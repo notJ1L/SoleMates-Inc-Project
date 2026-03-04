@@ -29,7 +29,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Nike Dunk Low Retro (Panda)',
                 'slug' => 'nike-dunk-low-retro-panda',
-                'price' => 115,
+                'price' => 6495,
                 'category' => 'Sneakers',
                 'brand' => 'Nike',
                 'description' => 'A classic 80s basketball icon featuring crisp leather overlays and a monochrome aesthetic.',
@@ -41,7 +41,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Adidas Ultraboost Light',
                 'slug' => 'adidas-ultraboost-light',
-                'price' => 190,
+                'price' => 10995,
                 'category' => 'Running',
                 'brand' => 'Adidas',
                 'description' => 'The lightest Ultraboost ever, featuring a Light BOOST midsole for epic energy return.',
@@ -53,7 +53,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'New Balance 550',
                 'slug' => 'new-balance-550',
-                'price' => 110,
+                'price' => 6495,
                 'category' => 'Sneakers',
                 'brand' => 'New Balance',
                 'description' => 'A tribute to the 1989 original pro-ballers, featuring a streamlined silhouette and leather upper.',
@@ -65,7 +65,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Converse Chuck Taylor All Star High Top',
                 'slug' => 'converse-chuck-taylor-all-star-high-top',
-                'price' => 65,
+                'price' => 3990,
                 'category' => 'Sneakers',
                 'brand' => 'Converse',
                 'description' => 'The original basketball shoe, featuring a durable canvas upper and the iconic ankle patch.',
@@ -77,7 +77,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Vans Old Skool',
                 'slug' => 'vans-old-skool',
-                'price' => 70,
+                'price' => 4295,
                 'category' => 'Sneakers',
                 'brand' => 'Vans',
                 'description' => 'The classic skate shoe that first bared the iconic side stripe, built with suede and canvas.',
@@ -89,7 +89,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Puma Cali Women\'s',
                 'slug' => 'puma-cali-womens',
-                'price' => 80,
+                'price' => 4995,
                 'category' => 'Sneakers',
                 'brand' => 'Puma',
                 'description' => 'A West Coast-inspired silhouette with a stacked sole and full leather upper.',
@@ -101,7 +101,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Reebok Club C 85 Vintage',
                 'slug' => 'reebok-club-c-85-vintage',
-                'price' => 90,
+                'price' => 5295,
                 'category' => 'Sneakers',
                 'brand' => 'Reebok',
                 'description' => 'A 1980s court classic with soft leather and a clean, minimalist design.',
@@ -113,7 +113,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Asics Gel-Kayano 30',
                 'slug' => 'asics-gel-kayano-30',
-                'price' => 160,
+                'price' => 9995,
                 'category' => 'Running',
                 'brand' => 'Asics',
                 'description' => 'Premium stability shoe with 4D GUIDANCE SYSTEM for maximum support and comfort.',
@@ -125,7 +125,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Hoka Bondi 8',
                 'slug' => 'hoka-bondi-8',
-                'price' => 165,
+                'price' => 9495,
                 'category' => 'Running',
                 'brand' => 'Hoka',
                 'description' => 'The ultra-cushioned road shoe with an extended heel and lightweight foam.',
@@ -137,7 +137,7 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Dr. Martens 1460 Smooth',
                 'slug' => 'dr-martens-1460-smooth',
-                'price' => 170,
+                'price' => 10990,
                 'category' => 'Boots',
                 'brand' => 'Dr. Martens',
                 'description' => 'The original 8-eye boot with yellow stitching, grooved sides, and air-cushioned soles.',
