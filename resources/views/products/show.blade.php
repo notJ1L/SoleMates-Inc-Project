@@ -257,7 +257,7 @@
             <div class="product-gallery">
                 <div class="main-photo" id="mainPhoto">
                     @if($product->photos && $product->photos->first())
-                        <img src="{{ asset('storage/' . $product->photos->first()->image_path) }}"
+                        <img src="{{ asset('product_photos/' . $product->photos->first()->image_path) }}"
                              alt="{{ $product->name }}" id="mainPhotoImg">
                     @else
                         <span class="main-photo-placeholder">👟</span>
@@ -267,8 +267,8 @@
                     <div class="thumb-strip">
                         @foreach($product->photos as $i => $photo)
                             <div class="thumb {{ $i === 0 ? 'active' : '' }}"
-                                 onclick="switchPhoto(this, '{{ asset('storage/' . $photo->image_path) }}')">
-                                <img src="{{ asset('storage/' . $photo->image_path) }}" alt="">
+                                 onclick="switchPhoto(this, '{{ asset('product_photos/' . $photo->image_path) }}')">
+                                <img src="{{ asset('product_photos/' . $photo->image_path) }}" alt="">
                             </div>
                         @endforeach
                     </div>
@@ -488,7 +488,7 @@
                 <a href="{{ route('products.show', $related->id) }}" class="related-card">
                     <div class="related-img">
                         @if($related->photos && $related->photos->first())
-                            <img src="{{ asset('storage/product_photos/' . $related->photos->first()->filename) }}" alt="{{ $related->name }}">
+                            <img src="{{ asset('product_photos/' . $related->photos->first()->image_path) }}" alt="{{ $related->name }}">
                         @else
                             <span style="font-size:2.5rem; opacity:0.2;">👟</span>
                         @endif

@@ -18,7 +18,7 @@ class HomeController extends Controller
     {
         $featuredProducts = Product::with(['category', 'brand', 'photos'])
                                   ->inRandomOrder()
-                                  ->take(8)
+                                  ->take(10)
                                   ->get();
         
         $categories = Category::withCount('products')->get();

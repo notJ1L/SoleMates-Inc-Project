@@ -48,7 +48,7 @@ class ProductSeeder extends Seeder
                 'stock_label' => 'in_stock',
                 'sizes' => 'US Men 4–14 / UK 3.5–13',
                 'colors' => 'Core Black, Cloud White, Solar Red',
-                'image_filename' => 'adidas_ultraboostwhite.avif',
+                'image_filename' => 'addidas_ultraboost_light.webp',
             ],
             [
                 'name' => 'New Balance 550',
@@ -187,7 +187,7 @@ class ProductSeeder extends Seeder
                 ]
             );
 
-            $imagePath = 'product_photos/' . $data['image_filename'];
+            $imagePath = $data['image_filename']; 
 
             ProductPhoto::firstOrCreate(
                 [

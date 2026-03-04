@@ -399,7 +399,7 @@
                             <div class="product-img-wrap">
                                 @if($product->photos && $product->photos->first())
                                     <img
-                                        src="{{ asset('storage/product_photos/' . $product->photos->first()->filename) }}"
+                                        src="{{ url('/images/' . $product->photos->first()->image_path) }}"
                                         alt="{{ $product->name }}"
                                         class="product-img"
                                     >

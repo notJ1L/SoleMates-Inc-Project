@@ -29,7 +29,7 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 @if($product->photos->first())
-                                    <img src="{{ asset('storage/' . $product->photos->first()->image_path) }}" 
+                                    <img src="{{ asset('product_photos/' . $product->photos->first()->image_path) }}" 
                                          alt="{{ $product->name }}" 
                                          class="me-3" 
                                          style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
