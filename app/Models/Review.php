@@ -11,7 +11,7 @@ class Review extends Model
         'user_id',
         'product_id',
         'rating',
-        'comment',
+        'body',
     ];
 
     public function user(): BelongsTo

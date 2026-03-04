@@ -257,7 +257,7 @@
             <div class="product-gallery">
                 <div class="main-photo" id="mainPhoto">
                     @if($product->photos && $product->photos->first())
-                        <img src="{{ asset('storage/product_photos/' . $product->photos->first()->filename) }}"
+                        <img src="{{ asset('storage/' . $product->photos->first()->image_path) }}"
                              alt="{{ $product->name }}" id="mainPhotoImg">
                     @else
                         <span class="main-photo-placeholder">👟</span>
@@ -267,8 +267,8 @@
                     <div class="thumb-strip">
                         @foreach($product->photos as $i => $photo)
                             <div class="thumb {{ $i === 0 ? 'active' : '' }}"
-                                 onclick="switchPhoto(this, '{{ asset('storage/product_photos/' . $photo->filename) }}')">
-                                <img src="{{ asset('storage/product_photos/' . $photo->filename) }}" alt="">
+                                 onclick="switchPhoto(this, '{{ asset('storage/' . $photo->image_path) }}')">
+                                <img src="{{ asset('storage/' . $photo->image_path) }}" alt="">
                             </div>
                         @endforeach
                     </div>

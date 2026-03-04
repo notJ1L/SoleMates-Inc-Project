@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-
-            $table->integer('quantity')->unsigned();
-            $table->decimal('price', 10, 2); // unit price at time of purchase
-
+            $table->unsignedTinyInteger('rating'); // 1–5 stars
+            $table->text('body');
             $table->timestamps();
+
+            $table->unique(['user_id', 'product_id']); // one review per user per product
         });
     }
 
@@ -28,6 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('reviews');
     }
 };
+

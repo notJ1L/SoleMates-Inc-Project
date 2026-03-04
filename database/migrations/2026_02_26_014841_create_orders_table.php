@@ -13,17 +13,28 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); 
-            $table->string('order_number')->unique();    
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            // Basic order info
+            $table->string('order_number')->unique();
+
+            // Monetary fields
             $table->decimal('shipping', 10, 2)->default(0);
-            $table->enum('status', ['pending','paid','shipped','completed','cancelled'])
-                    ->default('pending');
-            $table->string('payment_method')->nullable();                  
+            $table->decimal('total', 10, 2)->default(0); // grand total (items + shipping)
+
+            // Status lifecycle aligned with admin UI (pending → processing → shipped → completed / cancelled)
+            $table->enum('status', ['pending', 'processing', 'shipped', 'completed', 'cancelled'])
+                ->default('pending');
+
+            $table->string('payment_method')->nullable();
             $table->text('notes')->nullable();
+
+            // Shipping details
             $table->string('shipping_address')->nullable();
             $table->string('shipping_city')->nullable();
             $table->string('shipping_postcode')->nullable();
             $table->string('shipping_country')->nullable();
+
             $table->timestamps();
         });
     }
