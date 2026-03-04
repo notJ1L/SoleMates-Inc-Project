@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('slug')->unique();         
+            // slug is optional; if not provided, it will be NULL
+            $table->string('slug')->unique()->nullable();
             $table->text('description')->nullable();
             $table->foreignId('parent_id')              
                 ->nullable()->constrained('categories')->nullOnDelete();

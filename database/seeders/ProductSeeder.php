@@ -16,9 +16,19 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ensure all existing products have a slug based on their name
+        Product::whereNull('slug')
+            ->orWhere('slug', '')
+            ->get()
+            ->each(function (Product $product) {
+                $product->slug = Str::slug($product->name);
+                $product->save();
+            });
+
         $products = [
             [
                 'name' => 'Nike Dunk Low Retro (Panda)',
+                'slug' => 'nike-dunk-low-retro-panda',
                 'price' => 115,
                 'category' => 'Sneakers',
                 'brand' => 'Nike',
@@ -30,6 +40,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Adidas Ultraboost Light',
+                'slug' => 'adidas-ultraboost-light',
                 'price' => 190,
                 'category' => 'Running',
                 'brand' => 'Adidas',
@@ -41,6 +52,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'New Balance 550',
+                'slug' => 'new-balance-550',
                 'price' => 110,
                 'category' => 'Sneakers',
                 'brand' => 'New Balance',
@@ -52,6 +64,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Converse Chuck Taylor All Star High Top',
+                'slug' => 'converse-chuck-taylor-all-star-high-top',
                 'price' => 65,
                 'category' => 'Sneakers',
                 'brand' => 'Converse',
@@ -63,6 +76,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Vans Old Skool',
+                'slug' => 'vans-old-skool',
                 'price' => 70,
                 'category' => 'Sneakers',
                 'brand' => 'Vans',
@@ -74,6 +88,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Puma Cali Women\'s',
+                'slug' => 'puma-cali-womens',
                 'price' => 80,
                 'category' => 'Sneakers',
                 'brand' => 'Puma',
@@ -85,6 +100,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Reebok Club C 85 Vintage',
+                'slug' => 'reebok-club-c-85-vintage',
                 'price' => 90,
                 'category' => 'Sneakers',
                 'brand' => 'Reebok',
@@ -96,6 +112,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Asics Gel-Kayano 30',
+                'slug' => 'asics-gel-kayano-30',
                 'price' => 160,
                 'category' => 'Running',
                 'brand' => 'Asics',
@@ -107,6 +124,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Hoka Bondi 8',
+                'slug' => 'hoka-bondi-8',
                 'price' => 165,
                 'category' => 'Running',
                 'brand' => 'Hoka',
@@ -118,6 +136,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'name' => 'Dr. Martens 1460 Smooth',
+                'slug' => 'dr-martens-1460-smooth',
                 'price' => 170,
                 'category' => 'Boots',
                 'brand' => 'Dr. Martens',
@@ -132,12 +151,18 @@ class ProductSeeder extends Seeder
         foreach ($products as $data) {
             $category = Category::firstOrCreate(
                 ['name' => $data['category']],
-                ['description' => $data['category'] . ' footwear']
+                [
+                    'slug' => Str::slug($data['category']),
+                    'description' => $data['category'] . ' footwear',
+                ]
             );
 
             $brand = Brand::firstOrCreate(
                 ['name' => $data['brand']],
-                ['description' => $data['brand'] . ' footwear']
+                [
+                    'slug' => Str::slug($data['brand']),
+                    'description' => $data['brand'] . ' footwear',
+                ]
             );
 
             $stockMap = [

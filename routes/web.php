@@ -24,6 +24,10 @@ Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/products', [FrontProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [FrontProductController::class, 'show'])->name('products.show');
 
+// Simple, unstyled product listing/detail (for initial functionality)
+Route::get('/simple-products', [FrontProductController::class, 'simpleIndex'])->name('products.simple.index');
+Route::get('/simple-products/{product}', [FrontProductController::class, 'simpleShow'])->name('products.simple.show');
+
 // Admin Routes (Protected)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {

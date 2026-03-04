@@ -9,6 +9,20 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    // SIMPLE product listing without CSS/filters
+    public function simpleIndex()
+    {
+        $products = Product::with(['category', 'brand'])->get();
+        return view('products.simple-index', compact('products'));
+    }
+
+    // SIMPLE product detail without CSS
+    public function simpleShow(Product $product)
+    {
+        $product->load(['category', 'brand', 'photos']);
+        return view('products.simple-show', compact('product'));
+    }
+
     public function index(Request $request)
     {
         $query = Product::with(['category', 'brand', 'photos']);

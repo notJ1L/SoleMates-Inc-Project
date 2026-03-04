@@ -12,9 +12,11 @@ class Product extends Model
         'name',
         'description',
         'price',
+        'slug',
         'category_id',
         'brand_id',
         'stock',
+        'image',
     ];
 
     public function category(): BelongsTo
