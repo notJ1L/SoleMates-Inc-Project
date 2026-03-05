@@ -16,28 +16,28 @@
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-icon"><i class="bi bi-bag"></i></div>
-            <div class="stat-value">{{ $totalOrders ?? 0 }}</div>
+            <div class="stat-value">{{ $stats['total_orders'] ?? 0 }}</div>
             <div class="stat-label">Total Orders</div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
-            <div class="stat-value">{{ $totalProducts ?? 0 }}</div>
+            <div class="stat-value">{{ $stats['total_products'] ?? 0 }}</div>
             <div class="stat-label">Products</div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-icon"><i class="bi bi-people"></i></div>
-            <div class="stat-value">{{ $totalUsers ?? 0 }}</div>
+            <div class="stat-value">{{ $stats['total_users'] ?? 0 }}</div>
             <div class="stat-label">Registered Users</div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
-            <div class="stat-value">₱{{ number_format($totalRevenue ?? 0, 0) }}</div>
+            <div class="stat-value">₱{{ number_format($stats['total_revenue'] ?? 0, 0) }}</div>
             <div class="stat-label">Total Revenue</div>
         </div>
     </div>
@@ -70,7 +70,7 @@
                                 <div style="font-size:0.85rem;font-weight:600;">{{ $order->user->name }}</div>
                                 <div style="font-size:0.72rem;color:var(--warm-gray);">{{ $order->user->email }}</div>
                             </td>
-                            <td><span style="font-family:var(--font-mono);font-size:0.85rem;">₱{{ number_format($order->total, 2) }}</span></td>
+                            <td><span style="font-family:var(--font-mono);font-size:0.85rem;">₱{{ number_format($order->total_amount, 2) }}</span></td>
                             <td>
                                 <span class="badge-status badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
                             </td>
@@ -87,13 +87,13 @@
     {{-- Right column --}}
     <div class="col-lg-5">
         {{-- Pending orders alert --}}
-        @if(($pendingOrders ?? 0) > 0)
+        @if(($stats['pending_orders'] ?? 0) > 0)
         <div style="background:rgba(200,169,110,0.12);border:1px solid rgba(200,169,110,0.3);border-radius:6px;padding:1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
             <div style="width:44px;height:44px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">
                 <i class="bi bi-clock"></i>
             </div>
             <div>
-                <div style="font-weight:700;font-size:0.9rem;">{{ $pendingOrders }} Pending Order{{ $pendingOrders > 1 ? 's' : '' }}</div>
+                <div style="font-weight:700;font-size:0.9rem;">{{ $stats['pending_orders'] }} Pending Order{{ $stats['pending_orders'] > 1 ? 's' : '' }}</div>
                 <div style="font-size:0.78rem;color:var(--warm-gray);margin-top:2px;">Need your attention</div>
             </div>
             <a href="{{ route('admin.orders.index') }}?status=pending" style="margin-left:auto;font-size:0.75rem;color:var(--accent);text-decoration:none;white-space:nowrap;">View →</a>

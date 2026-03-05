@@ -31,7 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // drop the users table when rolling back a fresh install
         Schema::dropIfExists('users');
     }
 };

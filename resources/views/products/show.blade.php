@@ -338,9 +338,8 @@
             {{-- Add to Cart --}}
             @auth
                 @if($product->stock > 0)
-                    <form action="{{ route('cart.add') }}" method="POST">
+                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
                         @csrf
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <div class="qty-control">
                                 <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
