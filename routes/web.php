@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ProfileController;
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -67,7 +68,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
-});
+
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/orders', [ProfileController::class, 'orders'])->name('profile.orders');
+}); 
 
 // Admin Routes (Protected)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

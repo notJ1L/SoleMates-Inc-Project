@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SoulMates Footwear')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
-    <!-- Bootstrap CSS -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <style>
-        /* Ensure dropdown works */
         .dropdown-toggle::after {
             content: none;
         }
@@ -84,9 +80,9 @@
                                 <i class="fas fa-user me-1"></i>{{ auth()->user()->name }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user me-2"></i>Profile</a></li>
                                 <li><a class="dropdown-item" href="{{ route('cart.index') }}"><i class="fas fa-shopping-cart me-2"></i>Cart</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-box me-2"></i>Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ route('profile.orders') }}"><i class="fas fa-box me-2"></i>Orders</a></li>
                                 @if(auth()->user()->isAdmin())
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="fas fa-cog me-2"></i>Admin Panel</a></li>
@@ -171,19 +167,34 @@
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
     </form>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+        <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dropdown Init + Logout Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manually initialize all dropdowns (in case Bootstrap auto-init fails)
+            var dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            dropdownElements.forEach(function(el) {
+                new bootstrap.Dropdown(el);
+            });
+
+            // Handle logout links
+            const logoutLinks = document.querySelectorAll('a[href*="logout"]');
+            logoutLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('logout-form').submit();
+                });
+            });
+        });
+    </script>
+
     <!-- Dropdown and Logout Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Bootstrap dropdowns
-            var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
-            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-                return new bootstrap.Dropdown(dropdownToggleEl);
-            });
-            
+        
             // Handle logout links
             const logoutLinks = document.querySelectorAll('a[href*="logout"]');
             logoutLinks.forEach(function(link) {
@@ -194,33 +205,6 @@
                         form.submit();
                     }
                 });
-            });
-            
-            // Manual dropdown toggle as backup
-            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-            dropdownToggles.forEach(function(toggle) {
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const dropdownMenu = this.nextElementSibling;
-                    if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
-                        dropdownMenu.classList.toggle('show');
-                        this.setAttribute('aria-expanded', dropdownMenu.classList.contains('show'));
-                    }
-                });
-            });
-            
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.matches('.dropdown-toggle') && !e.target.closest('.dropdown-toggle')) {
-                    const dropdowns = document.querySelectorAll('.dropdown-menu.show');
-                    dropdowns.forEach(function(dropdown) {
-                        dropdown.classList.remove('show');
-                        const toggle = dropdown.previousElementSibling;
-                        if (toggle) {
-                            toggle.setAttribute('aria-expanded', 'false');
-                        }
-                    });
-                }
             });
         });
     </script>
