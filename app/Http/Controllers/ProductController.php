@@ -27,7 +27,7 @@ class ProductController extends Controller
     {
         $query = Product::with(['category', 'brand', 'photos']);
 
-        // Search functionality
+        // Search
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -39,12 +39,12 @@ class ProductController extends Controller
             });
         }
 
-        // Filter by category
+        // category
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Filter by brand
+        // brand
         if ($request->has('brand_id')) {
             $query->where('brand_id', $request->brand_id);
         }
