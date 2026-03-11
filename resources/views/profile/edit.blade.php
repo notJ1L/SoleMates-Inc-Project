@@ -81,32 +81,68 @@
         {{-- Change Password --}}
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body p-4">
-                <h5 class="mb-1">Change Password</h5>
-                <small class="text-muted d-block mb-3">Leave blank to keep your current password.</small>
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Current Password</label>
-                    <input type="password" name="current_password"
-                           class="form-control @error('current_password') is-invalid @enderror">
-                    @error('current_password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <h5 class="mb-0">Change Password</h5>
+                    <button type="button" id="togglePasswordBtn" class="btn btn-sm btn-outline-secondary"
+                            onclick="togglePasswordFields()">Change Password</button>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">New Password</label>
-                    <input type="password" name="new_password"
-                           class="form-control @error('new_password') is-invalid @enderror">
-                    @error('new_password') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
+                <div id="passwordFields" style="display: none;" class="mt-3">
+                    <small class="text-muted d-block mb-3">Leave blank to keep your current password.</small>
 
-                <div class="mb-0">
-                    <label class="form-label fw-semibold">Confirm New Password</label>
-                    <input type="password" name="new_password_confirmation" class="form-control">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Current Password</label>
+                        <input type="password" name="current_password" id="current_password"
+                               class="form-control @error('current_password') is-invalid @enderror">
+                        @error('current_password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">New Password</label>
+                        <input type="password" name="new_password" id="new_password"
+                               class="form-control @error('new_password') is-invalid @enderror">
+                        @error('new_password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label fw-semibold">Confirm New Password</label>
+                        <input type="password" name="new_password_confirmation" class="form-control">
+                    </div>
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary px-5">Save Changes</button>
+                <button type="submit" class="btn btn-primary px-5">Save Changes</button>
         <a href="{{ route('home') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
     </form>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    @if($errors->hasAny(['current_password', 'new_password']))
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('passwordFields').style.display = 'block';
+            var btn = document.getElementById('togglePasswordBtn');
+            btn.textContent = 'Cancel';
+            btn.classList.replace('btn-outline-secondary', 'btn-outline-danger');
+        });
+    @endif
+
+    function togglePasswordFields() {
+        const fields = document.getElementById('passwordFields');
+        const btn = document.getElementById('togglePasswordBtn');
+        if (fields.style.display === 'none') {
+            fields.style.display = 'block';
+            btn.textContent = 'Cancel';
+            btn.classList.replace('btn-outline-secondary', 'btn-outline-danger');
+        } else {
+            fields.style.display = 'none';
+            btn.textContent = 'Change Password';
+            btn.classList.replace('btn-outline-danger', 'btn-outline-secondary');
+            document.getElementById('current_password').value = '';
+            document.getElementById('new_password').value = '';
+        }
+    }
+</script>
 @endsection

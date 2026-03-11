@@ -30,7 +30,7 @@ class ProfileController extends Controller
             'address'       => 'nullable|string|max:500',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'current_password'  => 'nullable|string',
-            'new_password'      => 'nullable|string|min:8|confirmed',
+            'new_password'      => ['nullable', 'string', 'min:8', 'confirmed', 'required_with:current_password'],
         ]);
 
         $data = [
@@ -46,12 +46,12 @@ class ProfileController extends Controller
         }
 
         // Handle password change
-        if ($request->filled('current_password')) {
+        if ($request->filled('current_password') && $request->filled('new_password')) {
             if (!Hash::check($request->current_password, $user->password)) {
                 return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.'])->withInput();
             }
-            $data['password'] = $request->new_password;
-        }
+                $data['password'] = Hash::make($request->new_password);
+    }
 
         $user->update($data);
 
