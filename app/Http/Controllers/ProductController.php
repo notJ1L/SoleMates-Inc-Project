@@ -64,6 +64,21 @@ class ProductController extends Controller
                                  ->take(4)
                                  ->get();
 
-        return view('products.show', compact('product', 'relatedProducts'));
+        // Check if user can review (must have purchased the product)
+        $canReview = false;
+        $hasReviewed = false;
+        if (auth()->check()) {
+            $hasPurchased = \App\Models\Order::where('user_id', auth()->id())
+                ->whereHas('orderItems', function($query) use ($product) {
+                    $query->where('product_id', $product->id);
+                })
+                ->exists();
+            $hasReviewed = \App\Models\Review::where('user_id', auth()->id())
+                ->where('product_id', $product->id)
+                ->exists();
+            $canReview = $hasPurchased && !$hasReviewed;
+        }
+
+        return view('products.show', compact('product', 'relatedProducts', 'canReview', 'hasReviewed'));
     }
 }

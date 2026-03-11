@@ -23,4 +23,9 @@ class OrderItems extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getSubtotalAttribute(): float
+    {
+        return (float) $this->quantity * (float) $this->price;
+    }
 }

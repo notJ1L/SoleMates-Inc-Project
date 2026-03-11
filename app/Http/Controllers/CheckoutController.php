@@ -73,7 +73,6 @@ class CheckoutController extends Controller
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'order_number' => 'ORD-' . strtoupper(Str::random(8)),
-                'total_amount' => $totalAmount,
                 'status' => 'pending',
                 'shipping_address' => $request->shipping_address,
                 'phone' => $request->phone,
@@ -97,7 +96,6 @@ class CheckoutController extends Controller
                     'product_id' => $productId,
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
-                    'subtotal' => $item['price'] * $item['quantity']
                 ]);
 
                 // Update product stock
@@ -125,7 +123,7 @@ class CheckoutController extends Controller
      */
     public function success($orderId)
     {
-        $order = Order::with(['items.product', 'user'])
+        $order = Order::with(['orderItems.product', 'user'])
                      ->where('id', $orderId)
                      ->where('user_id', Auth::id())
                      ->firstOrFail();

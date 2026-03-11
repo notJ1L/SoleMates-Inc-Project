@@ -70,7 +70,7 @@
                                 <div style="font-size:0.85rem;font-weight:600;">{{ $order->user->name }}</div>
                                 <div style="font-size:0.72rem;color:var(--warm-gray);">{{ $order->user->email }}</div>
                             </td>
-                            <td><span style="font-family:var(--font-mono);font-size:0.85rem;">₱{{ number_format($order->total_amount, 2) }}</span></td>
+                            <td><span style="font-family:var(--font-mono);font-size:0.85rem;">₱{{ number_format($order->total, 2) }}</span></td>
                             <td>
                                 <span class="badge-status badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
                             </td>

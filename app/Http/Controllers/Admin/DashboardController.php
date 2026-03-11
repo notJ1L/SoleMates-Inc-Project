@@ -28,13 +28,15 @@ class DashboardController extends Controller
             'total_users' => User::count(),
             'total_products' => Product::count(),
             'total_orders' => Order::count(),
-            'total_revenue' => Order::where('status', 'completed')->sum('total_amount'),
+            'total_revenue' => Order::where('status', 'completed')
+                                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                                ->sum(DB::raw('order_items.quantity * order_items.price')),
             'pending_orders' => Order::where('status', 'pending')->count(),
             'active_users' => User::where('is_active', true)->count(),
         ];
 
         // Get recent orders
-        $recentOrders = Order::with(['user', 'items.product'])
+        $recentOrders = Order::with(['user', 'orderItems.product'])
                             ->orderBy('created_at', 'desc')
                             ->take(5)
                             ->get();
@@ -56,12 +58,13 @@ class DashboardController extends Controller
 
         // Get monthly sales data for the last 6 months
         $monthlySales = Order::select(
-                                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-                                DB::raw('SUM(total_amount) as total'),
+                                DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m") as month'),
+                                DB::raw('SUM(order_items.quantity * order_items.price) as total'),
                                 DB::raw('COUNT(*) as count')
                             )
-                            ->where('status', 'completed')
-                            ->where('created_at', '>=', now()->subMonths(6))
+                            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                            ->where('orders.status', 'completed')
+                            ->where('orders.created_at', '>=', now()->subMonths(6))
                             ->groupBy('month')
                             ->orderBy('month')
                             ->get();

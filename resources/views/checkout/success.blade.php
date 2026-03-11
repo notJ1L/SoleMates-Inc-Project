@@ -27,7 +27,7 @@
                                 <span class="badge bg-warning">{{ ucfirst($order->status) }}</span>
                             </div>
                             <div class="col-md-6">
-                                <strong>Total Amount:</strong> ₱{{ number_format($order->total_amount, 2) }}<br>
+                                <strong>Total Amount:</strong> ₱{{ number_format($order->total, 2) }}<br>
                                 <strong>Payment Method:</strong> {{ ucfirst(str_replace('_', ' ', $order->payment_method)) }}<br>
                                 <strong>Payment Status:</strong> 
                                 <span class="badge bg-secondary">{{ ucfirst($order->payment_status) }}</span>
@@ -38,7 +38,7 @@
                     <!-- Order Items -->
                     <div class="text-start">
                         <h6 class="mb-3">Order Items:</h6>
-                        @foreach($order->items as $item)
+                        @foreach($order->orderItems as $item)
                             <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                                 <div>
                                     <strong>{{ $item->product->name }}</strong><br>
