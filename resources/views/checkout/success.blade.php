@@ -27,7 +27,7 @@
                                 <span class="badge bg-warning">{{ ucfirst($order->status) }}</span>
                             </div>
                             <div class="col-md-6">
-                                <strong>Total Amount:</strong> ₱{{ number_format($order->total_amount, 2) }}<br>
+                                <strong>Total Amount:</strong> ₱{{ number_format($order->total, 2) }}<br>
                                 <strong>Payment Method:</strong> {{ ucfirst(str_replace('_', ' ', $order->payment_method)) }}<br>
                                 <strong>Payment Status:</strong> 
                                 <span class="badge bg-secondary">{{ ucfirst($order->payment_status) }}</span>

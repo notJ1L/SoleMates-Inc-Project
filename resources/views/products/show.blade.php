@@ -429,7 +429,7 @@
                                     <div class="star-picker">
                                         @for($i = 5; $i >= 1; $i--)
                                             <input type="radio" name="rating" id="star{{ $i }}" value="{{ $i }}"
-                                                   {{ old('rating') == $i ? 'checked' : '' }} required>
+                                                   {{ old('rating') == $i ? 'checked' : '' }}>
                                             <label for="star{{ $i }}" title="{{ $i }} star{{ $i > 1 ? 's' : '' }}">★</label>
                                         @endfor
                                     </div>

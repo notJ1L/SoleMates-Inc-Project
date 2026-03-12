@@ -29,18 +29,6 @@ class HomeController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->get('search');
-        
-        $products = Product::with(['category', 'brand', 'photos'])
-                           ->where(function($query) use ($search) {
-                               $query->where('name', 'like', '%' . $search . '%')
-                                     ->orWhere('description', 'like', '%' . $search . '%')
-                                     ->orWhereHas('brand', function($brandQuery) use ($search) {
-                                         $brandQuery->where('name', 'like', '%' . $search . '%');
-                                     });
-                           })
-                           ->paginate(12);
-
-        return view('search', compact('products', 'search'));
+        return redirect()->route('products.index', ['search' => $request->get('search')]);
     }
 }

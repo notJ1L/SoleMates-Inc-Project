@@ -27,7 +27,7 @@ class ProductController extends Controller
     {
         $query = Product::with(['category', 'brand', 'photos']);
 
-        // Search functionality
+        // Search
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -39,12 +39,12 @@ class ProductController extends Controller
             });
         }
 
-        // Filter by category
+        // category
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        // Filter by brand
+        // brand
         if ($request->has('brand_id')) {
             $query->where('brand_id', $request->brand_id);
         }
@@ -64,6 +64,7 @@ class ProductController extends Controller
                                  ->take(4)
                                  ->get();
 
+<<<<<<< HEAD
         // Check if user can review (must be authenticated and have purchased the product)
         $canReview = false;
         $hasReviewed = false;
@@ -84,6 +85,21 @@ class ProductController extends Controller
             
             // User can review if they haven't reviewed yet and have ordered the product
             $canReview = !$hasReviewed && $hasOrdered;
+=======
+        // Check if user can review (must have purchased the product)
+        $canReview = false;
+        $hasReviewed = false;
+        if (auth()->check()) {
+            $hasPurchased = \App\Models\Order::where('user_id', auth()->id())
+                ->whereHas('orderItems', function($query) use ($product) {
+                    $query->where('product_id', $product->id);
+                })
+                ->exists();
+            $hasReviewed = \App\Models\Review::where('user_id', auth()->id())
+                ->where('product_id', $product->id)
+                ->exists();
+            $canReview = $hasPurchased && !$hasReviewed;
+>>>>>>> 6c132d8950b977adb25684877ca43137b3a50077
         }
 
         return view('products.show', compact('product', 'relatedProducts', 'canReview', 'hasReviewed'));

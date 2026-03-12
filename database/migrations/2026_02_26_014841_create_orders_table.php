@@ -20,7 +20,7 @@ return new class extends Migration
 
             // Monetary fields
             $table->decimal('shipping', 10, 2)->default(0);
-            $table->decimal('total', 10, 2)->default(0); // grand total (items + shipping)
+            // Note: total will be calculated dynamically from order_items
 
             // Status lifecycle aligned with admin UI (pending → processing → shipped → completed / cancelled)
             $table->enum('status', ['pending', 'processing', 'shipped', 'completed', 'cancelled'])

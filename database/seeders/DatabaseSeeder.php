@@ -16,12 +16,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed a default test user without relying on the factory
+        // Seed default admin account
         User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
+            'phone' => '09171234567',
+            'address' => 'Admin HQ, Metro City',
+            'is_active' => true,
+        ]);
+
+        // Seed default regular user account
+        User::create([
+            'name' => 'Regular User',
+            'email' => 'a@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+            'phone' => '09170000000',
+            'address' => 'Sample Street, Metro City',
             'is_active' => true,
         ]);
 

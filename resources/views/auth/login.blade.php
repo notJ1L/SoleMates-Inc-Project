@@ -187,7 +187,7 @@
                 
                 <!-- Forgot Password -->
                 <div class="text-center">
-                    <a href="#" class="text-decoration-none">Forgot your password?</a>
+                    <a href="{{ route('password.request') }}" class="text-decoration-none">Forgot your password?</a>
                 </div>
             </form>
             

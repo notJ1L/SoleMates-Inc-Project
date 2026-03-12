@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController as FrontProductController;
 use App\Http\Controllers\Admin\UserController;
@@ -13,6 +15,8 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ProfileController;
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -29,6 +33,17 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Email verification (auth required)
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware(['signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->name('verification.resend');
+
+    // Password confirmation (for sensitive actions)
+    Route::get('/password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
+    Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
+});
 
 // Image serving route for artisan serve
 Route::get('/images/{filename}', function ($filename) {
@@ -61,7 +76,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success/{orderId}', [CheckoutController::class, 'success'])->name('checkout.success');
-});
+
+    // Review Routes
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/orders', [ProfileController::class, 'orders'])->name('profile.orders');
+}); 
 
 // Admin Routes (Protected)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

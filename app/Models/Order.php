@@ -10,6 +10,7 @@ class Order extends Model
 {
     protected $fillable = [
         'user_id',
+<<<<<<< HEAD
         'order_number',
         'total_amount',
         'status',
@@ -17,6 +18,19 @@ class Order extends Model
         'phone',
         'payment_method',
         'payment_status',
+=======
+        'status',
+        'shipping_address',
+        'phone',
+        'shipping',
+        'payment_method',
+        'payment_status',
+        'notes',
+        'shipping_city',
+        'shipping_postcode',
+        'shipping_country',
+        'order_number',
+>>>>>>> 6c132d8950b977adb25684877ca43137b3a50077
     ];
 
     public function user(): BelongsTo
@@ -27,5 +41,21 @@ class Order extends Model
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItems::class);
+    }
+
+    /**
+     * Calculate total amount dynamically from order items + shipping
+     */
+    public function getTotalAttribute()
+    {
+        return $this->orderItems->sum('subtotal') + $this->shipping;
+    }
+
+    /**
+     * Get items subtotal (without shipping)
+     */
+    public function getSubtotalAttribute()
+    {
+        return $this->orderItems->sum('subtotal');
     }
 }
