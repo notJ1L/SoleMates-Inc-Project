@@ -10,9 +10,13 @@ class Order extends Model
 {
     protected $fillable = [
         'user_id',
-        'total',
+        'order_number',
+        'total_amount',
         'status',
         'shipping_address',
+        'phone',
+        'payment_method',
+        'payment_status',
     ];
 
     public function user(): BelongsTo

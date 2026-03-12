@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' — SoulMates Inc.')
+@section('title', $product->name . ' — SoleMates Footwear')
 
 @section('head')
 <style>

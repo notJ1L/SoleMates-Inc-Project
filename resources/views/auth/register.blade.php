@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Register — SoulMates Inc.')
+@section('title', 'Register — SoleMates Footwear')
 
 @section('head')
 <style>
@@ -151,7 +151,7 @@ function previewPhoto(input) {
             <div style="position: relative; z-index: 1; text-align: center;">
                 <i class="fas fa-shoe-prints shoe-icon"></i>
                 <h2 class="mb-3">Join Our Community</h2>
-                <p class="mb-0">Step into style with SoulMates Footwear</p>
+                <p class="mb-0">Step into style with SoleMates Footwear</p>
             </div>
         </div>
         

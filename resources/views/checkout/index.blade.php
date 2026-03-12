@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout — SoulMates Inc.')
+@section('title', 'Checkout — SoleMates Footwear')
 
 @section('content')
 <div class="container mt-4">
@@ -175,7 +175,7 @@
                     
                     <div class="mt-3">
                         <small class="text-muted">
-                            <i class="fas fa-lock me-1"></i>Secure checkout powered by SoulMates Inc.
+                            <i class="fas fa-lock me-1"></i>Secure checkout powered by SoleMates Footwear
                         </small>
                     </div>
                 </div>

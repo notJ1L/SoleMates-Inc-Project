@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Order Success — SoulMates Inc.')
+@section('title', 'Order Success — SoleMates Footwear')
 
 @section('content')
 <div class="container mt-4">
@@ -38,7 +38,7 @@
                     <!-- Order Items -->
                     <div class="text-start">
                         <h6 class="mb-3">Order Items:</h6>
-                        @foreach($order->items as $item)
+                        @foreach($order->orderItems as $item)
                             <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                                 <div>
                                     <strong>{{ $item->product->name }}</strong><br>

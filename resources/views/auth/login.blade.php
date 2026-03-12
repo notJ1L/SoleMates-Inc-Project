@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login — SoulMates Inc.')
+@section('title', 'Login — SoleMates Footwear')
 
 @section('head')
 <style>
@@ -114,7 +114,7 @@
             <div style="position: relative; z-index: 1; text-align: center;">
                 <i class="fas fa-shoe-prints shoe-icon"></i>
                 <h2 class="mb-3">Welcome Back</h2>
-                <p class="mb-0">Step into comfort with SoulMates Footwear</p>
+                <p class="mb-0">Step into comfort with SoleMates Footwear</p>
             </div>
         </div>
         

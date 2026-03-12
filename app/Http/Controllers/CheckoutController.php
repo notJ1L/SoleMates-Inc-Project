@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItems;
-use App\Models\Product;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,15 +25,25 @@ class CheckoutController extends Controller
      */
     public function index()
     {
-        $cart = session()->get('cart', []);
+        $cartItems = Cart::getUserCart(Auth::id());
 
-        if (empty($cart)) {
+        if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
+        // Convert cart items to array format for view
+        $cart = [];
         $cartTotal = 0;
-        foreach ($cart as $item) {
-            $cartTotal += $item['price'] * $item['quantity'];
+
+        foreach ($cartItems as $item) {
+            $cart[$item->product_id] = [
+                'name' => $item->product->name,
+                'price' => $item->product->price,
+                'quantity' => $item->quantity,
+                'image' => $item->product->photos->first()?->image_path,
+                'stock' => $item->product->stock
+            ];
+            $cartTotal += $item->product->price * $item->quantity;
         }
 
         $user = Auth::user();
@@ -48,9 +59,9 @@ class CheckoutController extends Controller
      */
     public function process(Request $request)
     {
-        $cart = session()->get('cart', []);
+        $cartItems = Cart::getUserCart(Auth::id());
 
-        if (empty($cart)) {
+        if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
@@ -65,8 +76,8 @@ class CheckoutController extends Controller
 
             // Calculate total
             $totalAmount = 0;
-            foreach ($cart as $item) {
-                $totalAmount += $item['price'] * $item['quantity'];
+            foreach ($cartItems as $item) {
+                $totalAmount += $item->product->price * $item->quantity;
             }
 
             // Create order
@@ -82,32 +93,30 @@ class CheckoutController extends Controller
             ]);
 
             // Create order items and update stock
-            foreach ($cart as $productId => $item) {
-                $product = Product::findOrFail($productId);
-
+            foreach ($cartItems as $item) {
                 // Check stock availability
-                if ($product->stock < $item['quantity']) {
+                if ($item->product->stock < $item->quantity) {
                     DB::rollBack();
-                    return redirect()->back()->with('error', "Product '{$item['name']}' is out of stock or insufficient quantity.");
+                    return redirect()->back()->with('error', "Product '{$item->product->name}' is out of stock or insufficient quantity.");
                 }
 
                 // Create order item
                 OrderItems::create([
                     'order_id' => $order->id,
-                    'product_id' => $productId,
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                    'subtotal' => $item['price'] * $item['quantity']
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
+                    'subtotal' => $item->product->price * $item->quantity
                 ]);
 
                 // Update product stock
-                $product->decrement('stock', $item['quantity']);
+                $item->product->decrement('stock', $item->quantity);
             }
 
             DB::commit();
 
-            // Clear cart
-            session()->forget('cart');
+            // Clear cart from database
+            Cart::clearUserCart(Auth::id());
 
             return redirect()->route('checkout.success', $order->id)->with('success', 'Order placed successfully!');
 
@@ -125,7 +134,7 @@ class CheckoutController extends Controller
      */
     public function success($orderId)
     {
-        $order = Order::with(['items.product', 'user'])
+        $order = Order::with(['orderItems.product', 'user'])
                      ->where('id', $orderId)
                      ->where('user_id', Auth::id())
                      ->firstOrFail();

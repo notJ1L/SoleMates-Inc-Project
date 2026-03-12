@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'SoleMates Footwear — Find Your Perfect Pair'); ?>
 
-@section('title', 'SoleMates Footwear — Find Your Perfect Pair')
-
-@section('head')
+<?php $__env->startSection('head'); ?>
 <style>
     :root {
         --sm-black: #111;
@@ -292,11 +290,11 @@
         }
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-{{-- ===== HERO / LANDING ===== --}}
+
 <section class="hero-section">
     <div class="container hero-inner">
         <div class="row align-items-center g-4">
@@ -312,7 +310,7 @@
                 </p>
 
                 <div class="d-flex flex-wrap align-items-center gap-3 hero-cta mb-3">
-                    <a href="{{ route('products.index') }}" class="btn btn-primary">
+                    <a href="<?php echo e(route('products.index')); ?>" class="btn btn-primary">
                         Shop all products
                     </a>
                     <a href="#featured" class="btn btn-outline-dark">
@@ -349,7 +347,7 @@
     </div>
 </section>
 
-{{-- ===== CATEGORIES / BRANDS STRIP ===== --}}
+
 <section class="homepage-section">
     <div class="container">
         <div class="section-heading">
@@ -357,33 +355,35 @@
             <span>Browse by category or brand</span>
         </div>
 
-        {{-- Categories --}}
-        @if(isset($categories) && $categories->count())
+        
+        <?php if(isset($categories) && $categories->count()): ?>
             <div class="chip-row mb-2">
-                @foreach($categories as $category)
-                    <a href="{{ route('products.index', ['category' => $category->name]) }}" class="chip-link">
-                        {{ $category->name }}
-                        <small>{{ $category->products_count ?? $category->products?->count() ?? 0 }}</small>
-                    </a>
-                @endforeach
-            </div>
-        @endif
+                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e(route('products.index', ['category' => $category->name])); ?>" class="chip-link">
+                        <?php echo e($category->name); ?>
 
-        {{-- Brands --}}
-        @if(isset($brands) && $brands->count())
-            <div class="chip-row">
-                @foreach($brands as $brand)
-                    <a href="{{ route('products.index', ['brand' => $brand->name]) }}" class="chip-link">
-                        {{ $brand->name }}
-                        <small>{{ $brand->products_count ?? $brand->products?->count() ?? 0 }}</small>
+                        <small><?php echo e($category->products_count ?? $category->products?->count() ?? 0); ?></small>
                     </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-        @endif
+        <?php endif; ?>
+
+        
+        <?php if(isset($brands) && $brands->count()): ?>
+            <div class="chip-row">
+                <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $brand): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e(route('products.index', ['brand' => $brand->name])); ?>" class="chip-link">
+                        <?php echo e($brand->name); ?>
+
+                        <small><?php echo e($brand->products_count ?? $brand->products?->count() ?? 0); ?></small>
+                    </a>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 
-{{-- ===== FEATURED PRODUCTS ===== --}}
+
 <section id="featured" class="homepage-section" style="padding-top:0;">
     <div class="container">
         <div class="section-heading">
@@ -391,62 +391,67 @@
             <span>Hand‑picked pairs just for you</span>
         </div>
 
-        @if(isset($featuredProducts) && $featuredProducts->count())
+        <?php if(isset($featuredProducts) && $featuredProducts->count()): ?>
             <div class="row g-3">
-                @foreach($featuredProducts as $product)
+                <?php $__currentLoopData = $featuredProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="col-6 col-md-4 col-xl-3">
-                        <a href="{{ route('products.show', $product->id) }}" class="product-card">
+                        <a href="<?php echo e(route('products.show', $product->id)); ?>" class="product-card">
                             <div class="product-img-wrap">
-                                @if($product->photos && $product->photos->first())
+                                <?php if($product->photos && $product->photos->first()): ?>
                                     <img
-                                        src="{{ url('/images/' . $product->photos->first()->image_path) }}"
-                                        alt="{{ $product->name }}"
+                                        src="<?php echo e(url('/images/' . $product->photos->first()->image_path)); ?>"
+                                        alt="<?php echo e($product->name); ?>"
                                         class="product-img"
                                     >
-                                @else
+                                <?php else: ?>
                                     <span class="product-img-placeholder">👟</span>
-                                @endif
+                                <?php endif; ?>
 
-                                @if($product->created_at && $product->created_at->diffInDays() < 14)
+                                <?php if($product->created_at && $product->created_at->diffInDays() < 14): ?>
                                     <span class="product-badge">New</span>
-                                @endif
+                                <?php endif; ?>
                             </div>
                             <div class="product-info">
                                 <div class="product-brand">
-                                    {{ optional($product->brand)->name ?? 'SoleMates' }}
+                                    <?php echo e(optional($product->brand)->name ?? 'SoleMates'); ?>
+
                                 </div>
                                 <div class="product-name">
-                                    {{ $product->name }}
+                                    <?php echo e($product->name); ?>
+
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-1">
                                     <div class="product-price">
-                                        ₱{{ number_format($product->price, 2) }}
+                                        ₱<?php echo e(number_format($product->price, 2)); ?>
+
                                     </div>
-                                    @if($product->stock !== null)
-                                        @if($product->stock <= 5 && $product->stock > 0)
-                                            <span class="product-stock">Only {{ $product->stock }} left</span>
-                                        @elseif($product->stock == 0)
+                                    <?php if($product->stock !== null): ?>
+                                        <?php if($product->stock <= 5 && $product->stock > 0): ?>
+                                            <span class="product-stock">Only <?php echo e($product->stock); ?> left</span>
+                                        <?php elseif($product->stock == 0): ?>
                                             <span class="product-stock" style="color:var(--sm-muted);">
                                                 Out of stock
                                             </span>
-                                        @endif
-                                    @endif
+                                        <?php endif; ?>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </a>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-        @else
+        <?php else: ?>
             <div class="empty-featured">
                 <div>We’re still curating featured pairs.</div>
                 <div class="mt-2">
                     In the meantime, you can explore everything in our
-                    <a href="{{ route('products.index') }}">shop</a>.
+                    <a href="<?php echo e(route('products.index')); ?>">shop</a>.
                 </div>
             </div>
-        @endif
+        <?php endif; ?>
     </div>
 </section>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp_ITCP226\htdocs\SoleMates Inc\resources\views/home.blade.php ENDPATH**/ ?>

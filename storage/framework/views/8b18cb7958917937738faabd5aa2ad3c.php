@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'SoleMates Footwear')</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title><?php echo $__env->yieldContent('title', 'SoleMates Footwear'); ?></title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/sass/app.scss', 'resources/js/app.js']); ?>
 
     <style>
         /* Ensure dropdown works */
@@ -25,13 +25,13 @@
         }
     </style>
     
-    @yield('head')
+    <?php echo $__env->yieldContent('head'); ?>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('home') }}">
+            <a class="navbar-brand fw-bold" href="<?php echo e(route('home')); ?>">
                 <i class="fas fa-shoe-prints me-2"></i>SoleMates Footwear
             </a>
             
@@ -42,16 +42,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link" href="<?php echo e(route('home')); ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Shop</a>
+                        <a class="nav-link" href="<?php echo e(route('products.index')); ?>">Shop</a>
                     </li>
                 </ul>
                 
                 <!-- Search Bar -->
-                <form class="d-flex me-3" action="{{ route('search') }}" method="GET">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Search products..." value="{{ request('search') }}">
+                <form class="d-flex me-3" action="<?php echo e(route('search')); ?>" method="GET">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search products..." value="<?php echo e(request('search')); ?>">
                     <button class="btn btn-outline-light" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
@@ -59,51 +59,54 @@
                 
                 <!-- User Menu -->
                 <ul class="navbar-nav">
-                    @guest
+                    <?php if(auth()->guard()->guest()): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Login</a>
+                            <a class="nav-link" href="<?php echo e(route('login')); ?>">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">Register</a>
+                            <a class="nav-link" href="<?php echo e(route('register')); ?>">Register</a>
                         </li>
-                    @else
+                    <?php else: ?>
                         <!-- Cart Link -->
                         <li class="nav-item">
-                            <a class="nav-link position-relative" href="{{ route('cart.index') }}">
+                            <a class="nav-link position-relative" href="<?php echo e(route('cart.index')); ?>">
                                 <i class="fas fa-shopping-cart"></i>
-                                @if(Auth::check())
-                                    @php
+                                <?php if(Auth::check()): ?>
+                                    <?php
                                         $cartCount = \App\Models\Cart::where('user_id', Auth::id())->count();
-                                    @endphp
-                                    @if($cartCount > 0)
+                                    ?>
+                                    <?php if($cartCount > 0): ?>
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            {{ $cartCount }}
+                                            <?php echo e($cartCount); ?>
+
                                         </span>
-                                    @endif
-                                @else
-                                    @if(session('cart') && count(session('cart')) > 0)
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <?php if(session('cart') && count(session('cart')) > 0): ?>
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            {{ count(session('cart')) }}
+                                            <?php echo e(count(session('cart'))); ?>
+
                                         </span>
-                                    @endif
-                                @endif
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </a>
                         </li>
                         
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user me-1"></i>{{ auth()->user()->name }}
+                                <i class="fas fa-user me-1"></i><?php echo e(auth()->user()->name); ?>
+
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" href="{{ route('cart.index') }}"><i class="fas fa-shopping-cart me-2"></i>Cart</a></li>
+                                <li><a class="dropdown-item" href="<?php echo e(route('cart.index')); ?>"><i class="fas fa-shopping-cart me-2"></i>Cart</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="fas fa-box me-2"></i>Orders</a></li>
-                                @if(auth()->user()->isAdmin())
+                                <?php if(auth()->user()->isAdmin()): ?>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="fas fa-cog me-2"></i>Admin Panel</a></li>
-                                @endif
+                                    <li><a class="dropdown-item" href="<?php echo e(route('admin.dashboard')); ?>"><i class="fas fa-cog me-2"></i>Admin Panel</a></li>
+                                <?php endif; ?>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <li><a class="dropdown-item" href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                                 </a></li>
                             </ul>
@@ -111,14 +114,14 @@
                         
                         <!-- Fallback logout button -->
                         <li class="nav-item d-none d-lg-block">
-                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                                @csrf
+                            <form action="<?php echo e(route('logout')); ?>" method="POST" style="display: inline;">
+                                <?php echo csrf_field(); ?>
                                 <button type="submit" class="btn btn-outline-light btn-sm ms-2" title="Logout">
                                     <i class="fas fa-sign-out-alt"></i>
                                 </button>
                             </form>
                         </li>
-                    @endguest
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -127,21 +130,23 @@
     <!-- Main Content -->
     <main class="main-content" style="margin-top: 76px;">
         <!-- Flash Messages -->
-        @if(session('success'))
+        <?php if(session('success')): ?>
             <div class="alert alert-success alert-dismissible fade show m-0" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show m-0" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+                <?php echo e(session('success')); ?>
 
-        @yield('content')
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+        
+        <?php if(session('error')): ?>
+            <div class="alert alert-danger alert-dismissible fade show m-0" role="alert">
+                <?php echo e(session('error')); ?>
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php echo $__env->yieldContent('content'); ?>
     </main>
 
     <!-- Footer -->
@@ -155,8 +160,8 @@
                 <div class="col-md-4">
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ route('home') }}" class="text-light">Home</a></li>
-                        <li><a href="{{ route('products.index') }}" class="text-light">Shop</a></li>
+                        <li><a href="<?php echo e(route('home')); ?>" class="text-light">Home</a></li>
+                        <li><a href="<?php echo e(route('products.index')); ?>" class="text-light">Shop</a></li>
                         <li><a href="#" class="text-light">About Us</a></li>
                         <li><a href="#" class="text-light">Contact</a></li>
                     </ul>
@@ -173,14 +178,14 @@
             </div>
             <hr class="bg-light">
             <div class="text-center">
-                <p>&copy; {{ date('Y') }} SoleMates Footwear. All rights reserved.</p>
+                <p>&copy; <?php echo e(date('Y')); ?> SoleMates Footwear. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <!-- Logout Form -->
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-        @csrf
+    <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+        <?php echo csrf_field(); ?>
     </form>
 
     <!-- Bootstrap JS -->
@@ -236,6 +241,7 @@
         });
     </script>
     
-    @yield('scripts')
+    <?php echo $__env->yieldContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH C:\xampp_ITCP226\htdocs\SoleMates Inc\resources\views/layouts/app.blade.php ENDPATH**/ ?>

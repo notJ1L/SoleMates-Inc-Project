@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItems;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -23,7 +24,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cart = session()->get('cart', []);
+        $cart = $this->getCart();
         $cartTotal = 0;
 
         foreach ($cart as $item) {
@@ -31,6 +32,33 @@ class CartController extends Controller
         }
 
         return view('cart.index', compact('cart', 'cartTotal'));
+    }
+
+    /**
+     * Get cart items (from database for authenticated users, session for guests)
+     */
+    private function getCart()
+    {
+        if (Auth::check()) {
+            // Get from database for authenticated users
+            $cartItems = Cart::getUserCart(Auth::id());
+            $cart = [];
+
+            foreach ($cartItems as $item) {
+                $cart[$item->product_id] = [
+                    'name' => $item->product->name,
+                    'price' => $item->product->price,
+                    'quantity' => $item->quantity,
+                    'image' => $item->product->photos->first()?->image_path,
+                    'stock' => $item->product->stock
+                ];
+            }
+
+            return $cart;
+        } else {
+            // Get from session for guests
+            return session()->get('cart', []);
+        }
     }
 
     /**
@@ -43,32 +71,49 @@ class CartController extends Controller
     public function add(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $cart = session()->get('cart', []);
 
         // Check if product is in stock
         if ($product->stock <= 0) {
             return redirect()->back()->with('error', 'Product is out of stock.');
         }
 
-        // If product already in cart, update quantity
-        if (isset($cart[$id])) {
-            // Check if adding more would exceed stock
-            if ($cart[$id]['quantity'] >= $product->stock) {
-                return redirect()->back()->with('error', 'Cannot add more than available stock.');
-            }
-            $cart[$id]['quantity']++;
-        } else {
-            // Add new item to cart
-            $cart[$id] = [
-                'name' => $product->name,
-                'price' => $product->price,
-                'quantity' => 1,
-                'image' => $product->photos->first()?->image_path,
-                'stock' => $product->stock
-            ];
-        }
+        if (Auth::check()) {
+            // Add to database for authenticated users
+            $cartItem = Cart::where('user_id', Auth::id())
+                            ->where('product_id', $id)
+                            ->first();
 
-        session()->put('cart', $cart);
+            if ($cartItem) {
+                // Check if adding more would exceed stock
+                if ($cartItem->quantity >= $product->stock) {
+                    return redirect()->back()->with('error', 'Cannot add more than available stock.');
+                }
+                Cart::addItem(Auth::id(), $id, 1);
+            } else {
+                Cart::addItem(Auth::id(), $id, 1);
+            }
+        } else {
+            // Add to session for guests
+            $cart = session()->get('cart', []);
+
+            if (isset($cart[$id])) {
+                // Check if adding more would exceed stock
+                if ($cart[$id]['quantity'] >= $product->stock) {
+                    return redirect()->back()->with('error', 'Cannot add more than available stock.');
+                }
+                $cart[$id]['quantity']++;
+            } else {
+                $cart[$id] = [
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'quantity' => 1,
+                    'image' => $product->photos->first()?->image_path,
+                    'stock' => $product->stock
+                ];
+            }
+
+            session()->put('cart', $cart);
+        }
 
         return redirect()->back()->with('success', 'Product added to cart!');
     }
@@ -81,24 +126,39 @@ class CartController extends Controller
      */
     public function update(Request $request)
     {
-        $cart = session()->get('cart', []);
         $productId = $request->input('product_id');
         $quantity = $request->input('quantity');
 
-        if (isset($cart[$productId])) {
+        if (Auth::check()) {
+            // Update in database for authenticated users
             $product = Product::findOrFail($productId);
             
             // Validate quantity
             if ($quantity <= 0) {
-                unset($cart[$productId]);
+                Cart::removeItem(Auth::id(), $productId);
             } elseif ($quantity <= $product->stock) {
-                $cart[$productId]['quantity'] = $quantity;
+                Cart::updateItem(Auth::id(), $productId, $quantity);
             } else {
                 return redirect()->back()->with('error', 'Quantity exceeds available stock.');
             }
-        }
+        } else {
+            // Update in session for guests
+            $cart = session()->get('cart', []);
 
-        session()->put('cart', $cart);
+            if (isset($cart[$productId])) {
+                $product = Product::findOrFail($productId);
+                
+                if ($quantity <= 0) {
+                    unset($cart[$productId]);
+                } elseif ($quantity <= $product->stock) {
+                    $cart[$productId]['quantity'] = $quantity;
+                } else {
+                    return redirect()->back()->with('error', 'Quantity exceeds available stock.');
+                }
+            }
+
+            session()->put('cart', $cart);
+        }
 
         return redirect()->route('cart.index')->with('success', 'Cart updated!');
     }
@@ -111,11 +171,17 @@ class CartController extends Controller
      */
     public function remove($id)
     {
-        $cart = session()->get('cart', []);
+        if (Auth::check()) {
+            // Remove from database for authenticated users
+            Cart::removeItem(Auth::id(), $id);
+        } else {
+            // Remove from session for guests
+            $cart = session()->get('cart', []);
 
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session()->put('cart', $cart);
+            if (isset($cart[$id])) {
+                unset($cart[$id]);
+                session()->put('cart', $cart);
+            }
         }
 
         return redirect()->route('cart.index')->with('success', 'Item removed from cart!');
@@ -128,7 +194,13 @@ class CartController extends Controller
      */
     public function clear()
     {
-        session()->forget('cart');
+        if (Auth::check()) {
+            // Clear from database for authenticated users
+            Cart::clearUserCart(Auth::id());
+        } else {
+            // Clear from session for guests
+            session()->forget('cart');
+        }
 
         return redirect()->route('cart.index')->with('success', 'Cart cleared!');
     }
