@@ -51,6 +51,21 @@
                             @enderror
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Stock *</label>
+                            <input type="number"
+                                   name="stock"
+                                   class="form-control @error('stock') is-invalid @enderror"
+                                   value="{{ old('stock', $product->stock ?? 0) }}"
+                                   min="0"
+                                   required>
+                            @error('stock')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                     
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -108,7 +123,7 @@
                                    class="d-none" 
                                    multiple 
                                    accept="image/*"
-                                   @if(!isset($product)) required>
+                                   @if(!isset($product)) required @endif>
                             <button type="button" 
                                     class="btn btn-outline-primary" 
                                     onclick="document.getElementById('photoInput').click()">
@@ -216,6 +231,8 @@
         </div>
     </div>
 </div>
+
+@endsection
 
 @section('scripts')
 <script>

@@ -86,6 +86,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/orders', [ProfileController::class, 'orders'])->name('profile.orders');
+    Route::get('/profile/orders/{order}', [ProfileController::class, 'show'])->name('profile.orders.show');
 }); 
 
 // Admin Routes (Protected)
@@ -93,6 +94,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     Route::resource('/users', UserController::class);
+    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
+    Route::get('/products/data', [ProductController::class, 'data'])->name('products.data');
+    Route::post('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
     Route::resource('/products', ProductController::class);
     Route::resource('/orders', OrderController::class);
     
