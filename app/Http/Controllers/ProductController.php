@@ -1,12 +1,10 @@
 ﻿<?php
+namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
-
-namespace App\Http\Controllers;
-
 
 class ProductController extends Controller
 {
@@ -29,28 +27,28 @@ class ProductController extends Controller
         $query = Product::with(['category', 'brand', 'photos']);
 
         // Search
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
+        if ($request->filled('search')) {
+            $search = trim((string) $request->input('search'));
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
                   ->orWhere('description', 'like', '%' . $search . '%')
-                  ->orWhereHas('brand', function($brandQuery) use ($search) {
+                  ->orWhereHas('brand', function ($brandQuery) use ($search) {
                       $brandQuery->where('name', 'like', '%' . $search . '%');
                   });
             });
         }
 
-        // category
-        if ($request->has('category_id')) {
-            $query->where('category_id', $request->category_id);
+        // Category filter
+        if ($request->filled('category_id') && is_numeric($request->input('category_id'))) {
+            $query->where('category_id', (int) $request->input('category_id'));
         }
 
-        // brand
-        if ($request->has('brand_id')) {
-            $query->where('brand_id', $request->brand_id);
+        // Brand filter
+        if ($request->filled('brand_id') && is_numeric($request->input('brand_id'))) {
+            $query->where('brand_id', (int) $request->input('brand_id'));
         }
 
-        $products = $query->paginate(12);
+        $products = $query->paginate(12)->withQueryString();
         $categories = Category::all();
         $brands = Brand::all();
 
