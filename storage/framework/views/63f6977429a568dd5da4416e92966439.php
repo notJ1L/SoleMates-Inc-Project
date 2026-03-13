@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', 'Shop — SoulMates Inc.'); ?>
+<?php $__env->startSection('title', 'Shop — SoleMates Footwear'); ?>
 
 <?php $__env->startSection('head'); ?>
 <style>

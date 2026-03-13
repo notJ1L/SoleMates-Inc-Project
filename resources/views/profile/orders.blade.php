@@ -25,6 +25,7 @@
                         @endif">
                         {{ ucfirst($order->status) }}
                     </span>
+                    <a href="{{ route('profile.orders.show', $order) }}" class="btn btn-sm btn-outline-secondary ms-2">View Details</a>
                 </div>
                 <div class="card-body p-3">
                     @foreach($order->orderItems as $item)

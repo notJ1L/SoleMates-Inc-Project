@@ -1,11 +1,12 @@
-<?php
-
-namespace App\Http\Controllers;
+﻿<?php
 
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+
+namespace App\Http\Controllers;
+
 
 class ProductController extends Controller
 {
@@ -63,30 +64,6 @@ class ProductController extends Controller
                                  ->where('id', '!=', $product->id)
                                  ->take(4)
                                  ->get();
-
-<<<<<<< HEAD
-        // Check if user can review (must be authenticated and have purchased the product)
-        $canReview = false;
-        $hasReviewed = false;
-        
-        if (auth()->check()) {
-            $user = auth()->user();
-            
-            // Check if user has already reviewed this product
-            $hasReviewed = $product->reviews()->where('user_id', $user->id)->exists();
-            
-            // Check if user has ordered this product (you can modify this logic based on your requirements)
-            $hasOrdered = $user->orders()
-                              ->whereHas('orderItems', function($query) use ($product) {
-                                  $query->where('product_id', $product->id);
-                              })
-                              ->where('status', 'completed')
-                              ->exists();
-            
-            // User can review if they haven't reviewed yet and have ordered the product
-            $canReview = !$hasReviewed && $hasOrdered;
-=======
-        // Check if user can review (must have purchased the product)
         $canReview = false;
         $hasReviewed = false;
         if (auth()->check()) {
@@ -99,7 +76,6 @@ class ProductController extends Controller
                 ->where('product_id', $product->id)
                 ->exists();
             $canReview = $hasPurchased && !$hasReviewed;
->>>>>>> 6c132d8950b977adb25684877ca43137b3a50077
         }
 
         return view('products.show', compact('product', 'relatedProducts', 'canReview', 'hasReviewed'));

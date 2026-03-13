@@ -102,16 +102,10 @@ class CheckoutController extends Controller
                 // Create order item
                 OrderItems::create([
                     'order_id' => $order->id,
-<<<<<<< HEAD
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
                     'price' => $item->product->price,
-                    'subtotal' => $item->product->price * $item->quantity
-=======
-                    'product_id' => $productId,
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
->>>>>>> 6c132d8950b977adb25684877ca43137b3a50077
+                    'subtotal' => $item->product->price * $item->quantity,
                 ]);
 
                 // Update product stock

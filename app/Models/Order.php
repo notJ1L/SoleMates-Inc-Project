@@ -10,7 +10,6 @@ class Order extends Model
 {
     protected $fillable = [
         'user_id',
-<<<<<<< HEAD
         'order_number',
         'total_amount',
         'status',
@@ -18,7 +17,6 @@ class Order extends Model
         'phone',
         'payment_method',
         'payment_status',
-=======
         'status',
         'shipping_address',
         'phone',
@@ -30,7 +28,6 @@ class Order extends Model
         'shipping_postcode',
         'shipping_country',
         'order_number',
->>>>>>> 6c132d8950b977adb25684877ca43137b3a50077
     ];
 
     public function user(): BelongsTo
