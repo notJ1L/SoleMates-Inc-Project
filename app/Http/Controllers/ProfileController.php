@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -40,8 +41,10 @@ class ProfileController extends Controller
             'address' => $request->address,
         ];
 
-        // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
             $data['profile_photo'] = $request->file('profile_photo')->store('profile_photos', 'public');
         }
 
