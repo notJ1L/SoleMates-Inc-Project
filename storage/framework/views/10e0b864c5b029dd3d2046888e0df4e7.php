@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin') â€” SoleMates</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo $__env->yieldContent('title', 'Admin'); ?> â€” SoleMates</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -440,9 +440,9 @@
             .admin-content { padding: 1.125rem; }
         }
 
-        @yield('styles')
+        <?php echo $__env->yieldContent('styles'); ?>
     </style>
-    @yield('head')
+    <?php echo $__env->yieldContent('head'); ?>
 </head>
 <body>
 
@@ -458,28 +458,28 @@
     <nav class="sidebar-nav">
         <div class="nav-section">
             <span class="nav-section-label">Overview</span>
-            <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+            <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
                 <i class="bi bi-grid-1x2"></i> Dashboard
             </a>
         </div>
 
         <div class="nav-section">
             <span class="nav-section-label">Catalog</span>
-            <a href="{{ route('admin.products.index') }}" class="sidebar-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+            <a href="<?php echo e(route('admin.products.index')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.products.*') ? 'active' : ''); ?>">
                 <i class="bi bi-box-seam"></i> Products
             </a>
         </div>
 
         <div class="nav-section">
             <span class="nav-section-label">Commerce</span>
-            <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+            <a href="<?php echo e(route('admin.orders.index')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.orders.*') ? 'active' : ''); ?>">
                 <i class="bi bi-bag-check"></i> Orders
             </a>
         </div>
 
         <div class="nav-section">
             <span class="nav-section-label">Users</span>
-            <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+            <a href="<?php echo e(route('admin.users.index')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.users.*') ? 'active' : ''); ?>">
                 <i class="bi bi-people"></i> All Users
             </a>
         </div>
@@ -487,7 +487,7 @@
         <div class="sidebar-divider"></div>
 
         <div class="nav-section">
-            <a href="{{ route('home') }}" class="sidebar-link" target="_blank" rel="noopener">
+            <a href="<?php echo e(route('home')); ?>" class="sidebar-link" target="_blank" rel="noopener">
                 <i class="bi bi-arrow-up-right-square"></i> View Storefront
             </a>
         </div>
@@ -496,19 +496,20 @@
     <div class="sidebar-footer">
         <div class="sidebar-user">
             <div class="sidebar-avatar">
-                @if(auth()->user()->profile_photo)
-                    <img src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo) }}" alt="">
-                @else
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                @endif
+                <?php if(auth()->user()->profile_photo): ?>
+                    <img src="<?php echo e(asset('storage/profile_photos/' . auth()->user()->profile_photo)); ?>" alt="">
+                <?php else: ?>
+                    <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
+
+                <?php endif; ?>
             </div>
             <div style="flex:1;min-width:0;">
-                <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
+                <div class="sidebar-user-name"><?php echo e(auth()->user()->name); ?></div>
                 <div class="sidebar-user-role">Administrator</div>
             </div>
         </div>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
+        <form action="<?php echo e(route('logout')); ?>" method="POST">
+            <?php echo csrf_field(); ?>
             <button type="submit" class="sidebar-link" style="color:rgba(255,255,255,0.32);">
                 <i class="bi bi-box-arrow-right"></i> Sign Out
             </button>
@@ -522,34 +523,34 @@
             <button class="sidebar-toggle-btn" id="sidebarToggle">
                 <i class="bi bi-list"></i>
             </button>
-            <div class="topbar-title">@yield('page-title', 'Dashboard')</div>
+            <div class="topbar-title"><?php echo $__env->yieldContent('page-title', 'Dashboard'); ?></div>
         </div>
         <div class="topbar-right">
-            @yield('topbar-actions')
+            <?php echo $__env->yieldContent('topbar-actions'); ?>
         </div>
     </div>
 
-    @if(session('success') || session('error'))
+    <?php if(session('success') || session('error')): ?>
     <div class="flash-wrap">
-        @if(session('success'))
+        <?php if(session('success')): ?>
         <div class="flash-alert flash-success alert-dismissible" role="alert">
             <i class="bi bi-check-circle-fill"></i>
-            <span>{{ session('success') }}</span>
+            <span><?php echo e(session('success')); ?></span>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
         </div>
-        @endif
-        @if(session('error'))
+        <?php endif; ?>
+        <?php if(session('error')): ?>
         <div class="flash-alert flash-error alert-dismissible" role="alert">
             <i class="bi bi-exclamation-circle-fill"></i>
-            <span>{{ session('error') }}</span>
+            <span><?php echo e(session('error')); ?></span>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
         </div>
-        @endif
+        <?php endif; ?>
     </div>
-    @endif
+    <?php endif; ?>
 
     <main class="admin-content">
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </main>
 </div>
 
@@ -559,6 +560,7 @@
         document.getElementById('adminSidebar').classList.toggle('open');
     });
 </script>
-@yield('scripts')
+<?php echo $__env->yieldContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH C:\xampp_ITCP226\htdocs\SoulMates-Inc-Project\resources\views/layouts/admin.blade.php ENDPATH**/ ?>

@@ -3,40 +3,34 @@
 @section('page-title', 'Orders')
 
 @section('content')
-<!-- Filters -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="d-flex gap-3 align-items-center">
-            <form method="GET" class="d-flex gap-2 align-items-center">
-                @csrf
-                
-                <select name="status" class="form-select" onchange="this.form.submit()">
-                    <option value="">All Status</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
-                    <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                </select>
-                
-                <input type="text" 
-                       name="search" 
-                       class="form-control" 
-                       placeholder="Search by order ID or customer name..." 
-                       value="{{ request('search') }}">
-                
-                <button type="submit" class="btn btn-outline-primary">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
-        </div>
-    </div>
+
+<div class="filter-bar">
+    <form method="GET" class="d-flex align-items-center gap-2 flex-wrap w-100">
+        <i class="bi bi-funnel" style="color:var(--text-muted);font-size:0.9rem;"></i>
+        <select name="status" class="form-select" style="width:160px;" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            <option value="pending"    {{ request('status') == 'pending'    ? 'selected' : '' }}>Pending</option>
+            <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
+            <option value="shipped"    {{ request('status') == 'shipped'    ? 'selected' : '' }}>Shipped</option>
+            <option value="completed"  {{ request('status') == 'completed'  ? 'selected' : '' }}>Completed</option>
+            <option value="cancelled"  {{ request('status') == 'cancelled'  ? 'selected' : '' }}>Cancelled</option>
+        </select>
+        <input type="text" name="search" class="form-control" style="max-width:280px;flex:1;"
+               placeholder="Search by order ID or customer…" value="{{ request('search') }}">
+        <button type="submit" class="btn-secondary-admin">
+            <i class="bi bi-search"></i> Search
+        </button>
+        @if(request('status') || request('search'))
+        <a href="{{ route('admin.orders.index') }}" class="btn-secondary-admin" style="color:var(--red);">
+            <i class="bi bi-x-lg"></i> Clear
+        </a>
+        @endif
+    </form>
 </div>
 
-<!-- Orders Table -->
-<div class="admin-form-card">
-    <div class="card-body p-0">
-        <table class="admin-table">
+<div class="panel">
+    <div class="table-responsive">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>Order</th>
@@ -45,214 +39,164 @@
                     <th>Total</th>
                     <th>Status</th>
                     <th>Date</th>
-                    <th>Actions</th>
+                    <th style="text-align:right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($orders as $order)
-                    <tr>
-                        <td>
-                            <div class="fw-semibold font-mono">#{{ $order->id }}</div>
-                            <div class="text-muted small">{{ $order->created_at->format('M d, Y') }}</div>
-                        </td>
-                        <td>
-                            <div class="fw-semibold">{{ $order->user->name }}</div>
-                            <div class="text-muted small">{{ $order->user->email }}</div>
-                            @if($order->user->phone)
-                                <div class="text-muted small">{{ $order->user->phone }}</div>
-                            @endif
-                        </td>
-                        <td>
-                            <div class="fw-semibold">{{ $order->orderItems->count() }} items</div>
-                            <div class="text-muted small">
-                                {{ $order->orderItems->first()->product->name ?? 'No items' }}
-                                @if($order->orderItems->count() > 1)
-                                    and {{ $order->orderItems->count() - 1 }} more
-                                @endif
-                            </div>
-                        </td>
-                        <td>
-                            <span class="font-mono fw-semibold">${{ number_format($order->total, 2) }}</span>
-                        </td>
-                        <td>
-                            <span class="badge-status badge-{{ $order->status }}">
-                                {{ ucfirst($order->status) }}
-                            </span>
-                        </td>
-                        <td>
-                            <div>{{ $order->created_at->format('M d, Y') }}</div>
-                            <div class="text-muted small">{{ $order->created_at->diffForHumans() }}</div>
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-primary" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#orderModal{{ $order->id }}">
-                                    <i class="fas fa-eye"></i>
+                <tr>
+                    <td><span class="mono">#{{ $order->id }}</span></td>
+                    <td>
+                        <div style="font-weight:600;">{{ $order->user->name }}</div>
+                        <div class="subtext">{{ $order->user->email }}</div>
+                    </td>
+                    <td>
+                        <div style="font-size:0.838rem;font-weight:500;">{{ $order->orderItems->count() }} item{{ $order->orderItems->count() != 1 ? 's' : '' }}</div>
+                        <div class="subtext">{{ Str::limit($order->orderItems->first()->product->name ?? '—', 28) }}</div>
+                    </td>
+                    <td><span class="mono">₱{{ number_format($order->total, 2) }}</span></td>
+                    <td><span class="badge-pill badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span></td>
+                    <td>
+                        <div style="font-size:0.813rem;">{{ $order->created_at->format('M d, Y') }}</div>
+                        <div class="subtext">{{ $order->created_at->diffForHumans() }}</div>
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;justify-content:flex-end;gap:0.375rem;">
+                            <button type="button" class="action-btn" title="View Details"
+                                    data-bs-toggle="modal" data-bs-target="#orderModal{{ $order->id }}">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            @if($order->status !== 'completed')
+                            <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST" class="d-inline">
+                                @csrf
+                                <input type="hidden" name="status" value="completed">
+                                <button type="submit" class="action-btn success" title="Mark Completed"
+                                        onclick="return confirm('Mark this order as completed?')">
+                                    <i class="bi bi-check-lg"></i>
                                 </button>
-                                
-                                @if($order->status !== 'completed')
-                                <form action="{{ route('admin.orders.updateStatus', $order) }}" 
-                                      method="POST" 
-                                      class="d-inline">
-                                    @csrf
-                                    <input type="hidden" name="status" value="completed">
-                                    <button type="submit" 
-                                            class="btn btn-sm btn-outline-success"
-                                            title="Mark as Completed"
-                                            onclick="return confirm('Mark this order as completed?')">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                </form>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
+                            </form>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-4">
-                            <i class="fas fa-shopping-bag fa-2x text-muted mb-2"></i>
-                            <p class="text-muted mb-0">No orders found</p>
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="bi bi-bag-x"></i>
+                            <p>No orders found.</p>
+                        </div>
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- Pagination -->
 @if($orders->hasPages())
-    <div class="d-flex justify-content-center mt-4">
-        {{ $orders->links() }}
-    </div>
+<div style="display:flex;justify-content:center;margin-top:1.25rem;">
+    {{ $orders->links() }}
+</div>
 @endif
 
-<!-- Order Details Modal -->
+{{-- Order Detail Modals --}}
 @foreach ($orders as $order)
-<div class="modal fade" id="orderModal{{ $order->id }}" tabindex="-1">
+<div class="modal fade" id="orderModal{{ $order->id }}" tabindex="-1" aria-labelledby="orderModalLabel{{ $order->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-bag-check me-2"></i>Order #{{ $order->id }} Details
+                <h5 class="modal-title" id="orderModalLabel{{ $order->id }}">
+                    Order <span class="text-mono">#{{ $order->id }}</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row mb-4">
+                <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <h6 class="fw-semibold mb-3">Customer Information</h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <td class="text-muted" style="width: 100px;">Name:</td>
-                                <td>{{ $order->user->name }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">Email:</td>
-                                <td>{{ $order->user->email }}</td>
-                            </tr>
-                            @if($order->user->phone)
-                            <tr>
-                                <td class="text-muted">Phone:</td>
-                                <td>{{ $order->user->phone }}</td>
-                            </tr>
-                            @endif
-                            @if($order->user->address)
-                            <tr>
-                                <td class="text-muted">Address:</td>
-                                <td>{{ $order->user->address }}</td>
-                            </tr>
-                            @endif
-                        </table>
+                        <div style="font-size:0.69rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.625rem;">Customer</div>
+                        <div style="font-weight:650;font-size:0.9rem;margin-bottom:0.15rem;">{{ $order->user->name }}</div>
+                        <div style="font-size:0.813rem;color:var(--text-secondary);">{{ $order->user->email }}</div>
+                        @if($order->user->phone)
+                        <div style="font-size:0.813rem;color:var(--text-secondary);">{{ $order->user->phone }}</div>
+                        @endif
+                        @if($order->user->address)
+                        <div style="font-size:0.813rem;color:var(--text-secondary);margin-top:0.25rem;">{{ $order->user->address }}</div>
+                        @endif
                     </div>
                     <div class="col-md-6">
-                        <h6 class="fw-semibold mb-3">Order Information</h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <td class="text-muted" style="width: 100px;">Status:</td>
-                                <td>
-                                    <span class="badge-status badge-{{ $order->status }}">
-                                        {{ ucfirst($order->status) }}
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">Order Date:</td>
-                                <td>{{ $order->created_at->format('M d, Y h:i A') }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">Subtotal:</td>
-                                <td class="font-mono">${{ number_format($order->total, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">Total:</td>
-                                <td class="font-mono fw-bold">${{ number_format($order->total, 2) }}</td>
-                            </tr>
-                        </table>
+                        <div style="font-size:0.69rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.625rem;">Order Info</div>
+                        <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.838rem;">
+                                <span style="color:var(--text-muted);">Status</span>
+                                <span class="badge-pill badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:0.838rem;">
+                                <span style="color:var(--text-muted);">Date</span>
+                                <span>{{ $order->created_at->format('M d, Y h:i A') }}</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;font-size:0.9rem;font-weight:700;border-top:1px solid var(--border);padding-top:0.4rem;margin-top:0.1rem;">
+                                <span>Total</span>
+                                <span class="text-mono">₱{{ number_format($order->total, 2) }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <h6 class="fw-semibold mb-3">Order Items</h6>
-                <div class="table-responsive">
-                    <table class="table table-sm">
+
+                <div style="font-size:0.69rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.625rem;">Items</div>
+                <div class="panel mb-4">
+                    <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Product</th>
                                 <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
+                                <th>Qty</th>
+                                <th style="text-align:right;">Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($order->orderItems as $item)
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">{{ $item->product->name }}</div>
-                                        <div class="text-muted small">{{ $item->product->category->name ?? 'Uncategorized' }}</div>
-                                    </td>
-                                    <td class="font-mono">${{ number_format($item->price, 2) }}</td>
-                                    <td>{{ $item->quantity }}</td>
-                                    <td class="font-mono fw-semibold">${{ number_format($item->price * $item->quantity, 2) }}</td>
-                                </tr>
+                            <tr>
+                                <td>
+                                    <div style="font-weight:600;">{{ $item->product->name }}</div>
+                                    <div class="subtext">{{ $item->product->category->name ?? 'Uncategorized' }}</div>
+                                </td>
+                                <td class="mono">₱{{ number_format($item->price, 2) }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td class="mono" style="text-align:right;font-weight:600;">₱{{ number_format($item->price * $item->quantity, 2) }}</td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- Status Update Form -->
+
                 @if($order->status !== 'completed')
-                <div class="mt-4 p-3 bg-light rounded">
-                    <h6 class="fw-semibold mb-3">Update Order Status</h6>
+                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;">
+                    <div style="font-size:0.69rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.75rem;">Update Status</div>
                     <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST">
                         @csrf
-                        <div class="row">
-                            <div class="col-md-8">
-                                <select name="status" class="form-select" required>
-                                    <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
-                                    <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Shipped</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-sync me-2"></i>Update Status
-                                </button>
-                            </div>
+                        <div style="display:flex;gap:0.625rem;align-items:center;">
+                            <select name="status" class="form-select" style="flex:1;">
+                                <option value="pending"    {{ $order->status == 'pending'    ? 'selected' : '' }}>Pending</option>
+                                <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
+                                <option value="shipped"    {{ $order->status == 'shipped'    ? 'selected' : '' }}>Shipped</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled"  {{ $order->status == 'cancelled'  ? 'selected' : '' }}>Cancelled</option>
+                            </select>
+                            <button type="submit" class="btn-primary-admin" style="white-space:nowrap;">
+                                <i class="bi bi-arrow-repeat"></i> Update
+                            </button>
                         </div>
                     </form>
                 </div>
                 @endif
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="{{ route('admin.orders.index') }}" class="btn btn-primary">View All Orders</a>
+                <button type="button" class="btn-secondary-admin" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 @endforeach
+
 @endsection
