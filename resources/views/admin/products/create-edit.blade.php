@@ -141,7 +141,7 @@
                                 <img src="{{ asset('storage/' . $photo->image_path) }}" alt="Gallery photo"
                                      style="width:90px;height:90px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border);">
                                 <button type="button"
-                                        onclick="deleteGalleryPhoto({{ $photo->id }}, this)"
+                                        onclick="deleteGalleryPhoto({{ $photo->id }})"
                                         style="position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:rgba(220,38,38,0.85);border:none;color:#fff;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">
                                     <i class="bi bi-x"></i>
                                 </button>
@@ -235,9 +235,10 @@ document.getElementById('coverInput').addEventListener('change', function() {
     reader.onload = e => {
         document.getElementById('coverPreview').src = e.target.result;
         document.getElementById('coverPreviewWrap').style.display = 'block';
-        @isset($product)
-        document.getElementById('coverPreviewExisting') && (document.getElementById('coverPreviewExisting').style.opacity = '0.4');
-        @endisset
+        const existingCover = document.getElementById('coverPreviewExisting');
+        if (existingCover) {
+            existingCover.style.opacity = '0.4';
+        }
     };
     reader.readAsDataURL(file);
 });
@@ -276,7 +277,7 @@ function handleGalleryFiles(files) {
 }
 
 // ── Delete existing gallery photo via Ajax ───────────────────────
-function deleteGalleryPhoto(photoId, btn) {
+function deleteGalleryPhoto(photoId) {
     if (!confirm('Remove this photo from the gallery?')) return;
     fetch(`/admin/products/photos/${photoId}`, {
         method: 'DELETE',

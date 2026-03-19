@@ -4,6 +4,7 @@
 
 @section('head')
 <style>
+    .filter-title {
         font-family: var(--font-mono);
         font-size: 0.65rem;
         letter-spacing: 0.2em;
@@ -50,7 +51,7 @@
     .sort-bar {
         display: flex;
         align-items: center;
-        justify-content-between;
+        justify-content: space-between;
         gap: 1rem;
         padding: 1rem 1.25rem;
         background: var(--white);
