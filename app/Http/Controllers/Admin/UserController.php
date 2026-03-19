@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -17,13 +19,66 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::paginate(10);
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index');  
     }
 
     public function create()
     {
         return view('admin.users.create');
+    }
+
+    public function data()
+    {
+        $query = User::query();
+
+        return DataTables::of($query)
+            ->addColumn('avatar_col', function (User $user) {
+                if ($user->profile_photo) {
+                    $url = Storage::disk('public')->url($user->profile_photo);
+                    $img = '<img src="' . e($url) . '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #E6E0D8;">';
+                } else {
+                    $letter = strtoupper(mb_substr($user->name, 0, 1));
+                    $img = '<div style="width:36px;height:36px;border-radius:50%;background:var(--accent-light,#F3EDE3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.875rem;color:var(--accent,#8B6F47);">' . e($letter) . '</div>';
+                }
+                return '<div style="display:flex;align-items:center;gap:0.65rem;">'
+                    . $img
+                    . '<div><div style="font-weight:600;">' . e($user->name) . '</div>'
+                    . ($user->phone ? '<div style="font-size:0.75rem;color:#A09A94;">' . e($user->phone) . '</div>' : '')
+                    . '</div></div>';
+            })
+            ->addColumn('role_col', function (User $user) {
+                return '<span class="badge-pill badge-' . e($user->role) . '">' . ucfirst(e($user->role)) . '</span>';
+            })
+            ->addColumn('status_col', function (User $user) {
+                return $user->is_active
+                    ? '<span class="badge-pill badge-active">Active</span>'
+                    : '<span class="badge-pill badge-inactive">Inactive</span>';
+            })
+            ->addColumn('joined_col', function (User $user) {
+                return '<div style="font-size:0.813rem;">' . $user->created_at->format('M d, Y') . '</div>'
+                    . '<div style="font-size:0.72rem;color:#A09A94;">' . $user->created_at->diffForHumans() . '</div>';
+            })
+            ->addColumn('actions', function (User $user) {
+                $editBtn = '<a href="' . route('admin.users.edit', $user) . '" class="action-btn" title="Edit"><i class="bi bi-pencil"></i></a>';
+
+                if ($user->is_active) {
+                    $toggleBtn = '<form action="' . route('admin.users.deactivate', $user) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Deactivate this user?\')">'
+                        . csrf_field()
+                        . '<button type="submit" class="action-btn warning" title="Deactivate"' . ($user->id === auth()->id() ? ' disabled' : '') . '><i class="bi bi-person-dash"></i></button>'
+                        . '</form>';
+                } else {
+                    $toggleBtn = '<form action="' . route('admin.users.activate', $user) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Activate this user?\')">'
+                        . csrf_field()
+                        . '<button type="submit" class="action-btn success" title="Activate"><i class="bi bi-person-check"></i></button>'
+                        . '</form>';
+                }
+
+                return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:0.375rem;">'
+                    . $editBtn . $toggleBtn
+                    . '</div>';
+            })
+            ->rawColumns(['avatar_col', 'role_col', 'status_col', 'joined_col', 'actions'])
+            ->make(true);
     }
 
     public function store(Request $request)

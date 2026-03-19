@@ -101,7 +101,8 @@ Route::middleware(['auth'])->group(function () {
 // Admin Routes (Protected)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
+    Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::resource('/users', UserController::class);
     Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
     Route::get('/products/data', [ProductController::class, 'data'])->name('products.data');

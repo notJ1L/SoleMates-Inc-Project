@@ -1,19 +1,19 @@
-{{-- filepath: c:\xampp_ITCP226\htdocs\SoulMates-Inc-Project\resources\views\admin\users\index.blade.php --}}
-@extends('layouts.admin')
 
-@section('page-title', 'Users')
 
-@section('head')
+
+<?php $__env->startSection('page-title', 'Users'); ?>
+
+<?php $__env->startSection('head'); ?>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('topbar-actions')
-    <a href="{{ route('admin.users.create') }}" class="btn-primary-admin">
+<?php $__env->startSection('topbar-actions'); ?>
+    <a href="<?php echo e(route('admin.users.create')); ?>" class="btn-primary-admin">
         <i class="bi bi-person-plus"></i> New User
     </a>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="panel">
     <div class="table-responsive">
         <table id="usersTable" class="data-table" style="width:100%">
@@ -30,9 +30,9 @@
         </table>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
@@ -40,7 +40,7 @@
 $('#usersTable').DataTable({
     processing: true,
     serverSide: true,
-    ajax: "{{ route('admin.users.data') }}",
+    ajax: "<?php echo e(route('admin.users.data')); ?>",
     columns: [
         { data: 'avatar_col', name: 'name',       orderable: true,  searchable: true },
         { data: 'email',      name: 'email' },
@@ -79,4 +79,5 @@ $('#usersTable').DataTable({
     }
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp_ITCP226\htdocs\SoulMates-Inc-Project\resources\views/admin/users/index.blade.php ENDPATH**/ ?>
