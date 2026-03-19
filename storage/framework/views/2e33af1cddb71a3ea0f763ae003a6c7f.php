@@ -318,6 +318,20 @@
                     </a>
                 </div>
 
+                
+                <form action="<?php echo e(route('search')); ?>" method="GET"
+                      class="d-flex align-items-center gap-2 mt-3"
+                      style="max-width:480px;">
+                    <input type="text" name="search"
+                           value="<?php echo e(request('search')); ?>"
+                           placeholder="Search products, brands..."
+                           class="form-control"
+                           style="border-radius:4px;font-size:0.9rem;">
+                    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </form>
+
                 <div class="d-flex flex-wrap align-items-center gap-3 hero-meta mt-2">
                     <span class="hero-badge">
                         <span class="hero-badge-icon">👟</span>
@@ -348,6 +362,61 @@
 </section>
 
 
+<?php if(isset($results)): ?>
+<section class="homepage-section" style="padding-bottom:0;">
+    <div class="container">
+        <h4 style="font-family:var(--font-display);font-weight:700;">
+            Results for &ldquo;<?php echo e($query); ?>&rdquo;
+            <span style="font-size:0.9rem;color:var(--sm-muted);"> (<?php echo e($results->total()); ?> found)</span>
+        </h4>
+
+        <?php if($results->count()): ?>
+            <div class="row g-3 mt-2">
+                <?php $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <a href="<?php echo e(route('products.show', $product->id)); ?>" class="product-card">
+                            <div class="product-img-wrap">
+                                <?php $thumb = $product->thumbnailUrl(); ?>
+                                <?php if($thumb): ?>
+                                    <img src="<?php echo e($thumb); ?>" alt="<?php echo e($product->name); ?>" class="product-img">
+                                <?php else: ?>
+                                    <span class="product-img-placeholder">&#128095;</span>
+                                <?php endif; ?>
+                                <?php if($product->created_at && $product->created_at->diffInDays() < 14): ?>
+                                    <span class="product-badge">New</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-brand">
+                                    <?php echo e(optional($product->brand)->name ?? 'SoleMates'); ?>
+
+                                </div>
+                                <div class="product-name"><?php echo e($product->name); ?></div>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <div class="product-price">&#8369;<?php echo e(number_format($product->price, 2)); ?></div>
+                                    <?php if($product->stock !== null): ?>
+                                        <?php if($product->stock <= 5 && $product->stock > 0): ?>
+                                            <span class="product-stock">Only <?php echo e($product->stock); ?> left</span>
+                                        <?php elseif($product->stock == 0): ?>
+                                            <span class="product-stock" style="color:var(--sm-muted);">Out of stock</span>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+
+            <div class="mt-4"><?php echo e($results->links()); ?></div>
+        <?php else: ?>
+            <p class="text-muted mt-3">No products found for &ldquo;<?php echo e($query); ?>&rdquo;. Try a different search term.</p>
+        <?php endif; ?>
+    </div>
+</section>
+<?php endif; ?>
+
+
 <section class="homepage-section">
     <div class="container">
         <div class="section-heading">
@@ -359,7 +428,7 @@
         <?php if(isset($categories) && $categories->count()): ?>
             <div class="chip-row mb-2">
                 <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <a href="<?php echo e(route('products.index', ['category' => $category->name])); ?>" class="chip-link">
+                    <a href="<?php echo e(route('products.index', ['category_id' => $category->id])); ?>" class="chip-link">
                         <?php echo e($category->name); ?>
 
                         <small><?php echo e($category->products_count ?? $category->products?->count() ?? 0); ?></small>
@@ -372,7 +441,7 @@
         <?php if(isset($brands) && $brands->count()): ?>
             <div class="chip-row">
                 <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $brand): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <a href="<?php echo e(route('products.index', ['brand' => $brand->name])); ?>" class="chip-link">
+                    <a href="<?php echo e(route('products.index', ['brand_id' => $brand->id])); ?>" class="chip-link">
                         <?php echo e($brand->name); ?>
 
                         <small><?php echo e($brand->products_count ?? $brand->products?->count() ?? 0); ?></small>

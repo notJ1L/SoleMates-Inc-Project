@@ -320,6 +320,20 @@
                     </a>
                 </div>
 
+                {{-- Search Form --}}
+                <form action="{{ route('search') }}" method="GET"
+                      class="d-flex align-items-center gap-2 mt-3"
+                      style="max-width:480px;">
+                    <input type="text" name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Search products, brands..."
+                           class="form-control"
+                           style="border-radius:4px;font-size:0.9rem;">
+                    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </form>
+
                 <div class="d-flex flex-wrap align-items-center gap-3 hero-meta mt-2">
                     <span class="hero-badge">
                         <span class="hero-badge-icon">👟</span>
@@ -349,6 +363,60 @@
     </div>
 </section>
 
+{{-- ===== SEARCH RESULTS ===== --}}
+@if(isset($results))
+<section class="homepage-section" style="padding-bottom:0;">
+    <div class="container">
+        <h4 style="font-family:var(--font-display);font-weight:700;">
+            Results for &ldquo;{{ $query }}&rdquo;
+            <span style="font-size:0.9rem;color:var(--sm-muted);"> ({{ $results->total() }} found)</span>
+        </h4>
+
+        @if($results->count())
+            <div class="row g-3 mt-2">
+                @foreach($results as $product)
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <a href="{{ route('products.show', $product->id) }}" class="product-card">
+                            <div class="product-img-wrap">
+                                @php $thumb = $product->thumbnailUrl(); @endphp
+                                @if($thumb)
+                                    <img src="{{ $thumb }}" alt="{{ $product->name }}" class="product-img">
+                                @else
+                                    <span class="product-img-placeholder">&#128095;</span>
+                                @endif
+                                @if($product->created_at && $product->created_at->diffInDays() < 14)
+                                    <span class="product-badge">New</span>
+                                @endif
+                            </div>
+                            <div class="product-info">
+                                <div class="product-brand">
+                                    {{ optional($product->brand)->name ?? 'SoleMates' }}
+                                </div>
+                                <div class="product-name">{{ $product->name }}</div>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <div class="product-price">&#8369;{{ number_format($product->price, 2) }}</div>
+                                    @if($product->stock !== null)
+                                        @if($product->stock <= 5 && $product->stock > 0)
+                                            <span class="product-stock">Only {{ $product->stock }} left</span>
+                                        @elseif($product->stock == 0)
+                                            <span class="product-stock" style="color:var(--sm-muted);">Out of stock</span>
+                                        @endif
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="mt-4">{{ $results->links() }}</div>
+        @else
+            <p class="text-muted mt-3">No products found for &ldquo;{{ $query }}&rdquo;. Try a different search term.</p>
+        @endif
+    </div>
+</section>
+@endif
+
 {{-- ===== CATEGORIES / BRANDS STRIP ===== --}}
 <section class="homepage-section">
     <div class="container">
@@ -361,7 +429,7 @@
         @if(isset($categories) && $categories->count())
             <div class="chip-row mb-2">
                 @foreach($categories as $category)
-                    <a href="{{ route('products.index', ['category' => $category->name]) }}" class="chip-link">
+                    <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="chip-link">
                         {{ $category->name }}
                         <small>{{ $category->products_count ?? $category->products?->count() ?? 0 }}</small>
                     </a>
@@ -373,7 +441,7 @@
         @if(isset($brands) && $brands->count())
             <div class="chip-row">
                 @foreach($brands as $brand)
-                    <a href="{{ route('products.index', ['brand' => $brand->name]) }}" class="chip-link">
+                    <a href="{{ route('products.index', ['brand_id' => $brand->id]) }}" class="chip-link">
                         {{ $brand->name }}
                         <small>{{ $brand->products_count ?? $brand->products?->count() ?? 0 }}</small>
                     </a>
