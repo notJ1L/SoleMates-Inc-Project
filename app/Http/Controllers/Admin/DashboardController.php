@@ -69,6 +69,40 @@ class DashboardController extends Controller
                             ->orderBy('month')
                             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentOrders', 'recentUsers', 'topProducts', 'monthlySales'));
+        // Yearly sales: 12-month breakdown for current year (bar chart)
+        $currentYear = now()->year;
+        $rawYearly = Order::select(
+                DB::raw('DATE_FORMAT(orders.created_at, "%m") as month_num'),
+                DB::raw('SUM(order_items.quantity * order_items.price) as total')
+            )
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.status', 'completed')
+            ->whereYear('orders.created_at', $currentYear)
+            ->groupBy('month_num')
+            ->orderBy('month_num')
+            ->get()
+            ->keyBy('month_num');
+
+        $monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        $yearlyData = [];
+        foreach (range(1, 12) as $m) {
+            $key = str_pad($m, 2, '0', STR_PAD_LEFT);
+            $yearlyData[] = isset($rawYearly[$key]) ? round((float) $rawYearly[$key]->total, 2) : 0;
+        }
+
+        // Product sales breakdown (pie chart)
+        $productSales = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('orders.status', 'completed')
+            ->select('products.name', DB::raw('SUM(order_items.quantity * order_items.price) as total'))
+            ->groupBy('products.id', 'products.name')
+            ->orderByDesc('total')
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'stats', 'recentOrders', 'recentUsers', 'topProducts', 'monthlySales',
+            'monthNames', 'yearlyData', 'productSales', 'currentYear'
+        ));
     }
 }

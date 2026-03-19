@@ -491,6 +491,13 @@
             </a>
         </div>
 
+        <div class="nav-section">
+            <span class="nav-section-label">Analytics</span>
+            <a href="<?php echo e(route('admin.charts.index')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.charts.*') ? 'active' : ''); ?>">
+                <i class="bi bi-bar-chart-line"></i> Charts
+            </a>
+        </div>
+
         <div class="sidebar-divider"></div>
 
         <div class="nav-section">

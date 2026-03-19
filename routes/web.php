@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\ChartsController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ReviewController;
@@ -124,4 +125,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/reviews/data', [AdminReviewController::class, 'data'])->name('reviews.data');
     Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
     Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+
+    // Admin Charts
+    Route::get('/charts', [ChartsController::class, 'index'])->name('charts.index');
+    Route::get('/charts/sales-range', [ChartsController::class, 'salesByRange'])->name('charts.salesRange');
 });
