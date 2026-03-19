@@ -54,6 +54,15 @@ Route::get('/images/{filename}', function ($filename) {
     return response()->file($path);
 })->where('filename', '.*');
 
+// Storage serving route for artisan serve (junctions don't always work with PHP built-in server)
+Route::get('/storage/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+    return response()->file($fullPath);
+})->where('path', '.*')->name('storage.serve');
+
 // Home Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
@@ -98,6 +107,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/products/data', [ProductController::class, 'data'])->name('products.data');
     Route::post('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
+    Route::delete('/products/photos/{photo}', [ProductController::class, 'deletePhoto'])->name('products.photos.delete');
     Route::resource('/products', ProductController::class);
     Route::resource('/orders', OrderController::class);
     

@@ -6,9 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Order;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
+     public function show(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $order->load('orderItems.product.photos');
+
+        return view('profile.order-show', compact('order'));
+    }
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -16,12 +29,14 @@ class ProfileController extends Controller
 
     public function edit()
     {
+        /** @var User $user */
         $user = Auth::user();
         return view('profile.edit', compact('user'));
     }
 
     public function update(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $request->validate([
@@ -48,22 +63,25 @@ class ProfileController extends Controller
             $data['profile_photo'] = $request->file('profile_photo')->store('profile_photos', 'public');
         }
 
-        // Handle password change
-        if ($request->filled('current_password') && $request->filled('new_password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
-                return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.'])->withInput();
-            }
-                $data['password'] = Hash::make($request->new_password);
+    // Handle password change
+    if ($request->filled('current_password') && $request->filled('new_password')) {
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Current password is incorrect.'])->withInput();
+        }
+        $data['password'] = Hash::make($request->new_password);
     }
 
-        $user->update($data);
+    $user->update($data);
 
         return redirect()->route('profile.edit')->with('success', 'Profile updated successfully!');
     }
 
     public function orders()
     {
-        $orders = Auth::user()->orders()
+        /** @var User $user */
+        $user = Auth::user();
+
+        $orders = $user->orders()
             ->with('orderItems.product')
             ->latest()
             ->paginate(10);

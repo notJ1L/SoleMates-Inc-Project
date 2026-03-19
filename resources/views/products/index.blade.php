@@ -250,8 +250,9 @@
                         <div class="col-sm-6 col-xl-4">
                             <a href="{{ route('products.show', $product->id) }}" class="product-card">
                                 <div class="product-img-wrap">
-                                    @if($product->photos && $product->photos->first())
-                                        <img src="{{ asset('product_photos/' . $product->photos->first()->image_path) }}"
+                                    @php $thumb = $product->thumbnailUrl(); @endphp
+                                    @if($thumb)
+                                        <img src="{{ $thumb }}"
                                              alt="{{ $product->name }}" class="product-img">
                                     @else
                                         <span class="product-img-placeholder">👟</span>
@@ -261,7 +262,7 @@
                                     @endif
                                 </div>
                                 <div class="product-info">
-                                    <div class="product-brand">{{ $product->brand }}</div>
+                                    <div class="product-brand">{{ $product->brand->name ?? 'SoleMates' }}</div>
                                     <div class="product-name">{{ $product->name }}</div>
                                     <div class="d-flex align-items-center justify-content-between mt-1">
                                         <div class="product-price">₱{{ number_format($product->price, 2) }}</div>

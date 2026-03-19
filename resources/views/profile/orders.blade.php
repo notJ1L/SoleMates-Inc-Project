@@ -33,7 +33,7 @@
                              {{ !$loop->last ? 'border-bottom' : '' }}">
                             <div class="d-flex align-items-center gap-3">
                                 @if($item->product && $item->product->photos->first())
-                                    <img src="{{ asset('product_photos/' . $item->product->photos->first()->image_path) }}"
+                                    <img src="{{ $item->product->photos->first()->url() }}"
                                          style="width:50px; height:50px; object-fit:cover; border-radius:3px;">
                                 @else
                                     <div style="width:50px; height:50px; background:#f3f0ea; border-radius:3px;

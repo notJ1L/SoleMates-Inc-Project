@@ -40,7 +40,7 @@ class CheckoutController extends Controller
                 'name' => $item->product->name,
                 'price' => $item->product->price,
                 'quantity' => $item->quantity,
-                'image' => $item->product->photos->first()?->image_path,
+                'image' => $item->product->thumbnailUrl(),
                 'stock' => $item->product->stock
             ];
             $cartTotal += $item->product->price * $item->quantity;

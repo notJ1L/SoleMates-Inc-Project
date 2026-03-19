@@ -187,7 +187,7 @@ class ProductSeeder extends Seeder
                 ]
             );
 
-            $imagePath = $data['image_filename']; 
+            $imagePath = 'product_photos/' . $data['image_filename'];
 
             ProductPhoto::firstOrCreate(
                 [

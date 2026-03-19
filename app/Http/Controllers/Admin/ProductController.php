@@ -35,9 +35,9 @@ class ProductController extends Controller
 
         return DataTables::of($query)
             ->addColumn('photo', function ($product) {
-                $photo = $product->photos->first();
-                if ($photo) {
-                    return '<img src="' . asset('storage/' . $photo->image_path) . '" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #E6E0D8;">';
+                $src = $product->thumbnailUrl();
+                if ($src) {
+                    return '<img src="' . $src . '" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #E6E0D8;">';
                 }
                 return '<div style="width:44px;height:44px;background:#F8F5F1;border-radius:6px;border:1px solid #E6E0D8;display:flex;align-items:center;justify-content:center;color:#A09A94;"><i class="bi bi-image"></i></div>';
             })
@@ -109,14 +109,15 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-            'photos' => 'required|array|min:1',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+            'name'          => 'required|string|max:255',
+            'description'   => 'required|string',
+            'price'         => 'required|numeric|min:0',
+            'stock'         => 'required|integer|min:0',
+            'category_id'   => 'required|exists:categories,id',
+            'brand_id'      => 'required|exists:brands,id',
+            'cover_photo'   => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photos'        => 'nullable|array',
+            'photos.*'      => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $slug = \Illuminate\Support\Str::slug($request->name);
@@ -126,14 +127,17 @@ class ProductController extends Controller
             $slug = $original . '-' . $i++;
         }
 
+        $coverPath = $request->file('cover_photo')->store('product_covers', 'public');
+
         $product = Product::create([
-            'name' => $request->name,
+            'name'        => $request->name,
             'description' => $request->description,
-            'price' => $request->price,
-            'stock' => $request->stock,
+            'price'       => $request->price,
+            'stock'       => $request->stock,
             'category_id' => $request->category_id,
-            'brand_id' => $request->brand_id,
-            'slug' => $slug,
+            'brand_id'    => $request->brand_id,
+            'slug'        => $slug,
+            'image'       => $coverPath,
         ]);
 
         if ($request->hasFile('photos')) {
@@ -156,14 +160,15 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'price'       => 'required|numeric|min:0',
+            'stock'       => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-            'photos' => 'nullable|array',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+            'brand_id'    => 'required|exists:brands,id',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photos'      => 'nullable|array',
+            'photos.*'    => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $slug = \Illuminate\Support\Str::slug($request->name);
@@ -173,15 +178,25 @@ class ProductController extends Controller
             $slug = $original . '-' . $i++;
         }
 
-        $product->update([
-            'name' => $request->name,
+        $data = [
+            'name'        => $request->name,
             'description' => $request->description,
-            'price' => $request->price,
-            'stock' => $request->stock,
+            'price'       => $request->price,
+            'stock'       => $request->stock,
             'category_id' => $request->category_id,
-            'brand_id' => $request->brand_id,
-            'slug' => $slug,
-        ]);
+            'brand_id'    => $request->brand_id,
+            'slug'        => $slug,
+        ];
+
+        if ($request->hasFile('cover_photo')) {
+            // Delete old cover
+            if ($product->image) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+            }
+            $data['image'] = $request->file('cover_photo')->store('product_covers', 'public');
+        }
+
+        $product->update($data);
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
@@ -208,12 +223,22 @@ class ProductController extends Controller
     public function forceDelete($id)
     {
         $product = Product::withTrashed()->findOrFail($id);
+        if ($product->image) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+        }
         foreach ($product->photos as $photo) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->image_path);
             $photo->delete();
         }
         $product->forceDelete();
         return redirect()->route('admin.products.index')->with('success', 'Product permanently deleted.');
+    }
+
+    public function deletePhoto(\App\Models\ProductPhoto $photo)
+    {
+        \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->image_path);
+        $photo->delete();
+        return response()->json(['success' => true]);
     }
 
     public function import(Request $request)

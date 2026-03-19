@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace App\Http\Controllers;
 
 use App\Models\Product;
@@ -59,7 +58,8 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load(['category', 'brand', 'photos', 'reviews.user']);
-        $relatedProducts = Product::where('category_id', $product->category_id)
+        $relatedProducts = Product::with(['photos'])
+                                 ->where('category_id', $product->category_id)
                                  ->where('id', '!=', $product->id)
                                  ->take(4)
                                  ->get();

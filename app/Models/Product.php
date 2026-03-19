@@ -45,4 +45,14 @@ class Product extends Model
     {
         return $this->hasMany(OrderItems::class);
     }
+
+    /** Best thumbnail URL: cover photo first, else first gallery photo, else null. */
+    public function thumbnailUrl(): ?string
+    {
+        if ($this->image) {
+            return asset('storage/' . ltrim($this->image, '/'));
+        }
+        $first = $this->photos->first();
+        return $first ? $first->url() : null;
+    }
 }

@@ -16,4 +16,10 @@ class ProductPhoto extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    /** Returns the public URL for this gallery photo. */
+    public function url(): string
+    {
+        return asset('storage/' . ltrim($this->image_path, '/'));
+    }
 }

@@ -30,7 +30,7 @@
                             <div class="row align-items-center mb-3 pb-3 border-bottom">
                                 <div class="col-md-2">
                                     @if($item['image'])
-                                        <img src="{{ url('/images/' . $item['image']) }}" 
+                                        <img src="{{ $item['image'] }}" 
                                              alt="{{ $item['name'] }}" 
                                              class="img-fluid rounded">
                                     @else

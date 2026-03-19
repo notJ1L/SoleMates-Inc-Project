@@ -49,7 +49,7 @@ class CartController extends Controller
                     'name' => $item->product->name,
                     'price' => $item->product->price,
                     'quantity' => $item->quantity,
-                    'image' => $item->product->photos->first()?->image_path,
+                    'image' => $item->product->thumbnailUrl(),
                     'stock' => $item->product->stock
                 ];
             }
@@ -107,7 +107,7 @@ class CartController extends Controller
                     'name' => $product->name,
                     'price' => $product->price,
                     'quantity' => 1,
-                    'image' => $product->photos->first()?->image_path,
+                    'image' => $product->thumbnailUrl(),
                     'stock' => $product->stock
                 ];
             }
