@@ -21,21 +21,26 @@
         
         <div class="card mb-4 border-0 shadow-sm">
             <div class="card-body p-4">
-                <h5 class="mb-3">Profile Photo</h5>
-                <div class="d-flex align-items-center gap-4">
+                <h5 class="mb-4">Profile Photo</h5>
+                <div class="d-flex flex-column align-items-center text-center">
                     <?php if($user->profilePhotoUrl()): ?>
-                        <img src="<?php echo e($user->profilePhotoUrl()); ?>"
+                        <img id="profilePreview"
+                             src="<?php echo e($user->profilePhotoUrl()); ?>"
                              alt="Profile Photo"
-                             style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--accent);">
+                             style="width:220px; height:220px; border-radius:50%; object-fit:cover; border:4px solid var(--accent); box-shadow:0 8px 18px rgba(0,0,0,0.08);">
                     <?php else: ?>
-                        <div style="width:80px; height:80px; border-radius:50%; background:#f3f0ea;
-                                    display:flex; align-items:center; justify-content:center; font-size:2rem;">
-                            👤
+                        <div id="profilePlaceholder"
+                             style="width:220px; height:220px; border-radius:50%; background:#f3f0ea; border:2px dashed #d3c8b7; display:flex; align-items:center; justify-content:center; color:#746754; font-weight:700; letter-spacing:0.06em;">
+                            PHOTO
                         </div>
+                        <img id="profilePreview"
+                             src=""
+                             alt="Profile Photo"
+                             style="display:none; width:220px; height:220px; border-radius:50%; object-fit:cover; border:4px solid var(--accent); box-shadow:0 8px 18px rgba(0,0,0,0.08);">
                     <?php endif; ?>
-                    <div>
-                        <input type="file" name="profile_photo" id="profile_photo"
-                               class="form-control <?php $__errorArgs = ['profile_photo'];
+
+                    <input type="file" name="profile_photo" id="profile_photo"
+                           class="d-none <?php $__errorArgs = ['profile_photo'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -43,17 +48,21 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                               accept="image/*">
-                        <small class="text-muted">JPG, PNG, GIF — max 2MB</small>
-                        <?php $__errorArgs = ['profile_photo'];
+                           accept="image/*">
+
+                    <label for="profile_photo" class="btn btn-outline-primary mt-4 px-4 py-2">
+                        Change Photo
+                    </label>
+
+                    <small id="profileFileName" class="text-muted mt-2">JPG, PNG, GIF - max 2MB</small>
+                    <?php $__errorArgs = ['profile_photo'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <div class="invalid-feedback"><?php echo e($message); ?></div> <?php unset($message);
+$message = $__bag->first($__errorArgs[0]); ?> <div class="text-danger mt-2"><?php echo e($message); ?></div> <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-                    </div>
                 </div>
             </div>
         </div>
@@ -243,6 +252,33 @@ unset($__errorArgs, $__bag); ?>
             document.getElementById('new_password').value = '';
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('profile_photo');
+        const preview = document.getElementById('profilePreview');
+        const placeholder = document.getElementById('profilePlaceholder');
+        const fileName = document.getElementById('profileFileName');
+
+        if (!input || !preview || !fileName) {
+            return;
+        }
+
+        input.addEventListener('change', function () {
+            const file = this.files && this.files[0] ? this.files[0] : null;
+            if (!file) {
+                fileName.textContent = 'JPG, PNG, GIF - max 2MB';
+                return;
+            }
+
+            fileName.textContent = file.name;
+            const objectUrl = URL.createObjectURL(file);
+            preview.src = objectUrl;
+            preview.style.display = 'block';
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+        });
+    });
 </script>
 <?php $__env->stopSection(); ?>
 
