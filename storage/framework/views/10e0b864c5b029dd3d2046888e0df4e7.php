@@ -484,6 +484,13 @@
             </a>
         </div>
 
+        <div class="nav-section">
+            <span class="nav-section-label">Reviews</span>
+            <a href="<?php echo e(route('admin.reviews.index')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.reviews.*') ? 'active' : ''); ?>">
+                <i class="bi bi-star"></i> All Reviews
+            </a>
+        </div>
+
         <div class="sidebar-divider"></div>
 
         <div class="nav-section">
