@@ -20,6 +20,6 @@ class ProductPhoto extends Model
     /** Returns the public URL for this gallery photo. */
     public function url(): string
     {
-        return asset('storage/' . ltrim($this->image_path, '/'));
+        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->image_path);
     }
 }

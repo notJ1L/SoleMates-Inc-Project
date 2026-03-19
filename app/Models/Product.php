@@ -50,7 +50,7 @@ class Product extends Model
     public function thumbnailUrl(): ?string
     {
         if ($this->image) {
-            return asset('storage/' . ltrim($this->image, '/'));
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->image);
         }
         $first = $this->photos->first();
         return $first ? $first->url() : null;

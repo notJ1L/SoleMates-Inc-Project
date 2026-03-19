@@ -98,7 +98,7 @@
                     @if(isset($product) && $product->image)
                     <div class="mb-3">
                         <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:0.5rem;">Current Cover</div>
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="Cover"
+                        <img src="{{ Storage::disk('public')->url($product->image) }}" alt="Cover"
                              id="coverPreviewExisting"
                              style="height:140px;width:auto;max-width:100%;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border);">
                     </div>
@@ -138,10 +138,10 @@
                         @foreach($product->photos as $photo)
                         <div class="col-auto" id="gallery-item-{{ $photo->id }}">
                             <div style="position:relative;display:inline-block;">
-                                <img src="{{ asset('storage/' . $photo->image_path) }}" alt="Gallery photo"
+                                <img src="{{ $photo->url() }}" alt="Gallery photo"
                                      style="width:90px;height:90px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border);">
                                 <button type="button"
-                                        onclick="deleteGalleryPhoto({{ $photo->id }})"
+                                        onclick="deleteGalleryPhoto({{ $photo->id }}, event)"
                                         style="position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:rgba(220,38,38,0.85);border:none;color:#fff;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">
                                     <i class="bi bi-x"></i>
                                 </button>

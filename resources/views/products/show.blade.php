@@ -259,7 +259,7 @@
 @php
                         $allPhotos = collect();
                         if ($product->image) {
-                            $allPhotos->push((object)['src' => asset('storage/' . $product->image)]);
+                            $allPhotos->push((object)['src' => \Illuminate\Support\Facades\Storage::disk('public')->url($product->image)]);
                         }
                         foreach ($product->photos as $p) {
                             $allPhotos->push((object)['src' => $p->url()]);

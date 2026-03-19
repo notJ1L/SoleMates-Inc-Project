@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProductController extends Controller
 {
@@ -65,13 +68,13 @@ class ProductController extends Controller
                                  ->get();
         $canReview = false;
         $hasReviewed = false;
-        if (auth()->check()) {
-            $hasPurchased = \App\Models\Order::where('user_id', auth()->id())
+        if (Auth::check()) {
+            $hasPurchased = \App\Models\Order::where('user_id', Auth::id())
                 ->whereHas('orderItems', function($query) use ($product) {
                     $query->where('product_id', $product->id);
                 })
                 ->exists();
-            $hasReviewed = \App\Models\Review::where('user_id', auth()->id())
+            $hasReviewed = \App\Models\Review::where('user_id', Auth::id())
                 ->where('product_id', $product->id)
                 ->exists();
             $canReview = $hasPurchased && !$hasReviewed;
@@ -80,3 +83,4 @@ class ProductController extends Controller
         return view('products.show', compact('product', 'relatedProducts', 'canReview', 'hasReviewed'));
     }
 }
+

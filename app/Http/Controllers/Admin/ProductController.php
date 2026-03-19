@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -115,9 +117,9 @@ class ProductController extends Controller
             'stock'         => 'required|integer|min:0',
             'category_id'   => 'required|exists:categories,id',
             'brand_id'      => 'required|exists:brands,id',
-            'cover_photo'   => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cover_photo'   => 'required|image|mimes:jpeg,png|max:2048',
             'photos'        => 'nullable|array',
-            'photos.*'      => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photos.*'      => 'image|mimes:jpeg,png|max:2048',
         ]);
 
         $slug = \Illuminate\Support\Str::slug($request->name);
@@ -127,7 +129,8 @@ class ProductController extends Controller
             $slug = $original . '-' . $i++;
         }
 
-        $coverPath = $request->file('cover_photo')->store('product_covers', 'public');
+        $file = $request->file('cover_photo');
+        $coverPath = Storage::disk('public')->putFileAs('images', $file, Str::random(16) . '.' . $file->extension());
 
         $product = Product::create([
             'name'        => $request->name,
@@ -142,7 +145,7 @@ class ProductController extends Controller
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('product_photos', 'public');
+                $path = Storage::disk('public')->putFileAs('images', $photo, Str::random(16) . '.' . $photo->extension());
                 $product->photos()->create(['image_path' => $path]);
             }
         }
@@ -152,6 +155,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
+        $product->load('photos');
         $categories = Category::all();
         $brands = Brand::all();
         return view('admin.products.create-edit', compact('product', 'categories', 'brands'));
@@ -166,9 +170,9 @@ class ProductController extends Controller
             'stock'       => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'brand_id'    => 'required|exists:brands,id',
-            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png|max:2048',
             'photos'      => 'nullable|array',
-            'photos.*'    => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photos.*'    => 'image|mimes:jpeg,png|max:2048',
         ]);
 
         $slug = \Illuminate\Support\Str::slug($request->name);
@@ -189,18 +193,18 @@ class ProductController extends Controller
         ];
 
         if ($request->hasFile('cover_photo')) {
-            // Delete old cover
             if ($product->image) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+                Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('cover_photo')->store('product_covers', 'public');
+            $file = $request->file('cover_photo');
+            $data['image'] = Storage::disk('public')->putFileAs('images', $file, Str::random(16) . '.' . $file->extension());
         }
 
         $product->update($data);
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('product_photos', 'public');
+                $path = Storage::disk('public')->putFileAs('images', $photo, Str::random(16) . '.' . $photo->extension());
                 $product->photos()->create(['image_path' => $path]);
             }
         }
@@ -224,10 +228,10 @@ class ProductController extends Controller
     {
         $product = Product::withTrashed()->findOrFail($id);
         if ($product->image) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+            Storage::disk('public')->delete($product->image);
         }
         foreach ($product->photos as $photo) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->image_path);
+            Storage::disk('public')->delete($photo->image_path);
             $photo->delete();
         }
         $product->forceDelete();
@@ -236,7 +240,7 @@ class ProductController extends Controller
 
     public function deletePhoto(\App\Models\ProductPhoto $photo)
     {
-        \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->image_path);
+        Storage::disk('public')->delete($photo->image_path);
         $photo->delete();
         return response()->json(['success' => true]);
     }

@@ -101,7 +101,7 @@
                                     @foreach($product->photos as $photo)
                                         <div class="existing-photo" id="photo-{{ $photo->id }}"
                                              style="position:relative;width:80px;height:80px;border-radius:4px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.1);">
-                                            <img src="{{ asset('storage/product_photos/' . $photo->filename) }}"
+                                            <img src="{{ $photo->url() }}"
                                                  style="width:100%;height:100%;object-fit:cover;">
                                             <button type="button"
                                                     onclick="removeExistingPhoto({{ $photo->id }}, this)"
