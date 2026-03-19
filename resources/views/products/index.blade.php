@@ -120,6 +120,11 @@
 @endsection
 
 @section('content')
+@php
+    $activeCat   = $categories->firstWhere('id', request('category_id'));
+    $activeBrand = $brands->firstWhere('id', request('brand_id'));
+    $hasFilters  = request('search') || request('category_id') || request('brand_id') || request('price_min') || request('price_max');
+@endphp
 
 {{-- Page Header --}}
 <div class="page-header">
@@ -131,10 +136,10 @@
         <h1>
             @if(request('search'))
                 Results for "{{ request('search') }}"
-            @elseif(request('brand'))
-                {{ request('brand') }}
-            @elseif(request('category'))
-                {{ request('category') }}
+            @elseif(request('brand_id') && isset($activeBrand))
+                {{ $activeBrand->name }}
+            @elseif(request('category_id') && isset($activeCat))
+                {{ $activeCat->name }}
             @else
                 All Products
             @endif
@@ -154,22 +159,21 @@
                     @endif
 
                     {{-- Active filters --}}
-                    @if(request('brand') || request('category') || request('search'))
+                    @if($hasFilters)
                         <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
-                            <span style="font-size:0.75rem; color:var(--warm-gray);">Active:</span>
+                            <span style="font-size:0.75rem;color:var(--warm-gray);">Active:</span>
                             @if(request('search'))
-                                <a href="{{ route('products.index') }}" class="active-filter">
-                                    "{{ request('search') }}" <i class="bi bi-x"></i>
-                                </a>
+                                <a href="{{ route('products.index') }}" class="active-filter">"{{ request('search') }}" <i class="bi bi-x"></i></a>
                             @endif
-                            @if(request('brand'))
-                                <a href="{{ route('products.index', array_merge(request()->except('brand'), [])) }}" class="active-filter">
-                                    {{ request('brand') }} <i class="bi bi-x"></i>
-                                </a>
+                            @if($activeCat)
+                                <a href="{{ route('products.index', array_merge(request()->except('category_id'), [])) }}" class="active-filter">{{ $activeCat->name }} <i class="bi bi-x"></i></a>
                             @endif
-                            @if(request('category'))
-                                <a href="{{ route('products.index', array_merge(request()->except('category'), [])) }}" class="active-filter">
-                                    {{ request('category') }} <i class="bi bi-x"></i>
+                            @if($activeBrand)
+                                <a href="{{ route('products.index', array_merge(request()->except('brand_id'), [])) }}" class="active-filter">{{ $activeBrand->name }} <i class="bi bi-x"></i></a>
+                            @endif
+                            @if(request('price_min') || request('price_max'))
+                                <a href="{{ route('products.index', array_merge(request()->except(['price_min','price_max']), [])) }}" class="active-filter">
+                                    ₱{{ number_format(request('price_min', $priceMin)) }}–{{ number_format(request('price_max', $priceMax)) }} <i class="bi bi-x"></i>
                                 </a>
                             @endif
                         </div>
@@ -188,43 +192,62 @@
                         @endforeach
                     </div>
 
+                    {{-- Price Range --}}
+                    <div class="filter-card">
+                        <div class="filter-title">Price Range</div>
+                        <div class="d-flex gap-2 align-items-center mb-2">
+                            <input type="number" name="price_min" id="price_min"
+                                   value="{{ request('price_min', '') }}"
+                                   placeholder="₱ Min" min="0"
+                                   class="form-control form-control-sm"
+                                   style="font-size:0.8rem;">
+                            <span style="color:var(--warm-gray);">—</span>
+                            <input type="number" name="price_max" id="price_max"
+                                   value="{{ request('price_max', '') }}"
+                                   placeholder="₱ Max" min="0"
+                                   class="form-control form-control-sm"
+                                   style="font-size:0.8rem;">
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary w-100" style="font-size:0.75rem;">Apply Price</button>
+                    </div>
+
                     {{-- Category --}}
-                    @if(isset($categories) && $categories->count() > 0)
+                    @if($categories->count() > 0)
                     <div class="filter-card">
                         <div class="filter-title">Category</div>
                         <label class="filter-option">
-                            <input type="radio" name="category" value=""
-                                   {{ !request('category') ? 'checked' : '' }}
+                            <input type="radio" name="category_id" value=""
+                                   {{ !request('category_id') ? 'checked' : '' }}
                                    onchange="this.form.submit()"> All
                         </label>
                         @foreach($categories as $cat)
                             <label class="filter-option">
-                                <input type="radio" name="category" value="{{ $cat->category }}"
-                                       {{ request('category') === $cat->category ? 'checked' : '' }}
+                                <input type="radio" name="category_id" value="{{ $cat->id }}"
+                                       {{ request('category_id') == $cat->id ? 'checked' : '' }}
                                        onchange="this.form.submit()">
-                                {{ $cat->category }}
-                                <span class="filter-count">{{ $cat->total }}</span>
+                                {{ $cat->name }}
+                                <span class="filter-count">{{ $cat->products_count }}</span>
                             </label>
                         @endforeach
                     </div>
                     @endif
 
                     {{-- Brand --}}
-                    @if(isset($brands) && $brands->count() > 0)
+                    @if($brands->count() > 0)
                     <div class="filter-card">
                         <div class="filter-title">Brand</div>
                         <label class="filter-option">
-                            <input type="radio" name="brand" value=""
-                                   {{ !request('brand') ? 'checked' : '' }}
+                            <input type="radio" name="brand_id" value=""
+                                   {{ !request('brand_id') ? 'checked' : '' }}
                                    onchange="this.form.submit()"> All
                         </label>
                         @foreach($brands as $br)
                             <label class="filter-option">
-                                <input type="radio" name="brand" value="{{ $br->brand }}"
-                                       {{ request('brand') === $br->brand ? 'checked' : '' }}
+                                <input type="radio" name="brand_id" value="{{ $br->id }}"
+                                       {{ request('brand_id') == $br->id ? 'checked' : '' }}
                                        onchange="this.form.submit()">
-                                {{ $br->brand }}
-                                <span class="filter-count">{{ $br->total }}</span>
+                                {{ $br->name }}
+                                <span class="filter-count">{{ $br->products_count }}</span>
                             </label>
                         @endforeach
                     </div>

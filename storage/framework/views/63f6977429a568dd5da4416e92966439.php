@@ -118,6 +118,11 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
+<?php
+    $activeCat   = $categories->firstWhere('id', request('category_id'));
+    $activeBrand = $brands->firstWhere('id', request('brand_id'));
+    $hasFilters  = request('search') || request('category_id') || request('brand_id') || request('price_min') || request('price_max');
+?>
 
 
 <div class="page-header">
@@ -129,11 +134,11 @@
         <h1>
             <?php if(request('search')): ?>
                 Results for "<?php echo e(request('search')); ?>"
-            <?php elseif(request('brand')): ?>
-                <?php echo e(request('brand')); ?>
+            <?php elseif(request('brand_id') && isset($activeBrand)): ?>
+                <?php echo e($activeBrand->name); ?>
 
-            <?php elseif(request('category')): ?>
-                <?php echo e(request('category')); ?>
+            <?php elseif(request('category_id') && isset($activeCat)): ?>
+                <?php echo e($activeCat->name); ?>
 
             <?php else: ?>
                 All Products
@@ -154,22 +159,21 @@
                     <?php endif; ?>
 
                     
-                    <?php if(request('brand') || request('category') || request('search')): ?>
+                    <?php if($hasFilters): ?>
                         <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
-                            <span style="font-size:0.75rem; color:var(--warm-gray);">Active:</span>
+                            <span style="font-size:0.75rem;color:var(--warm-gray);">Active:</span>
                             <?php if(request('search')): ?>
-                                <a href="<?php echo e(route('products.index')); ?>" class="active-filter">
-                                    "<?php echo e(request('search')); ?>" <i class="bi bi-x"></i>
-                                </a>
+                                <a href="<?php echo e(route('products.index')); ?>" class="active-filter">"<?php echo e(request('search')); ?>" <i class="bi bi-x"></i></a>
                             <?php endif; ?>
-                            <?php if(request('brand')): ?>
-                                <a href="<?php echo e(route('products.index', array_merge(request()->except('brand'), []))); ?>" class="active-filter">
-                                    <?php echo e(request('brand')); ?> <i class="bi bi-x"></i>
-                                </a>
+                            <?php if($activeCat): ?>
+                                <a href="<?php echo e(route('products.index', array_merge(request()->except('category_id'), []))); ?>" class="active-filter"><?php echo e($activeCat->name); ?> <i class="bi bi-x"></i></a>
                             <?php endif; ?>
-                            <?php if(request('category')): ?>
-                                <a href="<?php echo e(route('products.index', array_merge(request()->except('category'), []))); ?>" class="active-filter">
-                                    <?php echo e(request('category')); ?> <i class="bi bi-x"></i>
+                            <?php if($activeBrand): ?>
+                                <a href="<?php echo e(route('products.index', array_merge(request()->except('brand_id'), []))); ?>" class="active-filter"><?php echo e($activeBrand->name); ?> <i class="bi bi-x"></i></a>
+                            <?php endif; ?>
+                            <?php if(request('price_min') || request('price_max')): ?>
+                                <a href="<?php echo e(route('products.index', array_merge(request()->except(['price_min','price_max']), []))); ?>" class="active-filter">
+                                    ₱<?php echo e(number_format(request('price_min', $priceMin))); ?>–<?php echo e(number_format(request('price_max', $priceMax))); ?> <i class="bi bi-x"></i>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -191,48 +195,67 @@
                     </div>
 
                     
-                    <?php if(isset($categories) && $categories->count() > 0): ?>
+                    <div class="filter-card">
+                        <div class="filter-title">Price Range</div>
+                        <div class="d-flex gap-2 align-items-center mb-2">
+                            <input type="number" name="price_min" id="price_min"
+                                   value="<?php echo e(request('price_min', '')); ?>"
+                                   placeholder="₱ Min" min="0"
+                                   class="form-control form-control-sm"
+                                   style="font-size:0.8rem;">
+                            <span style="color:var(--warm-gray);">—</span>
+                            <input type="number" name="price_max" id="price_max"
+                                   value="<?php echo e(request('price_max', '')); ?>"
+                                   placeholder="₱ Max" min="0"
+                                   class="form-control form-control-sm"
+                                   style="font-size:0.8rem;">
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary w-100" style="font-size:0.75rem;">Apply Price</button>
+                    </div>
+
+                    
+                    <?php if($categories->count() > 0): ?>
                     <div class="filter-card">
                         <div class="filter-title">Category</div>
                         <label class="filter-option">
-                            <input type="radio" name="category" value=""
-                                   <?php echo e(!request('category') ? 'checked' : ''); ?>
+                            <input type="radio" name="category_id" value=""
+                                   <?php echo e(!request('category_id') ? 'checked' : ''); ?>
 
                                    onchange="this.form.submit()"> All
                         </label>
                         <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <label class="filter-option">
-                                <input type="radio" name="category" value="<?php echo e($cat->category); ?>"
-                                       <?php echo e(request('category') === $cat->category ? 'checked' : ''); ?>
+                                <input type="radio" name="category_id" value="<?php echo e($cat->id); ?>"
+                                       <?php echo e(request('category_id') == $cat->id ? 'checked' : ''); ?>
 
                                        onchange="this.form.submit()">
-                                <?php echo e($cat->category); ?>
+                                <?php echo e($cat->name); ?>
 
-                                <span class="filter-count"><?php echo e($cat->total); ?></span>
+                                <span class="filter-count"><?php echo e($cat->products_count); ?></span>
                             </label>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                     <?php endif; ?>
 
                     
-                    <?php if(isset($brands) && $brands->count() > 0): ?>
+                    <?php if($brands->count() > 0): ?>
                     <div class="filter-card">
                         <div class="filter-title">Brand</div>
                         <label class="filter-option">
-                            <input type="radio" name="brand" value=""
-                                   <?php echo e(!request('brand') ? 'checked' : ''); ?>
+                            <input type="radio" name="brand_id" value=""
+                                   <?php echo e(!request('brand_id') ? 'checked' : ''); ?>
 
                                    onchange="this.form.submit()"> All
                         </label>
                         <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $br): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <label class="filter-option">
-                                <input type="radio" name="brand" value="<?php echo e($br->brand); ?>"
-                                       <?php echo e(request('brand') === $br->brand ? 'checked' : ''); ?>
+                                <input type="radio" name="brand_id" value="<?php echo e($br->id); ?>"
+                                       <?php echo e(request('brand_id') == $br->id ? 'checked' : ''); ?>
 
                                        onchange="this.form.submit()">
-                                <?php echo e($br->brand); ?>
+                                <?php echo e($br->name); ?>
 
-                                <span class="filter-count"><?php echo e($br->total); ?></span>
+                                <span class="filter-count"><?php echo e($br->products_count); ?></span>
                             </label>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
