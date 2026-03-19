@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class ProductPhoto extends Model
 {
@@ -20,6 +21,6 @@ class ProductPhoto extends Model
     /** Returns the public URL for this gallery photo. */
     public function url(): string
     {
-        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->image_path);
+        return Storage::disk('public')->url($this->image_path);
     }
 }

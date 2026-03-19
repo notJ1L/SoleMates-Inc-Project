@@ -22,8 +22,8 @@
             <div class="card-body p-4">
                 <h5 class="mb-3">Profile Photo</h5>
                 <div class="d-flex align-items-center gap-4">
-                    @if(auth()->user()->profile_photo)
-                        <img src="{{ asset('storage/' . auth()->user()->profile_photo) }}"
+                    @if($user->profilePhotoUrl())
+                        <img src="{{ $user->profilePhotoUrl() }}"
                              alt="Profile Photo"
                              style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--accent);">
                     @else

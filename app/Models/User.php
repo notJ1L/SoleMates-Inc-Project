@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -53,5 +54,15 @@ class User extends Authenticatable
     public function isActive(): bool
     {
         return $this->is_active;
+    }
+
+    /** Returns the public URL for this user's profile photo, if present. */
+    public function profilePhotoUrl(): ?string
+    {
+        if (!$this->profile_photo) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->profile_photo);
     }
 }
