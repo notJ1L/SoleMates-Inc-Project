@@ -95,9 +95,8 @@
 </div>
 
 @if($orders->hasPages())
-<div style="display:flex;justify-content:center;margin-top:1.25rem;">
+  <div class="d-flex justify-content-center align-items-center mt-4">
     {{ $orders->links() }}
-</div>
 @endif
 
 {{-- Order Detail Modals --}}

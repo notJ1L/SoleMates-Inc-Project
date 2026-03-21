@@ -1,63 +1,65 @@
-{{-- filepath: c:\xampp_ITCP226\htdocs\SoulMates-Inc-Project\resources\views\admin\users\index.blade.php --}}
-@extends('layouts.admin')
 
-@section('page-title', 'Users')
 
-@section('head')
+<?php $__env->startSection('page-title', 'Reviews'); ?>
+
+<?php $__env->startSection('head'); ?>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('topbar-actions')
-    <a href="{{ route('admin.users.create') }}" class="btn-primary-admin">
-        <i class="bi bi-person-plus"></i> New User
-    </a>
-@endsection
+<?php $__env->startSection('content'); ?>
 
-@section('content')
+<?php if(session('success')): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <?php echo e(session('success')); ?>
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
+
 <div class="panel">
     <div class="table-responsive">
-        <table id="usersTable" class="data-table" style="width:100%">
+        <table id="reviewsTable" class="data-table" style="width:100%">
             <thead>
                 <tr>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Rating</th>
+                    <th>Review</th>
+                    <th>Date</th>
                     <th style="text-align:right;">Actions</th>
                 </tr>
             </thead>
         </table>
     </div>
 </div>
-<div id="users-outer-nav" class="d-flex justify-content-between align-items-center mt-4 px-1"></div>
-@endsection
+<div id="reviews-outer-nav" class="d-flex justify-content-between align-items-center mt-4 px-1"></div>
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 <script>
-$('#usersTable').DataTable({
+$('#reviewsTable').DataTable({
     processing: true,
     serverSide: true,
-    ajax: '{{ route('admin.users.data') }}',
+    ajax: '<?php echo e(route('admin.reviews.data')); ?>',
     columns: [
-        { data: 'avatar_col', name: 'name',       orderable: true,  searchable: true },
-        { data: 'email',      name: 'email' },
-        { data: 'role_col',   name: 'role' },
-        { data: 'status_col', name: 'is_active',  orderable: true,  searchable: false },
-        { data: 'joined_col', name: 'created_at', searchable: false },
-        { data: 'actions',    name: 'actions',    orderable: false,  searchable: false },
+        { data: 'user_col',    name: 'user.name' },
+        { data: 'product_col', name: 'product.name' },
+        { data: 'rating_col',  name: 'rating',     searchable: false },
+        { data: 'body_col',    name: 'body' },
+        { data: 'date_col',    name: 'created_at', searchable: false },
+        { data: 'actions',     name: 'actions',    orderable: false, searchable: false },
     ],
-    order: [[0, 'asc']],
-    pageLength: 10,
+    order: [[4, 'desc']],
+    pageLength: 15,
     language: {
         processing: '<div style="padding:1rem;color:var(--text-muted);">Loading...</div>',
         search: '',
-        searchPlaceholder: 'Search users...',
+        searchPlaceholder: 'Search reviews...',
         lengthMenu: 'Show _MENU_ per page',
-        zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No users found.</div>',
+        zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No reviews found.</div>',
         paginate: { previous: '&#x2039;', next: '&#x203A;' },
     },
     dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rtip',
@@ -65,7 +67,7 @@ $('#usersTable').DataTable({
         var wrapper = this.api().table().container();
         var $info  = $(wrapper).find('.dataTables_info').detach();
         var $pager = $(wrapper).find('.dataTables_paginate').detach();
-        $('#users-outer-nav').append($info).append($pager);
+        $('#reviews-outer-nav').append($info).append($pager);
     },
     drawCallback: function() {
         $('.dataTables_filter input').css({
@@ -87,4 +89,6 @@ $('#usersTable').DataTable({
     }
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp_ITCP226\htdocs\SoulMates-Inc-Project\resources\views/admin/reviews/index.blade.php ENDPATH**/ ?>

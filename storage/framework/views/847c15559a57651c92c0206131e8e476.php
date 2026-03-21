@@ -30,6 +30,7 @@
         </table>
     </div>
 </div>
+<div id="users-outer-nav" class="d-flex justify-content-between align-items-center mt-4 px-1"></div>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('scripts'); ?>
@@ -40,7 +41,7 @@
 $('#usersTable').DataTable({
     processing: true,
     serverSide: true,
-    ajax: "<?php echo e(route('admin.users.data')); ?>",
+    ajax: '<?php echo e(route('admin.users.data')); ?>',
     columns: [
         { data: 'avatar_col', name: 'name',       orderable: true,  searchable: true },
         { data: 'email',      name: 'email' },
@@ -57,8 +58,15 @@ $('#usersTable').DataTable({
         searchPlaceholder: 'Search users...',
         lengthMenu: 'Show _MENU_ per page',
         zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No users found.</div>',
+        paginate: { previous: '&#x2039;', next: '&#x203A;' },
     },
-    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rt<"dt-bottom d-flex align-items-center justify-content-between mt-3"ip>',
+    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rtip',
+    initComplete: function() {
+        var wrapper = this.api().table().container();
+        var $info  = $(wrapper).find('.dataTables_info').detach();
+        var $pager = $(wrapper).find('.dataTables_paginate').detach();
+        $('#users-outer-nav').append($info).append($pager);
+    },
     drawCallback: function() {
         $('.dataTables_filter input').css({
             'border': '1px solid var(--border)',

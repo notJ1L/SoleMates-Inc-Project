@@ -31,6 +31,7 @@
         </table>
     </div>
 </div>
+<div id="reviews-outer-nav" class="d-flex justify-content-between align-items-center mt-4 px-1"></div>
 @endsection
 
 @section('scripts')
@@ -58,8 +59,15 @@ $('#reviewsTable').DataTable({
         searchPlaceholder: 'Search reviews...',
         lengthMenu: 'Show _MENU_ per page',
         zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No reviews found.</div>',
+        paginate: { previous: '&#x2039;', next: '&#x203A;' },
     },
-    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rt<"dt-bottom d-flex align-items-center justify-content-between mt-3"ip>',
+    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rtip',
+    initComplete: function() {
+        var wrapper = this.api().table().container();
+        var $info  = $(wrapper).find('.dataTables_info').detach();
+        var $pager = $(wrapper).find('.dataTables_paginate').detach();
+        $('#reviews-outer-nav').append($info).append($pager);
+    },
     drawCallback: function() {
         $('.dataTables_filter input').css({
             'border': '1px solid var(--border)',

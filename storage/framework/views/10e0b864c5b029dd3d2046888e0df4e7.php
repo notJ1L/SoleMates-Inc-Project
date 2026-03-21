@@ -808,6 +808,54 @@
         <?php echo $__env->yieldContent('styles'); ?>
     </style>
     <?php echo $__env->yieldContent('head'); ?>
+    <style>
+        /* ── Pagination overrides (after any CDN CSS) ── */
+        .dataTables_paginate .pagination .page-link,
+        .pagination .page-link {
+            font-family: var(--font-body) !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            color: var(--c-text-mid) !important;
+            background: var(--c-white) !important;
+            border: 1.5px solid var(--c-border) !important;
+            padding: 0.5rem 0.875rem !important;
+            margin: 0 2px !important;
+            border-radius: 8px !important;
+            transition: all 0.18s ease !important;
+            box-shadow: none !important;
+        }
+        .dataTables_paginate .pagination .page-link:hover,
+        .pagination .page-link:hover {
+            color: var(--c-gold-dark) !important;
+            background: rgba(200,169,110,0.07) !important;
+            border-color: var(--c-gold) !important;
+            box-shadow: 0 2px 8px rgba(200,169,110,0.15) !important;
+        }
+        .dataTables_paginate .pagination .page-item.active .page-link,
+        .pagination .page-item.active .page-link {
+            color: var(--c-black) !important;
+            background: var(--c-gold) !important;
+            border-color: var(--c-gold) !important;
+            font-weight: 700 !important;
+            box-shadow: 0 2px 8px rgba(200,169,110,0.25) !important;
+        }
+        .dataTables_paginate .pagination .page-item.disabled .page-link,
+        .pagination .page-item.disabled .page-link {
+            color: var(--c-text-muted) !important;
+            background: var(--c-off-white) !important;
+            border-color: var(--c-border) !important;
+            opacity: 0.55 !important;
+            cursor: not-allowed !important;
+        }
+        .dataTables_paginate {
+            padding-top: 0.5rem !important;
+        }
+        .dataTables_info {
+            font-size: 0.8rem !important;
+            color: var(--c-text-muted) !important;
+            padding-top: 0.75rem !important;
+        }
+    </style>
 </head>
 <body>
 

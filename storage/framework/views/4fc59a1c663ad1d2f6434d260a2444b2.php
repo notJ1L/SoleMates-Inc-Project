@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('page-title', 'Products'); ?>
 
 <?php $__env->startSection('head'); ?>
@@ -35,6 +37,7 @@
         </table>
     </div>
 </div>
+<div id="products-outer-nav" class="d-flex justify-content-between align-items-center mt-4 px-1"></div>
 
 
 <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
@@ -121,57 +124,32 @@ const table = $('#productsTable').DataTable({
         searchPlaceholder: 'Search products...',
         lengthMenu: 'Show _MENU_ per page',
         zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No products found.</div>',
+        paginate: { previous: '&#x2039;', next: '&#x203A;' },
     },
-    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rt<"dt-bottom d-flex align-items-center justify-content-between mt-3"ip>',
+    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rtip',
+    initComplete: function() {
+        var wrapper = this.api().table().container();
+        var $info  = $(wrapper).find('.dataTables_info').detach();
+        var $pager = $(wrapper).find('.dataTables_paginate').detach();
+        $('#products-outer-nav').append($info).append($pager);
+    },
     drawCallback: function() {
         // re-style search/length inputs to match admin theme
         $('.dataTables_filter input').css({
-            'border': '1.5px solid var(--c-border)',
-            'border-radius': '20px',
-            'padding': '0.5rem 1rem 0.5rem 2.5rem',
-            'font-size': '0.85rem',
-            'background': 'var(--c-off-white)',
-            'color': 'var(--c-text)',
-            'font-family': 'var(--font-body)',
-            'transition': 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            'margin-left': '0.75rem',
-        }).on('focus', function() {
-            $(this).css({
-                'border-color': 'var(--c-gold)',
-                'background': 'var(--c-white)',
-                'box-shadow': '0 0 0 3px rgba(200,169,110,0.12)'
-            });
-        }).on('blur', function() {
-            $(this).css({
-                'border-color': 'var(--c-border)',
-                'background': 'var(--c-off-white)',
-                'box-shadow': 'none'
-            });
+            'border': '1px solid var(--border)',
+            'border-radius': 'var(--radius-sm)',
+            'padding': '0.425rem 0.75rem',
+            'font-size': '0.838rem',
+            'background': 'var(--surface-2)',
+            'margin-left': '0.5rem',
         });
-
         $('.dataTables_length select').css({
-            'border': '1.5px solid var(--c-border)',
-            'border-radius': '8px',
-            'padding': '0.5rem 0.75rem',
-            'font-size': '0.85rem',
-            'background': 'var(--c-off-white)',
-            'color': 'var(--c-text)',
-            'font-family': 'var(--font-body)',
-            'margin': '0 0.5rem',
-            'cursor': 'pointer',
-            'transition': 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        }).on('focus', function() {
-            $(this).css({
-                'border-color': 'var(--c-gold)',
-                'background': 'var(--c-white)',
-                'box-shadow': '0 0 0 3px rgba(200,169,110,0.12)'
-            });
-        }).on('blur', function() {
-            $(this).css({
-                'border-color': 'var(--c-border)',
-                'background': 'var(--c-off-white)',
-                'box-shadow': 'none'
-            });
+            'border': '1px solid var(--border)',
+            'border-radius': 'var(--radius-sm)',
+            'padding': '0.425rem 0.5rem',
+            'font-size': '0.838rem',
+            'background': 'var(--surface-2)',
+            'margin': '0 0.375rem',
         });
     }
 });
@@ -181,14 +159,12 @@ function toggleTrashed() {
     const btn = document.getElementById('toggleTrashedBtn');
     if (showingTrashed) {
         btn.innerHTML = '<i class="bi bi-box-seam"></i> Show Active';
-        btn.style.borderColor = 'var(--c-error)';
-        btn.style.color = 'var(--c-error)';
-        btn.style.background = 'rgba(192,57,43,0.05)';
+        btn.style.borderColor = 'var(--red)';
+        btn.style.color = 'var(--red)';
     } else {
         btn.innerHTML = '<i class="bi bi-trash3"></i> Show Deleted';
         btn.style.borderColor = '';
         btn.style.color = '';
-        btn.style.background = '';
     }
     table.ajax.reload();
 }
