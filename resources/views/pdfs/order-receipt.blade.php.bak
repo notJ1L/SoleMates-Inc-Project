@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Order Receipt - {{ $orderNumber }}</title>
+    <style>
+        @page { margin: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', 'DejaVu Sans', sans-serif;
+            background: #F4F2ED;
+            color: #0A0A0A;
+            font-size: 11px;
+            line-height: 1.5;
+            padding: 28px;
+        }
+
+        .receipt {
+            background: #FFFFFF;
+            border: 1.5px solid #E4E2DC;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            padding: 32px 36px 28px;
+            border-bottom: 1.5px solid #E4E2DC;
+        }
+        .header-table { width: 100%; border-collapse: collapse; }
+        .brand {
+            font-size: 22px;
+            font-weight: 900;
+            color: #0A0A0A;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+        .brand-gold { color: #C8A96E; }
+        .header-right {
+            text-align: right;
+            vertical-align: bottom;
+        }
+        .receipt-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #999994;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            margin-bottom: 4px;
+        }
+        .order-number {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #0A0A0A;
+        }
+        .order-date {
+            font-size: 10px;
+            color: #6A6A6A;
+            margin-top: 2px;
+        }
+
+        /* ── Gold Divider ── */
+        .gold-line {
+            height: 3px;
+            background: #C8A96E;
+        }
+
+        /* ── Body ── */
+        .body { padding: 28px 36px 20px; }
+
+        /* ── Section Titles ── */
+        .section { margin-bottom: 24px; }
+        .section-title {
+            font-size: 9px;
+            font-weight: 800;
+            color: #A8893E;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #E4E2DC;
+        }
+
+        /* ── Info Grid ── */
+        .info-grid { width: 100%; border-collapse: separate; border-spacing: 8px 8px; margin: -4px -4px; }
+        .info-cell {
+            width: 50%;
+            vertical-align: top;
+            padding: 12px 16px;
+            background: #F9F8F5;
+            border: 1px solid #E4E2DC;
+            border-radius: 3px;
+        }
+        .info-label {
+            font-size: 8px;
+            font-weight: 700;
+            color: #999994;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 4px;
+        }
+        .info-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0A0A0A;
+            line-height: 1.35;
+            word-wrap: break-word;
+        }
+
+        /* ── Items Table ── */
+        .items-container {
+            border: 1px solid #E4E2DC;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .items { width: 100%; border-collapse: collapse; }
+        .items thead th {
+            background: #0A0A0A;
+            color: #FFFFFF;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        .items thead th.center { text-align: center; }
+        .items thead th.right { text-align: right; }
+        .items tbody td {
+            padding: 14px 14px;
+            border-bottom: 1px solid #F0EDE6;
+            vertical-align: middle;
+            font-size: 11px;
+        }
+        .items tbody tr:last-child td { border-bottom: none; }
+        .items tbody tr:nth-child(even) td { background: #FDFCFA; }
+
+        .product-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0A0A0A;
+            margin-bottom: 2px;
+        }
+        .product-brand {
+            font-size: 9px;
+            font-weight: 500;
+            color: #999994;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .col-qty {
+            text-align: center;
+            font-weight: 700;
+            color: #0A0A0A;
+        }
+        .col-money {
+            text-align: right;
+            font-weight: 700;
+            color: #0A0A0A;
+            white-space: nowrap;
+        }
+
+        /* ── Totals ── */
+        .totals-row { margin-top: 12px; }
+        .totals-table-wrap {
+            width: 46%;
+            float: right;
+            border: 1px solid #E4E2DC;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .totals-table { width: 100%; border-collapse: collapse; }
+        .totals-table td {
+            padding: 8px 16px;
+            font-size: 11px;
+        }
+        .totals-table .t-label {
+            color: #6A6A6A;
+            font-weight: 500;
+        }
+        .totals-table .t-value {
+            text-align: right;
+            font-weight: 700;
+            color: #0A0A0A;
+        }
+        .totals-table .t-border td {
+            border-bottom: 1px solid #E4E2DC;
+        }
+        .totals-table .t-grand td {
+            background: #0A0A0A;
+            padding: 12px 16px;
+        }
+        .totals-table .t-grand .t-label {
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .totals-table .t-grand .t-value {
+            color: #C8A96E;
+            font-weight: 900;
+            font-size: 15px;
+        }
+        .clearfix::after { content: ""; display: table; clear: both; }
+
+        /* ── Footer ── */
+        .footer {
+            border-top: 1.5px solid #E4E2DC;
+            padding: 24px 36px;
+            text-align: center;
+            background: #F9F8F5;
+        }
+        .footer-thanks {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0A0A0A;
+            margin-bottom: 4px;
+        }
+        .footer-note {
+            font-size: 9px;
+            color: #999994;
+            line-height: 1.6;
+        }
+        .footer-bar {
+            margin-top: 16px;
+            height: 3px;
+            background: #C8A96E;
+            width: 60px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="receipt">
+
+    {{-- ── Header ── --}}
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td class="brand">
+                    Sole<span class="brand-gold">Mates</span>
+                </td>
+                <td class="header-right">
+                    <div class="receipt-label">Receipt</div>
+                    <div class="order-number">{{ $orderNumber }}</div>
+                    <div class="order-date">{{ $orderDate }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="gold-line"></div>
+
+    <div class="body">
+
+        {{-- ── Customer ── --}}
+        <div class="section">
+            <div class="section-title">Customer Information</div>
+            <table class="info-grid">
+                <tr>
+                    <td class="info-cell">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">{{ $user->name }}</div>
+                    </td>
+                    <td class="info-cell">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value">{{ $user->email }}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-cell">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">{{ $order->phone }}</div>
+                    </td>
+                    <td class="info-cell">
+                        <div class="info-label">Shipping Address</div>
+                        <div class="info-value">{{ $order->shipping_address }}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        {{-- ── Order Details ── --}}
+        <div class="section">
+            <div class="section-title">Order Details</div>
+            <table class="info-grid">
+                <tr>
+                    <td class="info-cell">
+                        <div class="info-label">Order Date</div>
+                        <div class="info-value">{{ $orderDate }}</div>
+                    </td>
+                    <td class="info-cell">
+                        <div class="info-label">Payment Method</div>
+                        <div class="info-value">{{ ucfirst(str_replace('_', ' ', $order->payment_method)) }}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="info-cell">
+                        <div class="info-label">Payment Status</div>
+                        <div class="info-value">{{ ucfirst($order->payment_status) }}</div>
+                    </td>
+                    <td class="info-cell">
+                        <div class="info-label">Order Status</div>
+                        <div class="info-value">{{ ucfirst($order->status) }}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        {{-- ── Items ── --}}
+        <div class="section">
+            <div class="section-title">Items Ordered</div>
+            <div class="items-container">
+                <table class="items">
+                    <thead>
+                        <tr>
+                            <th style="width:48%">Product</th>
+                            <th class="center" style="width:10%">Qty</th>
+                            <th class="right" style="width:21%">Unit Price</th>
+                            <th class="right" style="width:21%">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($orderItems as $item)
+                        <tr>
+                            <td>
+                                <div class="product-name">{{ $item->product->name }}</div>
+                                <div class="product-brand">{{ $item->product->brand->name ?? 'SoleMates' }}</div>
+                            </td>
+                            <td class="col-qty">{{ $item->quantity }}</td>
+                            <td class="col-money">&#8369;{{ number_format($item->price, 2) }}</td>
+                            <td class="col-money">&#8369;{{ number_format($item->subtotal, 2) }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="totals-row clearfix">
+                <div class="totals-table-wrap">
+                    <table class="totals-table">
+                        <tr class="t-border">
+                            <td class="t-label">Subtotal</td>
+                            <td class="t-value">&#8369;{{ number_format($subtotal, 2) }}</td>
+                        </tr>
+                        <tr class="t-border">
+                            <td class="t-label">Shipping</td>
+                            <td class="t-value">&#8369;{{ number_format($shipping, 2) }}</td>
+                        </tr>
+                        <tr class="t-grand">
+                            <td class="t-label">Total</td>
+                            <td class="t-value">&#8369;{{ number_format($total, 2) }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- ── Footer ── --}}
+    <div class="footer">
+        <div class="footer-thanks">Thank you for shopping with SoleMates</div>
+        <div class="footer-note">This receipt serves as official proof of purchase.</div>
+        <div class="footer-note">&copy; {{ date('Y') }} SoleMates Footwear &middot; All rights reserved</div>
+        <div class="footer-bar"></div>
+    </div>
+
+</div>
+</body>
+</html>
+

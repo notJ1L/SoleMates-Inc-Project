@@ -118,8 +118,12 @@ class CheckoutController extends Controller
             // Clear cart from database
             Cart::clearUserCart(Auth::id());
 
-            // Send order confirmation email
-            $order->user->notify(new OrderCompleted($order));
+            // Send order confirmation email (non-blocking - don't let email failure affect checkout)
+            try {
+                $order->user->notify(new OrderCompleted($order));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Order notification failed: ' . $e->getMessage());
+            }
 
             return redirect()->route('checkout.success', $order->id)->with('success', 'Order placed successfully!');
 

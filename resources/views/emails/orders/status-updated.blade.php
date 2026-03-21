@@ -1,251 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Status Updated</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #f8f5f1;
-            color: #0C0C0C;
-            line-height: 1.6;
-        }
-        .email-container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        .header {
-            background: linear-gradient(135deg, #C8A96E, #B8935F);
-            padding: 40px 30px;
-            text-align: center;
-            color: #0C0C0C;
-        }
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        .content {
-            padding: 40px 30px;
-        }
-        .status-update {
-            background: linear-gradient(135deg, #f8f5f1, #fff);
-            border-radius: 8px;
-            padding: 25px;
-            margin: 25px 0;
-            border-left: 4px solid #C8A96E;
-            text-align: center;
-        }
-        .status-badge {
-            display: inline-block;
-            background: #C8A96E;
-            color: #0C0C0C;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 15px 0;
-        }
-        .status-change {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .old-status {
-            color: #6B6560;
-            text-decoration: line-through;
-        }
-        .new-status {
-            color: #0C0C0C;
-            font-weight: 600;
-        }
-        .order-info {
-            background: #f8f5f1;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 25px 0;
-        }
-        .order-info h3 {
-            color: #C8A96E;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-        .order-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .detail-item {
-            padding: 12px;
-            background: white;
-            border-radius: 6px;
-            border: 1px solid #e6e0d8;
-        }
-        .detail-label {
-            font-size: 12px;
-            color: #6B6560;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            margin-bottom: 4px;
-        }
-        .detail-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #0C0C0C;
-        }
-        .cta-button {
-            display: inline-block;
-            background: #C8A96E;
-            color: #0C0C0C;
-            padding: 14px 28px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            text-align: center;
-            margin: 25px 0;
-            transition: all 0.2s ease;
-        }
-        .cta-button:hover {
-            background: #B8935F;
-            transform: translateY(-1px);
-        }
-        .footer {
-            background: #f8f5f1;
-            padding: 30px;
-            text-align: center;
-            border-top: 1px solid #e6e0d8;
-        }
-        .footer p {
-            color: #6B6560;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        .social-links {
-            margin-top: 15px;
-        }
-        .social-links a {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            background: #C8A96E;
-            color: #0C0C0C;
-            text-align: center;
-            line-height: 32px;
-            border-radius: 50%;
-            margin: 0 5px;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        @media (max-width: 600px) {
-            .email-container {
-                margin: 20px 10px;
-            }
-            .header, .content, .footer {
-                padding: 25px 20px;
-            }
-            .order-details {
-                grid-template-columns: 1fr;
-            }
-            .status-change {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="email-container">
-        <div class="header">
-            <h1>📦 Order Status Updated</h1>
-            <p>Your order status has changed</p>
-        </div>
-        
-        <div class="content">
-            <p>Hi {{ $user->name }},</p>
-            <p>We wanted to let you know that there's been an update to your order status.</p>
-            
-            <div class="status-update">
-                <h3>Current Status</h3>
-                <div class="status-badge">{{ ucfirst($order->status) }}</div>
-                
-                @if($oldStatus && $oldStatus !== $order->status)
-                    <div class="status-change">
-                        <span class="old-status">{{ ucfirst($oldStatus) }}</span>
-                        <span>→</span>
-                        <span class="new-status">{{ ucfirst($order->status) }}</span>
-                    </div>
-                @endif
-            </div>
-            
-            <div class="order-info">
-                <h3>Order Information</h3>
-                <div class="order-details">
-                    <div class="detail-item">
-                        <div class="detail-label">Order Number</div>
-                        <div class="detail-value">#{{ $order->id }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Total Amount</div>
-                        <div class="detail-value">₱{{ number_format($order->total, 2) }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Payment Status</div>
-                        <div class="detail-value">{{ ucfirst($order->payment_status) }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Last Updated</div>
-                        <div class="detail-value">{{ $order->updated_at->format('M d, Y H:i') }}</div>
-                    </div>
-                </div>
-            </div>
-            
-            <p>You can track your order and view all details by clicking the button below:</p>
-            
-            <div style="text-align: center;">
-                <a href="{{ route('profile.orders.show', $order->id) }}" class="cta-button">
-                    Track Your Order
-                </a>
-            </div>
-            
-            <p>If you have any questions about your order status, please don't hesitate to contact our customer support team.</p>
-            
-            <p>Best regards,<br>The SoleMates Team</p>
-        </div>
-        
-        <div class="footer">
-            <p>&copy; {{ date('Y') }} SoleMates Footwear. All rights reserved.</p>
-            <p>Find your perfect pair with us</p>
-            <div class="social-links">
-                <a href="#">f</a>
-                <a href="#">t</a>
-                <a href="#">i</a>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+@extends('layouts.email')
+
+@section('content')
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="padding: 24px 12px; background-color: #f9f8f5;">
+    <tr>
+        <td align="center">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width: 640px; background-color: #ffffff; border: 1px solid #e4e2dc; border-radius: 14px; overflow: hidden;">
+                <tr>
+                    <td style="padding: 18px 24px; border-bottom: 1px solid #ece8df; background-color: #ffffff;">
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td style="font-family: Montserrat, Arial, sans-serif; font-size: 21px; font-weight: 800; color: #0A0A0A; letter-spacing: -0.2px;">
+                                    <span style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 6px; background: #C8A96E; color: #0A0A0A; font-size: 12px; font-weight: 900; margin-right: 8px;">S</span>Sole<span style="color:#A8893E;">Mates</span>
+                                </td>
+                                <td align="right" style="font-family: 'Courier New', monospace; font-size: 11px; color: #999994; letter-spacing: 1.2px; text-transform: uppercase;">
+                                    Status Updated
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 28px 24px 16px; background: linear-gradient(140deg, #fffdf8 0%, #f9f6ef 55%, #f1ede3 100%); border-bottom: 1px solid #ece8df;">
+                        <div style="font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 1.8px; text-transform: uppercase; color: #999994; margin-bottom: 12px;">
+                            <span style="display:inline-block; width:16px; height:2px; background:#C8A96E; vertical-align:middle; margin-right:7px;"></span>
+                            Order Notification
+                        </div>
+                        <h1 style="margin: 0; font-family: Montserrat, Arial, sans-serif; font-size: 38px; line-height: 1.03; color: #0A0A0A; font-weight: 900; letter-spacing: -0.04em;">
+                            Your order status has<br>
+                            <span style="display:inline-block; background:#0A0A0A; color:#FFE9B0; padding:2px 9px; border-radius:4px;">been updated.</span>
+                        </h1>
+                        <p style="margin: 14px 0 0; max-width: 500px; font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.7; color: #6A6A6A;">
+                            We are keeping you informed at every step so you always know exactly where your order stands.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 24px;">
+                        <p style="margin: 0 0 12px; font-family: Inter, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #0A0A0A;">
+                            Hi {{ $user->name }},
+                        </p>
+                        <p style="margin: 0 0 18px; font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.7; color: #3A3A3A;">
+                            We wanted to let you know that your order status just changed.
+                        </p>
+
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin: 0 0 18px; background: #0A0A0A; border-radius: 12px; overflow: hidden;">
+                            <tr>
+                                <td align="center" style="padding: 16px 16px 8px; font-family: 'Courier New', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1.7px; color: rgba(255,255,255,0.45);">
+                                    Current Status
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="padding: 0 16px 10px;">
+                                    <span style="display: inline-block; background: #C8A96E; color: #0A0A0A; padding: 7px 16px; border-radius: 999px; font-family: Montserrat, Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @if($oldStatus && $oldStatus !== $order->status)
+                                <tr>
+                                    <td align="center" style="padding: 0 16px 16px; font-family: Inter, Arial, sans-serif; font-size: 13px; color: rgba(255,255,255,0.8);">
+                                        <span style="text-decoration: line-through; color: rgba(255,255,255,0.45);">{{ ucfirst($oldStatus) }}</span>
+                                        <span style="display:inline-block; margin: 0 7px; color: #C8A96E;">&rarr;</span>
+                                        <span style="font-weight: 700; color: #FFFFFF;">{{ ucfirst($order->status) }}</span>
+                                    </td>
+                                </tr>
+                            @endif
+                        </table>
+
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #F9F8F5; border: 1px solid #E4E2DC; border-radius: 12px;">
+                            <tr>
+                                <td style="padding: 15px 16px; font-family: Montserrat, Arial, sans-serif; font-size: 11px; color: #A8893E; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 800;">
+                                    Order Information
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0 10px 10px;">
+                                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Order Number</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;">#{{ $order->id }}</td></tr>
+                                                </table>
+                                            </td>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Total Amount</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;"><span style="font-family: Montserrat, Arial, sans-serif; font-weight: 800;">&#8369;</span>{{ number_format($order->total, 2) }}</td></tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Payment Status</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;">{{ ucfirst($order->payment_status) }}</td></tr>
+                                                </table>
+                                            </td>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Last Updated</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;">{{ $order->updated_at->format('M d, Y H:i') }}</td></tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 20px;">
+                            <tr>
+                                <td align="center" style="padding-bottom: 10px;">
+                                    <a href="{{ route('profile.orders.show', $order->id) }}" style="display: inline-block; background: #0A0A0A; color: #FFFFFF; text-decoration: none; font-family: Montserrat, Arial, sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 13px 22px; border-radius: 8px;">
+                                        Track Your Order
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="margin: 18px 0 0; font-family: Inter, Arial, sans-serif; font-size: 14px; line-height: 1.7; color: #6A6A6A;">
+                            If you have any questions about your order status, just reply to this email and our support team will assist you.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 16px 24px 22px; border-top: 1px solid #ece8df; background-color: #FFFFFF;">
+                        <p style="margin: 0; text-align: center; font-family: Inter, Arial, sans-serif; font-size: 12px; line-height: 1.7; color: #999994;">
+                            &copy; {{ date('Y') }} SoleMates Footwear. Find your perfect pair.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+@endsection

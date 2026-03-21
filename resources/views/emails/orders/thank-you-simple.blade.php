@@ -1,58 +1,119 @@
 @extends('layouts.email')
 
 @section('content')
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-    
-    <!-- Header -->
-    <div style="background: linear-gradient(135deg, #C8A96E, #B8935F); padding: 50px 30px; text-align: center; color: #0C0C0C;">
-        <h1 style="font-size: 32px; font-weight: 800; margin: 0 0 12px 0;">🎉 Thank You!</h1>
-        <p style="font-size: 18px; margin: 0;">Your order has been successfully completed</p>
-    </div>
-    
-    <!-- Thank You Message -->
-    <div style="padding: 40px 30px; text-align: center;">
-        <h2 style="font-size: 24px; font-weight: 700; color: #C8A96E; margin-bottom: 15px;">Dear {{ $user->name }},</h2>
-        <p style="font-size: 16px; color: #6B6560; line-height: 1.7; margin-bottom: 20px;">We're absolutely delighted that you chose SoleMates for your footwear needs! Your order has been completed and is on its way to you.</p>
-        <p style="font-size: 16px; color: #6B6560; line-height: 1.7; margin-bottom: 20px;">Thank you for trusting us with your purchase. We hope your new shoes bring you comfort, style, and countless happy steps!</p>
-    </div>
-    
-    <!-- Order Summary -->
-    <div style="margin: 0 30px 30px; padding: 25px; background: #f8f5f1; border-radius: 12px; border: 1px solid #e6e0d8;">
-        <h3 style="color: #C8A96E; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px;">📦 Your Order Summary</h3>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #e6e0d8;">
-                <div style="font-size: 12px; color: #6B6560; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px;">Order Number</div>
-                <div style="font-size: 16px; font-weight: 600; color: #0C0C0C;">#{{ $order->id }}</div>
-            </div>
-            <div style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #e6e0d8;">
-                <div style="font-size: 12px; color: #6B6560; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px;">Total Amount</div>
-                <div style="font-size: 16px; font-weight: 600; color: #0C0C0C;">₱{{ number_format($order->total, 2) }}</div>
-            </div>
-            <div style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #e6e0d8;">
-                <div style="font-size: 12px; color: #6B6560; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px;">Completed Date</div>
-                <div style="font-size: 16px; font-weight: 600; color: #0C0C0C;">{{ $order->updated_at->format('M d, Y') }}</div>
-            </div>
-            <div style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #e6e0d8;">
-                <div style="font-size: 12px; color: #6B6560; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px;">Payment Method</div>
-                <div style="font-size: 16px; font-weight: 600; color: #0C0C0C;">{{ ucfirst($order->payment_method) }}</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Buttons -->
-    <div style="display: flex; gap: 15px; justify-content: center; margin: 30px; flex-wrap: wrap;">
-        <a href="{{ route('profile.orders.receipt', $order->id) }}" style="display: inline-block; background: #C8A96E; color: #0C0C0C; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; text-align: center; min-width: 150px;">📄 Download Receipt</a>
-        <a href="{{ route('profile.orders.show', $order->id) }}" style="display: inline-block; background: transparent; border: 2px solid #C8A96E; color: #C8A96E; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; text-align: center; min-width: 150px;">View Order</a>
-    </div>
-    
-    <!-- Footer -->
-    <div style="background: #f8f5f1; padding: 40px 30px; text-align: center; border-top: 1px solid #e6e0d8;">
-        <h3 style="color: #C8A96E; font-size: 18px; margin-bottom: 15px;">Shop With Us Again!</h3>
-        <p style="color: #6B6560; font-size: 14px; margin-bottom: 8px;">We'd love to see you back soon. Check out our latest collections and exclusive offers!</p>
-        <p style="color: #6B6560; font-size: 14px; margin-bottom: 20px;">&copy; {{ date('Y') }} SoleMates Footwear. All rights reserved.</p>
-        <p style="color: #6B6560; font-size: 14px; margin-bottom: 0;">Find your perfect pair with us</p>
-    </div>
-    
-</div>
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="padding: 24px 12px; background-color: #f9f8f5;">
+    <tr>
+        <td align="center">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width: 640px; background-color: #ffffff; border: 1px solid #e4e2dc; border-radius: 14px; overflow: hidden;">
+                <tr>
+                    <td style="padding: 18px 24px; border-bottom: 1px solid #ece8df; background-color: #ffffff;">
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td style="font-family: Montserrat, Arial, sans-serif; font-size: 21px; font-weight: 800; color: #0A0A0A; letter-spacing: -0.2px;">
+                                    <span style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 6px; background: #C8A96E; color: #0A0A0A; font-size: 12px; font-weight: 900; margin-right: 8px;">S</span>Sole<span style="color:#A8893E;">Mates</span>
+                                </td>
+                                <td align="right" style="font-family: 'Courier New', monospace; font-size: 11px; color: #999994; letter-spacing: 1.2px; text-transform: uppercase;">
+                                    Thank You
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 28px 24px 16px; background: linear-gradient(140deg, #fffdf8 0%, #f9f6ef 55%, #f1ede3 100%); border-bottom: 1px solid #ece8df;">
+                        <div style="font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 1.8px; text-transform: uppercase; color: #999994; margin-bottom: 12px;">
+                            <span style="display:inline-block; width:16px; height:2px; background:#C8A96E; vertical-align:middle; margin-right:7px;"></span>
+                            Purchase Complete
+                        </div>
+                        <h1 style="margin: 0; font-family: Montserrat, Arial, sans-serif; font-size: 38px; line-height: 1.03; color: #0A0A0A; font-weight: 900; letter-spacing: -0.04em;">
+                            Thank you for choosing SoleMates.
+                        </h1>
+                        <p style="margin: 14px 0 0; max-width: 500px; font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.7; color: #6A6A6A;">
+                            Your order has been completed and your receipt is ready whenever you need it.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 24px;">
+                        <p style="margin: 0 0 12px; font-family: Inter, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #0A0A0A;">
+                            Hi {{ $user->name }},
+                        </p>
+                        <p style="margin: 0 0 20px; font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.7; color: #3A3A3A;">
+                            We appreciate your order and your trust in our brand. We hope your new pair gives you comfort, confidence, and style every day.
+                        </p>
+
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #F9F8F5; border: 1px solid #E4E2DC; border-radius: 12px;">
+                            <tr>
+                                <td style="padding: 15px 16px; font-family: Montserrat, Arial, sans-serif; font-size: 11px; color: #A8893E; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 800;">
+                                    Order Summary
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0 10px 10px;">
+                                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Order Number</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;">#{{ $order->id }}</td></tr>
+                                                </table>
+                                            </td>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Total Amount</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;"><span style="font-family: Montserrat, Arial, sans-serif; font-weight: 800;">&#8369;</span>{{ number_format($order->total, 2) }}</td></tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Completed Date</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;">{{ $order->updated_at->format('M d, Y') }}</td></tr>
+                                                </table>
+                                            </td>
+                                            <td width="50%" valign="top" style="padding: 6px;">
+                                                <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background: #FFFFFF; border: 1px solid #E4E2DC; border-radius: 8px;">
+                                                    <tr><td style="padding: 11px 12px 5px; font-family: 'Courier New', monospace; font-size: 10px; color: #999994; text-transform: uppercase; letter-spacing: 1px;">Payment Method</td></tr>
+                                                    <tr><td style="padding: 0 12px 12px; font-family: Montserrat, Arial, sans-serif; font-size: 18px; line-height: 1.2; color: #0A0A0A; font-weight: 800;">{{ ucfirst($order->payment_method) }}</td></tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 20px;">
+                            <tr>
+                                <td align="center" style="padding-bottom: 10px;">
+                                    <a href="{{ route('profile.orders.receipt', $order->id) }}" style="display: inline-block; background: #0A0A0A; color: #FFFFFF; text-decoration: none; font-family: Montserrat, Arial, sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 13px 22px; border-radius: 8px;">
+                                        Download Receipt
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <a href="{{ route('profile.orders.show', $order->id) }}" style="display: inline-block; color: #3A3A3A; text-decoration: none; font-family: Montserrat, Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;">
+                                        View Order Details
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 16px 24px 22px; border-top: 1px solid #ece8df; background-color: #FFFFFF;">
+                        <p style="margin: 0; text-align: center; font-family: Inter, Arial, sans-serif; font-size: 12px; line-height: 1.7; color: #999994;">
+                            &copy; {{ date('Y') }} SoleMates Footwear. Crafted for comfort, designed for style.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 @endsection

@@ -435,4 +435,4 @@
     </div>
 
 </body>
-</html>
+</html><?php /**PATH C:\xampp_ITCP226\htdocs\SoulMates-Inc-Project\resources\views/pdfs/order-receipt.blade.php ENDPATH**/ ?>
