@@ -334,12 +334,16 @@
             line-height: 1;
         }
 
-        /* ── User dropdown button ── */
+        /* ── User menu trigger button ── */
+        .sm-user-menu {
+            position: relative;
+        }
+
         .sm-user-btn {
             display: flex;
             align-items: center;
             gap: 7px;
-            padding: 5px 11px 5px 5px;
+            padding: 5px 10px 5px 5px;
             background: none;
             border: 1.5px solid var(--c-border);
             border-radius: 20px;
@@ -348,11 +352,14 @@
             font-weight: 600;
             color: var(--c-text-mid);
             cursor: pointer;
-            transition: border-color 0.18s, background 0.18s;
+            transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
         }
 
-        .sm-user-btn:hover { border-color: var(--c-gold); background: var(--c-off-white); }
-        .sm-user-btn::after { display: none !important; }
+        .sm-user-btn:hover,
+        .sm-user-menu.is-open .sm-user-btn {
+            border-color: var(--c-gold);
+            background: var(--c-off-white);
+        }
 
         .sm-avatar {
             width: 26px;
@@ -377,26 +384,146 @@
             white-space: nowrap;
         }
 
-        /* ── Dropdown menu ── */
-        .sm-nav .dropdown-menu {
+        .sm-user-chevron {
+            font-size: 0.6rem;
+            color: var(--c-text-muted);
+            transition: transform 0.22s var(--ease);
+            margin-left: 1px;
+        }
+
+        .sm-user-menu.is-open .sm-user-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* ── Custom dropdown panel ── */
+        .sm-user-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            min-width: 240px;
+            background: var(--c-white);
             border: 1.5px solid var(--c-border);
-            border-radius: 12px;
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.10);
-            padding: 0.5rem;
-            margin-top: 6px !important;
-            min-width: 190px;
+            border-radius: 14px;
+            box-shadow: 0 20px 52px rgba(0,0,0,0.13), 0 4px 14px rgba(0,0,0,0.06);
+            padding: 0.45rem;
+            z-index: 2000;
+            transform-origin: top right;
+
+            /* Hidden state */
+            opacity: 0;
+            transform: translateY(-8px) scale(0.97);
+            pointer-events: none;
+            transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
         }
 
-        .sm-nav .dropdown-item {
-            border-radius: 7px;
+        .sm-user-menu.is-open .sm-user-panel {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        /* Panel header: avatar + name + email */
+        .sm-user-panel-head {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 0.85rem;
+        }
+
+        .sm-user-panel-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--c-gold), var(--c-gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
             font-size: 0.85rem;
-            padding: 8px 12px;
-            color: var(--c-text-mid);
-            transition: background 0.15s, color 0.15s;
+            font-weight: 900;
+            color: var(--c-white);
+            flex-shrink: 0;
+            text-transform: uppercase;
         }
 
-        .sm-nav .dropdown-item:hover { background: var(--c-off-white); color: var(--c-black); }
-        .sm-nav .dropdown-item i { width: 18px; color: var(--c-text-muted); }
+        .sm-user-panel-name {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--c-black);
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        .sm-user-panel-email {
+            font-size: 0.72rem;
+            color: var(--c-text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        .sm-panel-sep {
+            height: 1px;
+            background: var(--c-border);
+            margin: 0.35rem 0;
+        }
+
+        /* Menu items */
+        .sm-user-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.6rem 0.85rem;
+            border-radius: 9px;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--c-text-mid);
+            text-decoration: none;
+            transition: background 0.15s var(--ease), color 0.15s var(--ease);
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sm-user-item:hover {
+            background: var(--c-off-white);
+            color: var(--c-black);
+        }
+
+        .sm-user-item:hover .sm-user-item-ic {
+            color: var(--c-gold-dark);
+        }
+
+        .sm-user-item-ic {
+            width: 15px;
+            text-align: center;
+            color: var(--c-text-muted);
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            transition: color 0.15s var(--ease);
+        }
+
+        .sm-user-item-danger {
+            color: var(--c-error);
+        }
+
+        .sm-user-item-danger:hover {
+            background: #fff5f5;
+            color: var(--c-error);
+        }
+
+        .sm-user-item-danger .sm-user-item-ic,
+        .sm-user-item-danger:hover .sm-user-item-ic {
+            color: var(--c-error);
+        }
 
         /* ── Page header (shop page) ── */
         .page-header {
@@ -614,70 +741,28 @@
         }
 
         /* ═══════════════════════════════════════════════════════════
-           SCROLL-REVEAL ANIMATION SYSTEM
-           ─ CSS only activates when JS has confirmed it is running.
-             The script adds .sm-js to <html> immediately, so if JS
-             is blocked or fails, content stays fully visible.
-           ─ Usage: data-reveal="up|down|left|right|scale|fade"
-                    data-delay="1".."8" for staggered groups
+           FADE-UP ANIMATION SYSTEM
+           ─ JS auto-adds .sm-animate to target elements by their
+             existing CSS class names — no HTML attributes needed.
+           ─ On page load: above-fold elements reveal with a stagger.
+           ─ On scroll: below-fold elements reveal as they enter view.
+           ─ .sm-animate is added by JS so content is always visible
+             if JS is blocked or fails.
         ═══════════════════════════════════════════════════════════ */
 
-        /* Only hide elements when JS is confirmed running */
-        .sm-js [data-reveal] {
+        /* Hidden state — only applied once JS adds the class */
+        .sm-animate {
             opacity: 0;
-            transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
+            transform: translateY(28px);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: opacity, transform;
         }
 
-        .sm-js [data-reveal="up"]    { transform: translateY(32px); }
-        .sm-js [data-reveal="down"]  { transform: translateY(-32px); }
-        .sm-js [data-reveal="left"]  { transform: translateX(-32px); }
-        .sm-js [data-reveal="right"] { transform: translateX(32px); }
-        .sm-js [data-reveal="scale"] { transform: scale(0.92) translateY(18px); }
-        .sm-js [data-reveal="fade"]  { transform: none; }
-
-        /* Revealed — JS adds this class via IntersectionObserver */
-        .sm-js [data-reveal].is-revealed {
-            opacity: 1 !important;
-            transform: none !important;
-        }
-
-        /* Stagger delay helpers — only apply when hidden */
-        .sm-js [data-reveal][data-delay="1"] { transition-delay: 80ms;  }
-        .sm-js [data-reveal][data-delay="2"] { transition-delay: 160ms; }
-        .sm-js [data-reveal][data-delay="3"] { transition-delay: 240ms; }
-        .sm-js [data-reveal][data-delay="4"] { transition-delay: 320ms; }
-        .sm-js [data-reveal][data-delay="5"] { transition-delay: 400ms; }
-        .sm-js [data-reveal][data-delay="6"] { transition-delay: 480ms; }
-        .sm-js [data-reveal][data-delay="7"] { transition-delay: 560ms; }
-        .sm-js [data-reveal][data-delay="8"] { transition-delay: 640ms; }
-
-        /* Once revealed, remove stagger so re-reads don't delay */
-        .sm-js [data-reveal].is-revealed { transition-delay: 0ms !important; }
-
-        /* ── Hero load animations (CSS only, no Observer needed) ── */
-        .ha {
-            animation: haFadeUp 0.72s var(--ease) both;
-        }
-        .ha-1 { animation-delay: 0.06s; }
-        .ha-2 { animation-delay: 0.18s; }
-        .ha-3 { animation-delay: 0.30s; }
-        .ha-4 { animation-delay: 0.44s; }
-        .ha-5 { animation-delay: 0.56s; }
-
-        .ha-right {
-            animation: haFadeRight 0.78s var(--ease) both;
-            animation-delay: 0.28s;
-        }
-
-        @keyframes haFadeUp {
-            from { opacity: 0; transform: translateY(26px); }
-            to   { opacity: 1; transform: none; }
-        }
-
-        @keyframes haFadeRight {
-            from { opacity: 0; transform: translateX(26px); }
-            to   { opacity: 1; transform: none; }
+        /* Visible state — JS adds .sm-in when element enters viewport */
+        .sm-animate.sm-in {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* ── Button hover micro-interactions ── */
@@ -690,29 +775,26 @@
         .btn-shop-more,
         .btn-mission,
         .sm-btn-solid {
-            transition: background 0.2s var(--ease),
-                        color 0.2s var(--ease),
-                        transform 0.2s var(--ease),
-                        box-shadow 0.2s var(--ease),
-                        border-color 0.2s var(--ease);
+            transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                        color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ── Product card hover polish ── */
         .prod-card {
-            transition: transform 0.28s var(--ease),
-                        box-shadow 0.28s var(--ease),
-                        border-color 0.28s var(--ease);
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Respect reduced-motion preference */
+        /* Respect reduced-motion — show everything instantly */
         @media (prefers-reduced-motion: reduce) {
-            .sm-js [data-reveal],
-            .ha,
-            .ha-right {
+            .sm-animate {
                 opacity: 1 !important;
                 transform: none !important;
                 transition: none !important;
-                animation: none !important;
             }
         }
     </style>
@@ -802,53 +884,86 @@
                         @endif
                     </a>
 
-                    {{-- User dropdown --}}
-                    <div class="dropdown">
-                        <button class="sm-user-btn dropdown-toggle"
+                    {{-- Custom user menu dropdown --}}
+                    <div class="sm-user-menu" id="smUserMenu">
+
+                        <button class="sm-user-btn"
+                                id="smUserBtn"
                                 type="button"
-                                data-bs-toggle="dropdown"
                                 aria-expanded="false"
-                                aria-haspopup="true">
+                                aria-haspopup="true"
+                                aria-controls="smUserPanel">
                             <span class="sm-avatar" aria-hidden="true">
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             </span>
                             <span class="sm-user-name">{{ auth()->user()->name }}</span>
+                            <i class="fas fa-chevron-down sm-user-chevron" aria-hidden="true"></i>
                         </button>
 
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="fas fa-user me-2" aria-hidden="true"></i>My Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('cart.index') }}">
-                                    <i class="fas fa-shopping-bag me-2" aria-hidden="true"></i>My Cart
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.orders') }}">
-                                    <i class="fas fa-box me-2" aria-hidden="true"></i>My Orders
-                                </a>
-                            </li>
+                        <div class="sm-user-panel" id="smUserPanel" role="menu">
+
+                            {{-- Identity header --}}
+                            <div class="sm-user-panel-head">
+                                <div class="sm-user-panel-avatar" aria-hidden="true">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                </div>
+                                <div style="min-width:0;">
+                                    <div class="sm-user-panel-name">{{ auth()->user()->name }}</div>
+                                    <div class="sm-user-panel-email">{{ auth()->user()->email }}</div>
+                                </div>
+                            </div>
+
+                            <div class="sm-panel-sep"></div>
+
+                            {{-- Navigation items --}}
+                            <a href="{{ route('profile.edit') }}"
+                               class="sm-user-item"
+                               role="menuitem">
+                                <i class="fas fa-user-circle sm-user-item-ic" aria-hidden="true"></i>
+                                My Profile
+                            </a>
+
+                            <a href="{{ route('cart.index') }}"
+                               class="sm-user-item"
+                               role="menuitem">
+                                <i class="fas fa-shopping-bag sm-user-item-ic" aria-hidden="true"></i>
+                                My Cart
+                                @php $cartCount = \App\Models\Cart::where('user_id', Auth::id())->count(); @endphp
+                                @if($cartCount > 0)
+                                    <span style="margin-left:auto;background:var(--c-gold);color:var(--c-black);font-size:0.6rem;font-weight:900;border-radius:99px;padding:1px 7px;font-family:var(--font-display);">
+                                        {{ $cartCount }}
+                                    </span>
+                                @endif
+                            </a>
+
+                            <a href="{{ route('profile.orders') }}"
+                               class="sm-user-item"
+                               role="menuitem">
+                                <i class="fas fa-box sm-user-item-ic" aria-hidden="true"></i>
+                                My Orders
+                            </a>
+
                             @if(auth()->user()->isAdmin())
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                        <i class="fas fa-cog me-2" aria-hidden="true"></i>Admin Panel
-                                    </a>
-                                </li>
-                            @endif
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger"
-                                   href="{{ route('logout') }}"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>Sign Out
+                                <div class="sm-panel-sep"></div>
+                                <a href="{{ route('admin.dashboard') }}"
+                                   class="sm-user-item"
+                                   role="menuitem">
+                                    <i class="fas fa-cog sm-user-item-ic" aria-hidden="true"></i>
+                                    Admin Panel
                                 </a>
-                            </li>
-                        </ul>
-                    </div>
+                            @endif
+
+                            <div class="sm-panel-sep"></div>
+
+                            <button class="sm-user-item sm-user-item-danger"
+                                    role="menuitem"
+                                    onclick="document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt sm-user-item-ic" aria-hidden="true"></i>
+                                Sign Out
+                            </button>
+
+                        </div>{{-- /.sm-user-panel --}}
+                    </div>{{-- /.sm-user-menu --}}
                 @endguest
 
             </div>{{-- /.sm-nav-right --}}
@@ -1004,9 +1119,6 @@
 (function () {
     'use strict';
 
-    /* ── Mark <html> so animation CSS activates immediately ── */
-    document.documentElement.classList.add('sm-js');
-
     /* ── Scroll shadow + glassmorphism intensity on navbar ── */
     var nav = document.getElementById('smNav');
     if (nav) {
@@ -1039,78 +1151,176 @@
         });
     }
 
-    /* ── Bootstrap dropdown init ── */
-    document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function (el) {
-        new bootstrap.Dropdown(el);
-    });
-
-    /* ── Logout link handler ── */
-    document.querySelectorAll('a[href*="logout"]').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            var form = document.getElementById('logout-form');
-            if (form) form.submit();
+    /* ── Bootstrap dropdown init (for any remaining BS dropdowns) ── */
+    if (typeof bootstrap !== 'undefined') {
+        document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function (el) {
+            new bootstrap.Dropdown(el);
         });
-    });
+    }
+
+    /* ── Custom user menu dropdown ── */
+    var userMenu = document.getElementById('smUserMenu');
+    var userBtn  = document.getElementById('smUserBtn');
+
+    if (userMenu && userBtn) {
+
+        /* Toggle on button click */
+        userBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var isOpen = userMenu.classList.toggle('is-open');
+            userBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        /* Close when clicking anywhere outside the menu */
+        document.addEventListener('click', function (e) {
+            if (!userMenu.contains(e.target)) {
+                userMenu.classList.remove('is-open');
+                userBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        /* Close on Escape key */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && userMenu.classList.contains('is-open')) {
+                userMenu.classList.remove('is-open');
+                userBtn.setAttribute('aria-expanded', 'false');
+                userBtn.focus();
+            }
+        });
+    }
 
     /* ══════════════════════════════════════════════════════════
-       SCROLL-REVEAL — Intersection Observer
-       ─ Gated behind .sm-js so elements are never permanently
-         hidden if this block throws or IO is unsupported.
-       ─ Double requestAnimationFrame ensures the browser has
-         actually painted elements as opacity:0 BEFORE the
-         observer starts watching — this is what makes the
-         transition visible rather than instant.
-       ─ threshold:0 means "any pixel visible = trigger".
-       ─ rootMargin shrinks the bottom of the viewport by 60px
-         so elements animate just before they reach the edge.
+       FADE-UP ANIMATION ENGINE
+       ─ Automatically targets elements by their existing CSS
+         class names — no data-* attributes needed in HTML.
+       ─ On page load: elements already on screen reveal with a
+         small stagger ordered by their vertical position.
+       ─ On scroll: elements below the fold reveal as they enter
+         the viewport (fires once per element, never repeats).
+       ─ The double requestAnimationFrame trick ensures the
+         browser has actually painted opacity:0 before the
+         observer starts — without it the transition is skipped.
     ══════════════════════════════════════════════════════════ */
-    (function initReveal() {
+    (function () {
 
-        /* Fallback: show everything if reduced-motion or no IO support */
-        var prefersReduced = window.matchMedia &&
-            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        /* Skip entirely for reduced-motion users */
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-        if (prefersReduced || !('IntersectionObserver' in window)) {
-            document.querySelectorAll('[data-reveal]').forEach(function (el) {
-                el.classList.add('is-revealed');
-            });
-            return;
+        /* ── Elements to animate (by existing class names) ── */
+        var SELECTORS = [
+            /* ---- Homepage hero ---- */
+            '.hero-kicker',
+            '.hero-title',
+            '.hero-subtitle',
+            '.hero-cta',
+            '.hero-trust',
+            '.hero-card',
+
+            /* ---- Homepage sections ---- */
+            '.hp-sec-head',
+            '.cat-strip',
+            '.carousel-outer',
+            '.carousel-dots',
+            '.hp-empty',
+
+            /* ---- Product cards (homepage + shop) ---- */
+            '.prod-card',
+
+            /* ---- Shop page ---- */
+            '.sort-bar',
+            '.filter-card',
+            '.empty-state',
+
+            /* ---- Cart page ---- */
+            '.cart-empty',
+            '.cart-item-wrap',
+            '.summary-card',
+
+            /* ---- Checkout page ---- */
+            '.checkout-steps',
+            '.co-card',
+            '.co-summary',
+
+            /* ---- Order success page ---- */
+            '.success-icon-wrap',
+            '.success-title',
+            '.success-subtitle',
+            '.order-card',
+
+            /* ---- About page ---- */
+            '.about-hero-inner',
+            '.value-card',
+            '.contact-card',
+            '.mission-banner',
+            '.story-visual',
+
+            /* ---- Shared page headers ---- */
+            '.page-eyebrow',
+            '.page-title',
+            '.search-results-title',
+        ].join(', ');
+
+        /* Collect all matching elements */
+        var all = Array.from(document.querySelectorAll(SELECTORS));
+        if (!all.length) return;
+
+        /* Mark every target as animatable (starts hidden via CSS) */
+        all.forEach(function (el) { el.classList.add('sm-animate'); });
+
+        /* Helper: is element currently in the visible viewport? */
+        function inViewport(el) {
+            var r = el.getBoundingClientRect();
+            return r.top < window.innerHeight && r.bottom > 0;
         }
 
-        var observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (entry.isIntersecting) {
-                    var el    = entry.target;
-                    var delay = parseInt(el.getAttribute('data-delay') || '0', 10) * 80;
-
-                    if (delay > 0) {
-                        setTimeout(function () { el.classList.add('is-revealed'); }, delay);
-                    } else {
-                        el.classList.add('is-revealed');
-                    }
-
-                    observer.unobserve(el); /* fire once per element */
-                }
+        /* Helper: reveal a group with a top-to-bottom stagger */
+        function revealGroup(group, baseDelayMs) {
+            /* Sort by vertical position so items animate top → down */
+            group.slice().sort(function (a, b) {
+                return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
+            }).forEach(function (el, i) {
+                setTimeout(function () { el.classList.add('sm-in'); }, (baseDelayMs || 0) + i * 80);
             });
-        }, {
-            threshold:   0,                      /* any pixel visible = trigger */
-            rootMargin: '0px 0px -60px 0px'     /* 60px before viewport bottom  */
-        });
+        }
+
+        /* Split into already-visible vs below-the-fold */
+        var onScreen  = all.filter(inViewport);
+        var offScreen = all.filter(function (el) { return !inViewport(el); });
 
         /*
-         * Double rAF pattern:
-         * rAF-1 → browser has scheduled a paint
-         * rAF-2 → browser has completed that paint (opacity:0 is on screen)
-         * Now we start observing — so the first reveal IS an animated transition.
+         * Double rAF:
+         * Frame 1 — browser schedules a paint with opacity:0 applied.
+         * Frame 2 — that paint is committed to screen.
+         * NOW we trigger .sm-in so the CSS transition is visible.
          */
         requestAnimationFrame(function () {
             requestAnimationFrame(function () {
-                document.querySelectorAll('[data-reveal]').forEach(function (el) {
-                    observer.observe(el);
-                });
+                revealGroup(onScreen, 60); /* slight initial delay feels natural */
             });
         });
+
+        /* Scroll reveal via IntersectionObserver */
+        if (!('IntersectionObserver' in window)) {
+            /* Fallback for very old browsers */
+            offScreen.forEach(function (el) { el.classList.add('sm-in'); });
+            return;
+        }
+
+        var scrollObserver = new IntersectionObserver(function (entries) {
+            var visible = [];
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    visible.push(entry.target);
+                    scrollObserver.unobserve(entry.target); /* fire once only */
+                }
+            });
+            if (visible.length) revealGroup(visible, 0);
+        }, {
+            threshold:  0.08,              /* 8 % of element visible = trigger  */
+            rootMargin: '0px 0px -40px 0px' /* 40 px before bottom of viewport  */
+        });
+
+        offScreen.forEach(function (el) { scrollObserver.observe(el); });
 
     })();
 

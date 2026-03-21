@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'My Orders — SoleMates Footwear'); ?>
 
-@section('title', 'My Orders — SoleMates Footwear')
-
-@section('head')
+<?php $__env->startSection('head'); ?>
 <style>
 /* ════ ORDERS PAGE ════ */
 .orders-page { padding: 2.5rem 0 5rem; }
@@ -209,17 +207,17 @@
 .order-item-qty { font-size: 0.75rem; color: var(--c-text-muted); font-family: var(--font-mono); }
 .order-item-price { font-family: var(--font-mono); font-weight: 700; flex-shrink: 0; }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-{{-- Breadcrumb --}}
+
 <div class="profile-breadcrumb">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('profile.edit') }}">My Account</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>">Home</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('profile.edit')); ?>">My Account</a></li>
                 <li class="breadcrumb-item active" aria-current="page">My Orders</li>
             </ol>
         </nav>
@@ -229,26 +227,26 @@
 <div class="orders-page">
     <div class="container">
 
-        {{-- Header --}}
+        
         <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mb-4">
             <div>
                 <h1 class="orders-page-title">My Orders</h1>
                 <p class="orders-page-sub">
-                    {{ $orders->total() }} order{{ $orders->total() !== 1 ? 's' : '' }} placed
+                    <?php echo e($orders->total()); ?> order<?php echo e($orders->total() !== 1 ? 's' : ''); ?> placed
                 </p>
             </div>
-            <a href="{{ route('products.index') }}" class="btn-view-order" style="background:transparent;color:var(--c-text-mid);border:1.5px solid var(--c-border);">
+            <a href="<?php echo e(route('products.index')); ?>" class="btn-view-order" style="background:transparent;color:var(--c-text-mid);border:1.5px solid var(--c-border);">
                 <i class="fas fa-store" aria-hidden="true"></i>
                 Continue Shopping
             </a>
         </div>
 
-        @if($orders->count() > 0)
+        <?php if($orders->count() > 0): ?>
 
-            @foreach($orders as $order)
+            <?php $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                {{-- Determine status class --}}
-                @php
+                
+                <?php
                     $statusClass = match($order->status) {
                         'pending'    => 'status-pending',
                         'processing' => 'status-processing',
@@ -265,94 +263,101 @@
                         'cancelled'  => 'fa-times-circle',
                         default      => 'fa-circle',
                     };
-                @endphp
+                ?>
 
-                <div class="order-card" aria-label="Order {{ $order->order_number }}">
+                <div class="order-card" aria-label="Order <?php echo e($order->order_number); ?>">
 
-                    {{-- Card header --}}
+                    
                     <div class="order-card-head">
                         <div>
-                            <div class="order-num">{{ $order->order_number }}</div>
+                            <div class="order-num"><?php echo e($order->order_number); ?></div>
                             <div class="order-date">
                                 <i class="fas fa-calendar-alt me-1" aria-hidden="true"></i>
-                                {{ $order->created_at->format('M d, Y') }}
+                                <?php echo e($order->created_at->format('M d, Y')); ?>
+
                                 &nbsp;·&nbsp;
-                                {{ $order->orderItems->count() }} item{{ $order->orderItems->count() !== 1 ? 's' : '' }}
+                                <?php echo e($order->orderItems->count()); ?> item<?php echo e($order->orderItems->count() !== 1 ? 's' : ''); ?>
+
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <span class="order-status {{ $statusClass }}">
-                                <i class="fas {{ $statusIcon }}" aria-hidden="true"></i>
-                                {{ ucfirst($order->status) }}
+                            <span class="order-status <?php echo e($statusClass); ?>">
+                                <i class="fas <?php echo e($statusIcon); ?>" aria-hidden="true"></i>
+                                <?php echo e(ucfirst($order->status)); ?>
+
                             </span>
-                            <a href="{{ route('profile.orders.show', $order) }}" class="btn-view-order">
+                            <a href="<?php echo e(route('profile.orders.show', $order)); ?>" class="btn-view-order">
                                 View Details
                                 <i class="fas fa-arrow-right" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>
 
-                    {{-- Card body: items --}}
+                    
                     <div class="order-card-body">
-                        @foreach($order->orderItems->take(3) as $item)
+                        <?php $__currentLoopData = $order->orderItems->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="order-item-row">
                                 <div style="display:flex;align-items:center;gap:0.75rem;min-width:0;">
-                                    @php
+                                    <?php
                                         $thumb = $item->product ? $item->product->thumbnailUrl() : null;
-                                    @endphp
+                                    ?>
                                     <div class="order-thumb">
-                                        @if($thumb)
-                                            <img src="{{ $thumb }}" alt="{{ $item->product->name }}">
-                                        @else
+                                        <?php if($thumb): ?>
+                                            <img src="<?php echo e($thumb); ?>" alt="<?php echo e($item->product->name); ?>">
+                                        <?php else: ?>
                                             &#128095;
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                     <div style="min-width:0;">
                                         <div class="order-item-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;">
-                                            {{ $item->product->name ?? 'Product unavailable' }}
+                                            <?php echo e($item->product->name ?? 'Product unavailable'); ?>
+
                                         </div>
-                                        <div class="order-item-qty">Qty: {{ $item->quantity }} &nbsp;·&nbsp; &#8369;{{ number_format($item->price, 2) }} each</div>
+                                        <div class="order-item-qty">Qty: <?php echo e($item->quantity); ?> &nbsp;·&nbsp; &#8369;<?php echo e(number_format($item->price, 2)); ?> each</div>
                                     </div>
                                 </div>
-                                <div class="order-item-price">&#8369;{{ number_format($item->subtotal, 2) }}</div>
+                                <div class="order-item-price">&#8369;<?php echo e(number_format($item->subtotal, 2)); ?></div>
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                        @if($order->orderItems->count() > 3)
+                        <?php if($order->orderItems->count() > 3): ?>
                             <div style="font-size:0.78rem;color:var(--c-text-muted);margin-top:0.5rem;">
-                                +{{ $order->orderItems->count() - 3 }} more item{{ ($order->orderItems->count() - 3) !== 1 ? 's' : '' }}
-                                &mdash; <a href="{{ route('profile.orders.show', $order) }}" style="color:var(--c-gold-dark);text-decoration:none;">view all</a>
-                            </div>
-                        @endif
+                                +<?php echo e($order->orderItems->count() - 3); ?> more item<?php echo e(($order->orderItems->count() - 3) !== 1 ? 's' : ''); ?>
 
-                        {{-- Total row --}}
+                                &mdash; <a href="<?php echo e(route('profile.orders.show', $order)); ?>" style="color:var(--c-gold-dark);text-decoration:none;">view all</a>
+                            </div>
+                        <?php endif; ?>
+
+                        
                         <div class="order-card-foot">
                             <div>
                                 <div class="order-total-label">Order Total</div>
-                                <div class="order-total-amount">&#8369;{{ number_format($order->orderItems->sum('subtotal'), 2) }}</div>
+                                <div class="order-total-amount">&#8369;<?php echo e(number_format($order->orderItems->sum('subtotal'), 2)); ?></div>
                             </div>
                             <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--c-text-muted);">
-                                @if($order->payment_status === 'paid')
+                                <?php if($order->payment_status === 'paid'): ?>
                                     <span style="color:var(--c-success);font-weight:600;"><i class="fas fa-check-circle me-1"></i>Paid</span>
-                                @else
-                                    <span><i class="fas fa-clock me-1"></i>Payment {{ ucfirst($order->payment_status ?? 'pending') }}</span>
-                                @endif
+                                <?php else: ?>
+                                    <span><i class="fas fa-clock me-1"></i>Payment <?php echo e(ucfirst($order->payment_status ?? 'pending')); ?></span>
+                                <?php endif; ?>
                                 &nbsp;·&nbsp;
-                                {{ ucfirst(str_replace('_', ' ', $order->payment_method ?? '—')) }}
+                                <?php echo e(ucfirst(str_replace('_', ' ', $order->payment_method ?? '—'))); ?>
+
                             </div>
                         </div>
                     </div>
 
                 </div>
 
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-            {{-- Pagination --}}
+            
             <div class="mt-3">
-                {{ $orders->links() }}
+                <?php echo e($orders->links()); ?>
+
             </div>
 
-        @else
+        <?php else: ?>
 
             <div class="orders-empty">
                 <div class="orders-empty-icon" aria-hidden="true">
@@ -360,15 +365,17 @@
                 </div>
                 <h3>No orders yet</h3>
                 <p>You haven't placed any orders. Browse our collection<br>and find your perfect pair!</p>
-                <a href="{{ route('products.index') }}" class="btn-start-shopping">
+                <a href="<?php echo e(route('products.index')); ?>" class="btn-start-shopping">
                     <i class="fas fa-store" aria-hidden="true"></i>
                     Start Shopping
                 </a>
             </div>
 
-        @endif
+        <?php endif; ?>
 
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/profile/orders.blade.php ENDPATH**/ ?>

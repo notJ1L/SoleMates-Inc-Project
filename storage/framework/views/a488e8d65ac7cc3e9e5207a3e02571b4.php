@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'About Us — SoleMates Footwear'); ?>
 
 <?php $__env->startSection('head'); ?>
@@ -575,18 +573,5 @@
 </section>
 
 <?php $__env->stopSection(); ?>
-```
-
-The file `about.blade.php` has been created at `resources/views/about.blade.php`. Here's a summary of what's included in the page:
-
-**Structure overview:**
-
-- **`<?php $__env->startSection('head'); ?>`** — Pulls in Montserrat & Inter from Google Fonts, plus all scoped CSS custom properties and component styles.
-- **Breadcrumb bar** — Cream-toned strip with a `Home → About Us` trail.
-- **Hero section** — Full dark gradient background with dot-grid texture, gold radial glows, an eyebrow label, a large clamp-scaled headline, and a subdued descriptor paragraph.
-- **Our Story** — Two-column layout: a stats panel (dark card with 500+, 2K+, 100% figures) on the right, and the brand narrative + CTA buttons on the left.
-- **Core Values** — 4-column card grid (Quality First, Fair Pricing, Fast Delivery, Customer Love), each with a gold-tinted icon box and hover lift effect, on a cream background.
-- **Mission Banner** — Full-width dark card with dot-grid texture, a large pull-quote with a gold accent span, supporting copy, and a gold "Shop Now" CTA button.
-- **Contact section** — 4 cards (Email, Phone, Location, Hours), each with a cream icon tile, label, and value, on the cream background.
 
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/about.blade.php ENDPATH**/ ?>

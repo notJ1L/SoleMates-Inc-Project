@@ -710,19 +710,19 @@
 
             
             <div class="col-lg-7">
-                <p class="hero-kicker ha ha-1">SoleMates Footwear &nbsp;·&nbsp; <?php echo e(date('Y')); ?> Collection</p>
+                <p class="hero-kicker">SoleMates Footwear &nbsp;·&nbsp; <?php echo e(date('Y')); ?> Collection</p>
 
-                <h1 class="hero-title ha ha-2">
+                <h1 class="hero-title">
                     Step into your<br>
                     <span class="hero-highlight">perfect pair.</span>
                 </h1>
 
-                <p class="hero-subtitle ha ha-3">
+                <p class="hero-subtitle">
                     Thoughtfully curated footwear for every walk of life — from everyday errands
                     to milestone moments. Lightweight comfort, elevated style, pairs that truly last.
                 </p>
 
-                <div class="hero-cta ha ha-4">
+                <div class="hero-cta">
                     <a href="<?php echo e(route('products.index')); ?>" class="btn-hero-primary">
                         <i class="fas fa-store" aria-hidden="true"></i>
                         Shop All Products
@@ -733,7 +733,7 @@
                     </a>
                 </div>
 
-                <div class="hero-trust ha ha-5">
+                <div class="hero-trust">
                     <span class="hero-trust-badge">
                         <i class="fas fa-shield-alt" aria-hidden="true"></i>
                         Secure checkout
@@ -751,7 +751,7 @@
 
             
             <div class="col-lg-5">
-                <div class="hero-card ha-right" aria-hidden="true">
+                <div class="hero-card" aria-hidden="true">
                     <div class="hero-card-pill">New arrivals weekly</div>
                     <div class="hero-card-inner">
                         <div>

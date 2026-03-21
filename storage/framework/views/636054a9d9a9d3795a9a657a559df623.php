@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Order ' . $order->order_number . ' — SoleMates Footwear'); ?>
 
-@section('title', 'Order ' . $order->order_number . ' — SoleMates Footwear')
-
-@section('head')
+<?php $__env->startSection('head'); ?>
 <style>
 /* ════ ORDER DETAIL PAGE ════ */
 .order-detail-page { padding: 2.5rem 0 5rem; }
@@ -361,19 +359,19 @@
     box-shadow: 0 10px 26px rgba(0,0,0,0.18);
 }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-{{-- Breadcrumb --}}
+
 <div class="profile-breadcrumb">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('profile.edit') }}">My Account</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('profile.orders') }}">My Orders</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ $order->order_number }}</li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>">Home</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('profile.edit')); ?>">My Account</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('profile.orders')); ?>">My Orders</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><?php echo e($order->order_number); ?></li>
             </ol>
         </nav>
     </div>
@@ -382,14 +380,14 @@
 <div class="order-detail-page">
     <div class="container">
 
-        {{-- Back link --}}
-        <a href="{{ route('profile.orders') }}" class="od-back">
+        
+        <a href="<?php echo e(route('profile.orders')); ?>" class="od-back">
             <i class="fas fa-arrow-left" aria-hidden="true"></i>
             Back to My Orders
         </a>
 
-        {{-- ── Page header ── --}}
-        @php
+        
+        <?php
             $statusClass = match($order->status) {
                 'pending'    => 'status-pending',
                 'processing' => 'status-processing',
@@ -406,153 +404,162 @@
                 'cancelled'  => 'fa-times-circle',
                 default      => 'fa-circle',
             };
-        @endphp
+        ?>
 
         <div class="od-page-head">
             <div>
                 <div class="od-order-num">Order Number</div>
-                <h1 class="od-page-title">{{ $order->order_number }}</h1>
+                <h1 class="od-page-title"><?php echo e($order->order_number); ?></h1>
                 <div class="od-placed-date">
                     <i class="fas fa-calendar-alt me-1" aria-hidden="true"></i>
-                    Placed on {{ $order->created_at->format('F d, Y \a\t h:i A') }}
+                    Placed on <?php echo e($order->created_at->format('F d, Y \a\t h:i A')); ?>
+
                 </div>
             </div>
-            <span class="order-status {{ $statusClass }}">
-                <i class="fas {{ $statusIcon }}" aria-hidden="true"></i>
-                {{ ucfirst($order->status) }}
+            <span class="order-status <?php echo e($statusClass); ?>">
+                <i class="fas <?php echo e($statusIcon); ?>" aria-hidden="true"></i>
+                <?php echo e(ucfirst($order->status)); ?>
+
             </span>
         </div>
 
-        {{-- ── Order progress tracker ── --}}
-        @if($order->status !== 'cancelled')
-            @php
+        
+        <?php if($order->status !== 'cancelled'): ?>
+            <?php
                 $steps = ['pending', 'processing', 'shipped', 'completed'];
                 $currentIdx = array_search($order->status, $steps);
                 if ($currentIdx === false) $currentIdx = 0;
-            @endphp
+            ?>
             <div class="od-tracker">
                 <div class="od-tracker-steps">
-                    @foreach($steps as $i => $step)
-                        @php
+                    <?php $__currentLoopData = $steps; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $step): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php
                             $isDone   = $i < $currentIdx;
                             $isActive = $i === $currentIdx;
-                        @endphp
+                        ?>
 
-                        <div class="od-step {{ $isDone ? 'done' : ($isActive ? 'active' : '') }}">
+                        <div class="od-step <?php echo e($isDone ? 'done' : ($isActive ? 'active' : '')); ?>">
                             <div class="od-step-dot">
-                                @if($isDone)
+                                <?php if($isDone): ?>
                                     <i class="fas fa-check" aria-hidden="true"></i>
-                                @elseif($isActive)
-                                    <i class="fas {{ $statusIcon }}" aria-hidden="true"></i>
-                                @else
-                                    {{ $i + 1 }}
-                                @endif
+                                <?php elseif($isActive): ?>
+                                    <i class="fas <?php echo e($statusIcon); ?>" aria-hidden="true"></i>
+                                <?php else: ?>
+                                    <?php echo e($i + 1); ?>
+
+                                <?php endif; ?>
                             </div>
                             <div class="od-step-label">
-                                @if($step === 'pending')    Order Placed
-                                @elseif($step === 'processing') Processing
-                                @elseif($step === 'shipped')    Shipped
-                                @elseif($step === 'completed')  Delivered
-                                @endif
+                                <?php if($step === 'pending'): ?>    Order Placed
+                                <?php elseif($step === 'processing'): ?> Processing
+                                <?php elseif($step === 'shipped'): ?>    Shipped
+                                <?php elseif($step === 'completed'): ?>  Delivered
+                                <?php endif; ?>
                             </div>
                         </div>
 
-                        @if(!$loop->last)
-                            <div class="od-step-line {{ $isDone ? 'done' : '' }}"></div>
-                        @endif
-                    @endforeach
+                        <?php if(!$loop->last): ?>
+                            <div class="od-step-line <?php echo e($isDone ? 'done' : ''); ?>"></div>
+                        <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
-        @else
+        <?php else: ?>
             <div style="padding:1rem 1.25rem;background:#fff5f5;border:1.5px solid rgba(192,57,43,0.2);border-radius:12px;font-size:0.875rem;color:var(--c-error);display:flex;align-items:center;gap:0.6rem;margin-bottom:1.25rem;">
                 <i class="fas fa-times-circle" aria-hidden="true"></i>
                 This order was cancelled.
             </div>
-        @endif
+        <?php endif; ?>
 
         <div class="row g-4">
 
-            {{-- ── Left column: Items + totals ── --}}
+            
             <div class="col-lg-8">
 
-                {{-- Items --}}
+                
                 <div class="od-card">
                     <div class="od-card-header">
                         <div class="od-card-header-icon"><i class="fas fa-box" aria-hidden="true"></i></div>
                         <h5>Items Ordered</h5>
                         <span style="margin-left:auto;font-size:0.75rem;color:var(--c-text-muted);">
-                            {{ $order->orderItems->count() }} item{{ $order->orderItems->count() !== 1 ? 's' : '' }}
+                            <?php echo e($order->orderItems->count()); ?> item<?php echo e($order->orderItems->count() !== 1 ? 's' : ''); ?>
+
                         </span>
                     </div>
                     <div class="od-card-body">
-                        @foreach($order->orderItems as $item)
-                            @php $thumb = $item->product ? $item->product->thumbnailUrl() : null; @endphp
+                        <?php $__currentLoopData = $order->orderItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php $thumb = $item->product ? $item->product->thumbnailUrl() : null; ?>
                             <div class="od-item-row">
                                 <div class="od-item-thumb">
-                                    @if($thumb)
-                                        <img src="{{ $thumb }}" alt="{{ $item->product->name ?? 'Product' }}">
-                                    @else
+                                    <?php if($thumb): ?>
+                                        <img src="<?php echo e($thumb); ?>" alt="<?php echo e($item->product->name ?? 'Product'); ?>">
+                                    <?php else: ?>
                                         &#128095;
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                                 <div style="min-width:0;flex:1;">
                                     <div class="od-item-name">
-                                        {{ $item->product->name ?? 'Product unavailable' }}
+                                        <?php echo e($item->product->name ?? 'Product unavailable'); ?>
+
                                     </div>
                                     <div class="od-item-meta">
-                                        &#8369;{{ number_format($item->price, 2) }} &times; {{ $item->quantity }}
+                                        &#8369;<?php echo e(number_format($item->price, 2)); ?> &times; <?php echo e($item->quantity); ?>
+
                                     </div>
                                 </div>
-                                <div class="od-item-price">&#8369;{{ number_format($item->subtotal, 2) }}</div>
+                                <div class="od-item-price">&#8369;<?php echo e(number_format($item->subtotal, 2)); ?></div>
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                        {{-- Totals --}}
+                        
                         <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1.5px solid var(--c-border);">
                             <div class="od-total-row">
                                 <span>Subtotal</span>
-                                <strong>&#8369;{{ number_format($order->orderItems->sum('subtotal'), 2) }}</strong>
+                                <strong>&#8369;<?php echo e(number_format($order->orderItems->sum('subtotal'), 2)); ?></strong>
                             </div>
                             <div class="od-total-row free">
                                 <span>Shipping</span>
                                 <strong>
-                                    @if(isset($order->shipping) && $order->shipping > 0)
-                                        &#8369;{{ number_format($order->shipping, 2) }}
-                                    @else
+                                    <?php if(isset($order->shipping) && $order->shipping > 0): ?>
+                                        &#8369;<?php echo e(number_format($order->shipping, 2)); ?>
+
+                                    <?php else: ?>
                                         <i class="fas fa-check-circle me-1" aria-hidden="true"></i>Free
-                                    @endif
+                                    <?php endif; ?>
                                 </strong>
                             </div>
                             <hr class="od-grand-divider">
                             <div class="od-grand-total">
                                 <span class="od-grand-label">Total</span>
                                 <span class="od-grand-amount">
-                                    &#8369;{{ number_format($order->orderItems->sum('subtotal') + ($order->shipping ?? 0), 2) }}
+                                    &#8369;<?php echo e(number_format($order->orderItems->sum('subtotal') + ($order->shipping ?? 0), 2)); ?>
+
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Notes (if any) --}}
-                @if(!empty($order->notes))
+                
+                <?php if(!empty($order->notes)): ?>
                     <div class="od-card">
                         <div class="od-card-header">
                             <div class="od-card-header-icon"><i class="fas fa-sticky-note" aria-hidden="true"></i></div>
                             <h5>Order Notes</h5>
                         </div>
                         <div class="od-card-body" style="font-size:0.9rem;color:var(--c-text-soft);">
-                            {{ $order->notes }}
+                            <?php echo e($order->notes); ?>
+
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
 
             </div>
 
-            {{-- ── Right column: Shipping + Payment ── --}}
+            
             <div class="col-lg-4">
 
-                {{-- Shipping details --}}
+                
                 <div class="od-card">
                     <div class="od-card-header">
                         <div class="od-card-header-icon"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>
@@ -561,37 +568,38 @@
                     <div class="od-card-body">
                         <div class="od-info-row">
                             <span class="od-info-label">Name</span>
-                            <span class="od-info-value">{{ $order->user->name }}</span>
+                            <span class="od-info-value"><?php echo e($order->user->name); ?></span>
                         </div>
-                        @if($order->phone)
+                        <?php if($order->phone): ?>
                             <div class="od-info-row">
                                 <span class="od-info-label">Phone</span>
-                                <span class="od-info-value">{{ $order->phone }}</span>
+                                <span class="od-info-value"><?php echo e($order->phone); ?></span>
                             </div>
-                        @endif
+                        <?php endif; ?>
                         <div class="od-info-row">
                             <span class="od-info-label">Address</span>
-                            <span class="od-info-value">{{ $order->shipping_address }}</span>
+                            <span class="od-info-value"><?php echo e($order->shipping_address); ?></span>
                         </div>
-                        @if(!empty($order->shipping_city))
+                        <?php if(!empty($order->shipping_city)): ?>
                             <div class="od-info-row">
                                 <span class="od-info-label">City</span>
                                 <span class="od-info-value">
-                                    {{ $order->shipping_city }}
-                                    @if(!empty($order->shipping_postcode)), {{ $order->shipping_postcode }}@endif
+                                    <?php echo e($order->shipping_city); ?>
+
+                                    <?php if(!empty($order->shipping_postcode)): ?>, <?php echo e($order->shipping_postcode); ?><?php endif; ?>
                                 </span>
                             </div>
-                        @endif
-                        @if(!empty($order->shipping_country))
+                        <?php endif; ?>
+                        <?php if(!empty($order->shipping_country)): ?>
                             <div class="od-info-row">
                                 <span class="od-info-label">Country</span>
-                                <span class="od-info-value">{{ $order->shipping_country }}</span>
+                                <span class="od-info-value"><?php echo e($order->shipping_country); ?></span>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                {{-- Payment info --}}
+                
                 <div class="od-card">
                     <div class="od-card-header">
                         <div class="od-card-header-icon"><i class="fas fa-credit-card" aria-hidden="true"></i></div>
@@ -601,40 +609,43 @@
                         <div class="od-info-row">
                             <span class="od-info-label">Method</span>
                             <span class="od-info-value">
-                                {{ ucfirst(str_replace('_', ' ', $order->payment_method ?? '—')) }}
+                                <?php echo e(ucfirst(str_replace('_', ' ', $order->payment_method ?? '—'))); ?>
+
                             </span>
                         </div>
                         <div class="od-info-row">
                             <span class="od-info-label">Status</span>
                             <span class="od-info-value">
-                                @if($order->payment_status === 'paid')
+                                <?php if($order->payment_status === 'paid'): ?>
                                     <span class="pay-badge pay-badge-paid">
                                         <i class="fas fa-check-circle" aria-hidden="true"></i> Paid
                                     </span>
-                                @else
+                                <?php else: ?>
                                     <span class="pay-badge pay-badge-pending">
                                         <i class="fas fa-hourglass-half" aria-hidden="true"></i>
-                                        {{ ucfirst($order->payment_status ?? 'Pending') }}
+                                        <?php echo e(ucfirst($order->payment_status ?? 'Pending')); ?>
+
                                     </span>
-                                @endif
+                                <?php endif; ?>
                             </span>
                         </div>
                         <div class="od-info-row">
                             <span class="od-info-label">Date</span>
                             <span class="od-info-value" style="font-size:0.82rem;">
-                                {{ $order->created_at->format('M d, Y') }}
+                                <?php echo e($order->created_at->format('M d, Y')); ?>
+
                             </span>
                         </div>
                     </div>
                 </div>
 
-                {{-- Actions --}}
+                
                 <div class="d-flex flex-column gap-2">
-                    <a href="{{ route('profile.orders') }}" class="btn-back-orders">
+                    <a href="<?php echo e(route('profile.orders')); ?>" class="btn-back-orders">
                         <i class="fas fa-arrow-left" aria-hidden="true"></i>
                         Back to My Orders
                     </a>
-                    <a href="{{ route('products.index') }}" class="btn-shop-again">
+                    <a href="<?php echo e(route('products.index')); ?>" class="btn-shop-again">
                         <i class="fas fa-store" aria-hidden="true"></i>
                         Shop Again
                     </a>
@@ -647,4 +658,6 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/profile/orders-show.blade.php ENDPATH**/ ?>
