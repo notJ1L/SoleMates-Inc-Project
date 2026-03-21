@@ -77,14 +77,19 @@
             left: 0;
             right: 0;
             z-index: 1030;
-            background: var(--c-white);
-            border-bottom: 1px solid var(--c-border);
-            transition: box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(228, 226, 220, 0.6);
+            transition: background 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease), backdrop-filter 0.3s var(--ease);
             height: var(--nav-h);
         }
 
         .sm-nav.is-scrolled {
-            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            box-shadow: 0 2px 28px rgba(0, 0, 0, 0.09);
             border-bottom-color: transparent;
         }
 
@@ -607,6 +612,109 @@
             .sm-btn-ghost,
             .sm-btn-solid { flex: 1; text-align: center; justify-content: center; display: flex; }
         }
+
+        /* ═══════════════════════════════════════════════════════════
+           SCROLL-REVEAL ANIMATION SYSTEM
+           ─ CSS only activates when JS has confirmed it is running.
+             The script adds .sm-js to <html> immediately, so if JS
+             is blocked or fails, content stays fully visible.
+           ─ Usage: data-reveal="up|down|left|right|scale|fade"
+                    data-delay="1".."8" for staggered groups
+        ═══════════════════════════════════════════════════════════ */
+
+        /* Only hide elements when JS is confirmed running */
+        .sm-js [data-reveal] {
+            opacity: 0;
+            transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
+            will-change: opacity, transform;
+        }
+
+        .sm-js [data-reveal="up"]    { transform: translateY(32px); }
+        .sm-js [data-reveal="down"]  { transform: translateY(-32px); }
+        .sm-js [data-reveal="left"]  { transform: translateX(-32px); }
+        .sm-js [data-reveal="right"] { transform: translateX(32px); }
+        .sm-js [data-reveal="scale"] { transform: scale(0.92) translateY(18px); }
+        .sm-js [data-reveal="fade"]  { transform: none; }
+
+        /* Revealed — JS adds this class via IntersectionObserver */
+        .sm-js [data-reveal].is-revealed {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        /* Stagger delay helpers — only apply when hidden */
+        .sm-js [data-reveal][data-delay="1"] { transition-delay: 80ms;  }
+        .sm-js [data-reveal][data-delay="2"] { transition-delay: 160ms; }
+        .sm-js [data-reveal][data-delay="3"] { transition-delay: 240ms; }
+        .sm-js [data-reveal][data-delay="4"] { transition-delay: 320ms; }
+        .sm-js [data-reveal][data-delay="5"] { transition-delay: 400ms; }
+        .sm-js [data-reveal][data-delay="6"] { transition-delay: 480ms; }
+        .sm-js [data-reveal][data-delay="7"] { transition-delay: 560ms; }
+        .sm-js [data-reveal][data-delay="8"] { transition-delay: 640ms; }
+
+        /* Once revealed, remove stagger so re-reads don't delay */
+        .sm-js [data-reveal].is-revealed { transition-delay: 0ms !important; }
+
+        /* ── Hero load animations (CSS only, no Observer needed) ── */
+        .ha {
+            animation: haFadeUp 0.72s var(--ease) both;
+        }
+        .ha-1 { animation-delay: 0.06s; }
+        .ha-2 { animation-delay: 0.18s; }
+        .ha-3 { animation-delay: 0.30s; }
+        .ha-4 { animation-delay: 0.44s; }
+        .ha-5 { animation-delay: 0.56s; }
+
+        .ha-right {
+            animation: haFadeRight 0.78s var(--ease) both;
+            animation-delay: 0.28s;
+        }
+
+        @keyframes haFadeUp {
+            from { opacity: 0; transform: translateY(26px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        @keyframes haFadeRight {
+            from { opacity: 0; transform: translateX(26px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* ── Button hover micro-interactions ── */
+        .btn-hero-primary,
+        .btn-hero-secondary,
+        .btn-prod-view,
+        .btn-prod-cart,
+        .btn-checkout,
+        .btn-place-order,
+        .btn-shop-more,
+        .btn-mission,
+        .sm-btn-solid {
+            transition: background 0.2s var(--ease),
+                        color 0.2s var(--ease),
+                        transform 0.2s var(--ease),
+                        box-shadow 0.2s var(--ease),
+                        border-color 0.2s var(--ease);
+        }
+
+        /* ── Product card hover polish ── */
+        .prod-card {
+            transition: transform 0.28s var(--ease),
+                        box-shadow 0.28s var(--ease),
+                        border-color 0.28s var(--ease);
+        }
+
+        /* Respect reduced-motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .sm-js [data-reveal],
+            .ha,
+            .ha-right {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+                animation: none !important;
+            }
+        }
     </style>
 
     <?php echo $__env->yieldContent('head'); ?>
@@ -900,17 +1008,20 @@
 (function () {
     'use strict';
 
-    /* ── Scroll shadow on navbar ── */
+    /* ── Mark <html> so animation CSS activates immediately ── */
+    document.documentElement.classList.add('sm-js');
+
+    /* ── Scroll shadow + glassmorphism intensity on navbar ── */
     var nav = document.getElementById('smNav');
     if (nav) {
         window.addEventListener('scroll', function () {
-            nav.classList.toggle('is-scrolled', window.scrollY > 8);
+            nav.classList.toggle('is-scrolled', window.scrollY > 12);
         }, { passive: true });
     }
 
     /* ── Mobile nav toggler ── */
-    var toggler  = document.getElementById('smToggler');
-    var collapse = document.getElementById('smCollapse');
+    var toggler     = document.getElementById('smToggler');
+    var collapse    = document.getElementById('smCollapse');
     var togglerIcon = document.getElementById('smTogglerIcon');
 
     if (toggler && collapse) {
@@ -945,6 +1056,67 @@
             if (form) form.submit();
         });
     });
+
+    /* ══════════════════════════════════════════════════════════
+       SCROLL-REVEAL — Intersection Observer
+       ─ Gated behind .sm-js so elements are never permanently
+         hidden if this block throws or IO is unsupported.
+       ─ Double requestAnimationFrame ensures the browser has
+         actually painted elements as opacity:0 BEFORE the
+         observer starts watching — this is what makes the
+         transition visible rather than instant.
+       ─ threshold:0 means "any pixel visible = trigger".
+       ─ rootMargin shrinks the bottom of the viewport by 60px
+         so elements animate just before they reach the edge.
+    ══════════════════════════════════════════════════════════ */
+    (function initReveal() {
+
+        /* Fallback: show everything if reduced-motion or no IO support */
+        var prefersReduced = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReduced || !('IntersectionObserver' in window)) {
+            document.querySelectorAll('[data-reveal]').forEach(function (el) {
+                el.classList.add('is-revealed');
+            });
+            return;
+        }
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    var el    = entry.target;
+                    var delay = parseInt(el.getAttribute('data-delay') || '0', 10) * 80;
+
+                    if (delay > 0) {
+                        setTimeout(function () { el.classList.add('is-revealed'); }, delay);
+                    } else {
+                        el.classList.add('is-revealed');
+                    }
+
+                    observer.unobserve(el); /* fire once per element */
+                }
+            });
+        }, {
+            threshold:   0,                      /* any pixel visible = trigger */
+            rootMargin: '0px 0px -60px 0px'     /* 60px before viewport bottom  */
+        });
+
+        /*
+         * Double rAF pattern:
+         * rAF-1 → browser has scheduled a paint
+         * rAF-2 → browser has completed that paint (opacity:0 is on screen)
+         * Now we start observing — so the first reveal IS an animated transition.
+         */
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                document.querySelectorAll('[data-reveal]').forEach(function (el) {
+                    observer.observe(el);
+                });
+            });
+        });
+
+    })();
 
 })();
 </script>

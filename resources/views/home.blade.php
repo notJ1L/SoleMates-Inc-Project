@@ -714,19 +714,19 @@
 
             {{-- Left: Copy --}}
             <div class="col-lg-7">
-                <p class="hero-kicker">SoleMates Footwear &nbsp;·&nbsp; {{ date('Y') }} Collection</p>
+                <p class="hero-kicker ha ha-1">SoleMates Footwear &nbsp;·&nbsp; {{ date('Y') }} Collection</p>
 
-                <h1 class="hero-title">
+                <h1 class="hero-title ha ha-2">
                     Step into your<br>
                     <span class="hero-highlight">perfect pair.</span>
                 </h1>
 
-                <p class="hero-subtitle">
+                <p class="hero-subtitle ha ha-3">
                     Thoughtfully curated footwear for every walk of life — from everyday errands
                     to milestone moments. Lightweight comfort, elevated style, pairs that truly last.
                 </p>
 
-                <div class="hero-cta">
+                <div class="hero-cta ha ha-4">
                     <a href="{{ route('products.index') }}" class="btn-hero-primary">
                         <i class="fas fa-store" aria-hidden="true"></i>
                         Shop All Products
@@ -737,7 +737,7 @@
                     </a>
                 </div>
 
-                <div class="hero-trust">
+                <div class="hero-trust ha ha-5">
                     <span class="hero-trust-badge">
                         <i class="fas fa-shield-alt" aria-hidden="true"></i>
                         Secure checkout
@@ -755,7 +755,7 @@
 
             {{-- Right: Visual Card --}}
             <div class="col-lg-5">
-                <div class="hero-card" aria-hidden="true">
+                <div class="hero-card ha-right" aria-hidden="true">
                     <div class="hero-card-pill">New arrivals weekly</div>
                     <div class="hero-card-inner">
                         <div>
@@ -874,10 +874,10 @@
 
 
 {{-- ════════════════════════════════════════════════════════════
-     CATEGORY BROWSE STRIP
+     CATEGORY BROWSE STRIP — hidden on search results page
 ════════════════════════════════════════════════════════════ --}}
-@if(isset($categories) && $categories->count())
-<div class="cat-strip" role="navigation" aria-label="Browse by category">
+@if(!isset($results) && isset($categories) && $categories->count())
+<div class="cat-strip" data-reveal="fade" role="navigation" aria-label="Browse by category">
     <div class="container">
         <div class="cat-strip-inner">
             <span class="cat-strip-label">Browse:</span>
@@ -897,12 +897,13 @@
 
 
 {{-- ════════════════════════════════════════════════════════════
-     FEATURED PICKS CAROUSEL
+     FEATURED PICKS CAROUSEL — hidden on search results page
 ════════════════════════════════════════════════════════════ --}}
+@if(!isset($results))
 <section id="featured" class="hp-section" aria-label="Featured picks">
     <div class="container">
 
-        <div class="hp-sec-head">
+        <div class="hp-sec-head" data-reveal="up">
             <div>
                 <p class="hp-sec-kicker">Handpicked</p>
                 <h2 class="hp-sec-title">Featured Picks</h2>
@@ -926,7 +927,7 @@
         @if(isset($featuredProducts) && $featuredProducts->count())
 
             {{-- Carousel --}}
-            <div class="carousel-outer" id="featuredCarousel">
+            <div class="carousel-outer" id="featuredCarousel" data-reveal="up" data-delay="1">
                 <div class="carousel-viewport">
                     <div class="carousel-track" id="featuredTrack">
                         @foreach($featuredProducts as $product)
@@ -1023,7 +1024,7 @@
             <div class="carousel-dots" id="featuredDots" role="tablist" aria-label="Carousel position"></div>
 
         @else
-            <div class="hp-empty">
+            <div class="hp-empty" data-reveal="scale">
                 <div class="hp-empty-icon" aria-hidden="true">&#128095;</div>
                 <p>
                     We're still curating our featured picks.<br>
@@ -1034,16 +1035,17 @@
 
     </div>
 </section>
+@endif {{-- end @if(!isset($results)) for featured --}}
 
 
 {{-- ════════════════════════════════════════════════════════════
      NEW ARRIVALS GRID
 ════════════════════════════════════════════════════════════ --}}
-@if(isset($newArrivals) && $newArrivals->count())
+@if(!isset($results) && isset($newArrivals) && $newArrivals->count())
 <section class="hp-section hp-section-alt arrivals-grid" aria-label="New arrivals">
     <div class="container">
 
-        <div class="hp-sec-head">
+        <div class="hp-sec-head" data-reveal="up">
             <div>
                 <p class="hp-sec-kicker">Just Dropped</p>
                 <h2 class="hp-sec-title">New Arrivals</h2>
@@ -1055,7 +1057,9 @@
 
         <div class="row g-3">
             @foreach($newArrivals->take(8) as $product)
-                <div class="col-6 col-md-4 col-lg-3">
+                <div class="col-6 col-md-4 col-lg-3"
+                     data-reveal="scale"
+                     data-delay="{{ ($loop->index % 4) + 1 }}">
                     <div class="prod-card">
 
                         <a href="{{ route('products.show', $product->id) }}"
@@ -1129,7 +1133,7 @@
             @endforeach
         </div>
 
-        <div class="text-center mt-4">
+        <div class="text-center mt-4" data-reveal="up">
             <a href="{{ route('products.index', ['sort' => 'latest']) }}"
                class="btn-hero-secondary d-inline-flex">
                 <i class="fas fa-th" aria-hidden="true"></i>
@@ -1139,7 +1143,7 @@
 
     </div>
 </section>
-@endif
+@endif {{-- end @if(!isset($results)) for new arrivals --}}
 
 @endsection
 

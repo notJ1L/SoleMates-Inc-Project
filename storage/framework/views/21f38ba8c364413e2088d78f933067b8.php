@@ -1,7 +1,6 @@
-@extends('layouts.app')
-@section('title', 'Order Confirmed — SoleMates Footwear')
+<?php $__env->startSection('title', 'Order Confirmed — SoleMates Footwear'); ?>
 
-@section('head')
+<?php $__env->startSection('head'); ?>
 <style>
 /* ════ SUCCESS PAGE ════ */
 .success-page { padding: 3rem 0 5rem; }
@@ -131,15 +130,15 @@
 }
 .email-notice i { color: var(--c-gold-dark); }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
-{{-- Breadcrumb --}}
+<?php $__env->startSection('content'); ?>
+
 <div class="cart-breadcrumb">
   <div class="container">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>">Home</a></li>
         <li class="breadcrumb-item active" aria-current="page">Order Confirmed</li>
       </ol>
     </nav>
@@ -151,7 +150,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-7">
 
-        {{-- Header --}}
+        
         <div class="text-center mb-4" data-reveal="up">
           <div class="success-icon-wrap" aria-hidden="true">
             <i class="fas fa-check"></i>
@@ -163,83 +162,85 @@
           </p>
         </div>
 
-        {{-- Order Card --}}
+        
         <div class="order-card" data-reveal="up" data-delay="1">
 
           <div class="order-card-header">
             <div>
               <div style="font-size:0.7rem;color:var(--c-text-muted);font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Order Number</div>
-              <div class="order-number">{{ $order->order_number }}</div>
+              <div class="order-number"><?php echo e($order->order_number); ?></div>
             </div>
             <div class="d-flex gap-2 flex-wrap">
               <span class="order-status-badge pending">
                 <i class="fas fa-clock" aria-hidden="true"></i>
-                {{ ucfirst($order->status) }}
+                <?php echo e(ucfirst($order->status)); ?>
+
               </span>
-              <span class="order-status-badge {{ $order->payment_status === 'paid' ? 'paid' : 'pending' }}">
-                <i class="fas fa-{{ $order->payment_status === 'paid' ? 'check-circle' : 'hourglass-half' }}" aria-hidden="true"></i>
-                {{ ucfirst($order->payment_status) }}
+              <span class="order-status-badge <?php echo e($order->payment_status === 'paid' ? 'paid' : 'pending'); ?>">
+                <i class="fas fa-<?php echo e($order->payment_status === 'paid' ? 'check-circle' : 'hourglass-half'); ?>" aria-hidden="true"></i>
+                <?php echo e(ucfirst($order->payment_status)); ?>
+
               </span>
             </div>
           </div>
 
           <div class="order-card-body">
 
-            {{-- Meta grid --}}
+            
             <div class="order-meta-grid">
               <div class="order-meta-item">
                 <span class="order-meta-label">Order Date</span>
-                <span class="order-meta-value">{{ $order->created_at->format('M d, Y') }}</span>
+                <span class="order-meta-value"><?php echo e($order->created_at->format('M d, Y')); ?></span>
               </div>
               <div class="order-meta-item">
                 <span class="order-meta-label">Total Amount</span>
-                <span class="order-meta-value">&#8369;{{ number_format($order->total, 2) }}</span>
+                <span class="order-meta-value">&#8369;<?php echo e(number_format($order->total, 2)); ?></span>
               </div>
               <div class="order-meta-item">
                 <span class="order-meta-label">Payment Method</span>
-                <span class="order-meta-value">{{ ucfirst(str_replace('_', ' ', $order->payment_method)) }}</span>
+                <span class="order-meta-value"><?php echo e(ucfirst(str_replace('_', ' ', $order->payment_method))); ?></span>
               </div>
               <div class="order-meta-item">
                 <span class="order-meta-label">Items</span>
-                <span class="order-meta-value">{{ $order->orderItems->count() }} item{{ $order->orderItems->count() !== 1 ? 's' : '' }}</span>
+                <span class="order-meta-value"><?php echo e($order->orderItems->count()); ?> item<?php echo e($order->orderItems->count() !== 1 ? 's' : ''); ?></span>
               </div>
             </div>
 
-            {{-- Items --}}
+            
             <div class="order-items-title">Items Ordered</div>
-            @foreach($order->orderItems as $item)
+            <?php $__currentLoopData = $order->orderItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
               <div class="order-line">
                 <div>
-                  <div class="order-line-name">{{ $item->product->name }}</div>
-                  <div class="order-line-meta">&#8369;{{ number_format($item->price, 2) }} &times; {{ $item->quantity }}</div>
+                  <div class="order-line-name"><?php echo e($item->product->name); ?></div>
+                  <div class="order-line-meta">&#8369;<?php echo e(number_format($item->price, 2)); ?> &times; <?php echo e($item->quantity); ?></div>
                 </div>
-                <div class="order-line-price">&#8369;{{ number_format($item->subtotal, 2) }}</div>
+                <div class="order-line-price">&#8369;<?php echo e(number_format($item->subtotal, 2)); ?></div>
               </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
             <div class="order-total-row">
               <span class="order-total-label">Order Total</span>
-              <span class="order-total-amount">&#8369;{{ number_format($order->total, 2) }}</span>
+              <span class="order-total-amount">&#8369;<?php echo e(number_format($order->total, 2)); ?></span>
             </div>
 
-            {{-- Shipping info --}}
+            
             <div class="shipping-info">
               <div class="shipping-info-title">Delivery Details</div>
-              <div class="shipping-info-row"><strong>Name:</strong> {{ $order->user->name }}</div>
-              <div class="shipping-info-row"><strong>Phone:</strong> {{ $order->phone }}</div>
-              <div class="shipping-info-row"><strong>Address:</strong> {{ $order->shipping_address }}</div>
+              <div class="shipping-info-row"><strong>Name:</strong> <?php echo e($order->user->name); ?></div>
+              <div class="shipping-info-row"><strong>Phone:</strong> <?php echo e($order->phone); ?></div>
+              <div class="shipping-info-row"><strong>Address:</strong> <?php echo e($order->shipping_address); ?></div>
             </div>
 
           </div>
         </div>
 
-        {{-- Actions --}}
+        
         <div class="d-flex justify-content-center gap-3 flex-wrap mt-4" data-reveal="up" data-delay="2">
-          <a href="{{ route('products.index') }}" class="btn-shop-more">
+          <a href="<?php echo e(route('products.index')); ?>" class="btn-shop-more">
             <i class="fas fa-store" aria-hidden="true"></i>
             Continue Shopping
           </a>
-          <a href="{{ route('profile.orders') }}" class="btn-view-orders">
+          <a href="<?php echo e(route('profile.orders')); ?>" class="btn-view-orders">
             <i class="fas fa-box" aria-hidden="true"></i>
             View My Orders
           </a>
@@ -247,11 +248,13 @@
 
         <div class="email-notice" data-reveal="up" data-delay="3">
           <i class="fas fa-envelope" aria-hidden="true"></i>
-          A confirmation has been sent to <strong>{{ $order->user->email }}</strong>
+          A confirmation has been sent to <strong><?php echo e($order->user->email); ?></strong>
         </div>
 
       </div>
     </div>
   </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/checkout/success.blade.php ENDPATH**/ ?>
