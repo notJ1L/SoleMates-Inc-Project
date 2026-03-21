@@ -2,8 +2,8 @@
 <?php $__env->startSection('page-title', 'Dashboard'); ?>
 
 <?php $__env->startSection('topbar-actions'); ?>
-    <a href="<?php echo e(route('admin.products.create')); ?>" class="btn btn-sm" style="background:var(--accent);color:var(--black);font-size:0.78rem;font-weight:700;border-radius:3px;padding:0.4rem 1rem;border:none;">
-        <i class="bi bi-plus-lg me-1"></i> Add Product
+    <a href="<?php echo e(route('admin.products.create')); ?>" class="btn-primary-admin">
+        <i class="bi bi-plus-lg"></i> New Product
     </a>
 <?php $__env->stopSection(); ?>
 
@@ -45,40 +45,47 @@
 
     
     <div class="col-lg-7">
-        <div style="background:var(--white);border-radius:6px;border:1px solid rgba(0,0,0,0.07);overflow:hidden;">
-            <div style="padding:1.1rem 1.5rem; border-bottom:1px solid rgba(0,0,0,0.07); display:flex; justify-content:space-between; align-items:center;">
-                <div style="font-family:var(--font-display);font-size:1.05rem;font-weight:700;">Recent Orders</div>
-                <a href="<?php echo e(route('admin.orders.index')); ?>" style="font-size:0.75rem;color:var(--accent);text-decoration:none;">View all →</a>
+        <div class="panel h-100">
+            <div class="panel-header">
+                <span class="panel-title">Recent Orders</span>
+                <a href="<?php echo e(route('admin.orders.index')); ?>" style="font-size:0.775rem;color:var(--accent);text-decoration:none;font-weight:500;">View all →</a>
             </div>
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Customer</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $__empty_1 = true; $__currentLoopData = $recentOrders ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td><span style="font-family:var(--font-mono);font-size:0.75rem;">#<?php echo e($order->id); ?></span></td>
-                            <td>
-                                <div style="font-size:0.85rem;font-weight:600;"><?php echo e($order->user->name); ?></div>
-                                <div style="font-size:0.72rem;color:var(--warm-gray);"><?php echo e($order->user->email); ?></div>
-                            </td>
-                            <td><span style="font-family:var(--font-mono);font-size:0.85rem;">₱<?php echo e(number_format($order->total, 2)); ?></span></td>
-                            <td>
-                                <span class="badge-status badge-<?php echo e($order->status); ?>"><?php echo e(ucfirst($order->status)); ?></span>
-                            </td>
-                            <td><span style="font-size:0.75rem;color:var(--warm-gray);"><?php echo e($order->created_at->format('M d')); ?></span></td>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
                         </tr>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <tr><td colspan="5" style="text-align:center;color:var(--warm-gray);padding:2rem;font-size:0.85rem;">No orders yet.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php $__empty_1 = true; $__currentLoopData = $recentOrders ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <tr>
+                            <td><span class="mono">#<?php echo e($order->id); ?></span></td>
+                            <td>
+                                <div style="font-weight:600;"><?php echo e($order->user->name); ?></div>
+                                <div class="subtext"><?php echo e($order->user->email); ?></div>
+                            </td>
+                            <td><span class="mono">₱<?php echo e(number_format($order->total, 2)); ?></span></td>
+                            <td><span class="badge-pill badge-<?php echo e($order->status); ?>"><?php echo e(ucfirst($order->status)); ?></span></td>
+                            <td><span style="font-size:0.775rem;color:var(--text-muted);"><?php echo e($order->created_at->format('M d, Y')); ?></span></td>
+                        </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <i class="bi bi-bag"></i>
+                                    <p>No orders yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -149,6 +156,135 @@
     </div>
 
 </div>
+
+
+<div class="row g-3 mt-1">
+
+    
+    <div class="col-lg-7">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">
+                    <i class="bi bi-bar-chart-line" style="color:var(--accent);margin-right:6px;"></i>
+                    Yearly Sales — <?php echo e($currentYear ?? now()->year); ?>
+
+                </span>
+                <a href="<?php echo e(route('admin.charts.index')); ?>" style="font-size:0.775rem;color:var(--accent);text-decoration:none;font-weight:500;">Full report →</a>
+            </div>
+            <div style="padding:1rem 1.25rem 0.75rem;position:relative;height:240px;">
+                <canvas id="dashYearlyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-lg-5">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">
+                    <i class="bi bi-pie-chart" style="color:var(--purple);margin-right:6px;"></i>
+                    Sales by Product
+                </span>
+                <span style="font-size:0.75rem;color:var(--text-muted);">% of total revenue</span>
+            </div>
+            <div style="padding:1rem 1.25rem 0.75rem;display:flex;align-items:center;justify-content:center;height:240px;">
+                <?php if(isset($productSales) && $productSales->isNotEmpty()): ?>
+                    <canvas id="dashPieChart"></canvas>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <i class="bi bi-pie-chart" style="font-size:2rem;opacity:0.3;"></i>
+                        <p>No completed orders yet.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+</div>
 <?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('scripts'); ?>
+<?php
+    $dashMonthNames = $monthNames ?? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    $dashYearlyData = $yearlyData ?? array_fill(0, 12, 0);
+    $dashYear       = $currentYear ?? now()->year;
+?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+    Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+    Chart.defaults.color       = '#6B6560';
+
+    /* Yearly Sales Bar */
+    new Chart(document.getElementById('dashYearlyChart'), {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($dashMonthNames, 15, 512) ?>,
+            datasets: [{
+                label: 'Revenue (₱)',
+                data:  <?php echo json_encode($dashYearlyData, 15, 512) ?>,
+                backgroundColor: 'rgba(200,169,110,0.78)',
+                borderColor:     '#C8A96E',
+                borderWidth:     1,
+                borderRadius:    4,
+                borderSkipped:   false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ' ₱' + ctx.parsed.y.toLocaleString('en-PH', { minimumFractionDigits: 2 })
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: v => '₱' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v) }
+                }
+            }
+        }
+    });
+
+    /* Product Pie */
+    <?php if(isset($productSales) && $productSales->isNotEmpty()): ?>
+    const _pieColors = [
+        '#C8A96E','#2563EB','#16A34A','#7C3AED','#D97706',
+        '#DC2626','#0891B2','#DB2777','#65A30D','#EA580C',
+    ];
+    new Chart(document.getElementById('dashPieChart'), {
+        type: 'pie',
+        data: {
+            labels: <?php echo json_encode($productSales->pluck('name'), 15, 512) ?>,
+            datasets: [{
+                data: <?php echo json_encode($productSales->pluck('total')->map(fn($v) => round((float)$v, 2))->values(), 512) ?>,
+                backgroundColor: _pieColors.slice(0, <?php echo e($productSales->count()); ?>),
+                borderColor: '#fff',
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 10, boxWidth: 12, font: { size: 10 } } },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const total = ctx.dataset.data.reduce((a,b) => a+b, 0);
+                            const pct   = total > 0 ? (ctx.parsed / total * 100).toFixed(1) : '0.0';
+                            return ` ₱${ctx.parsed.toLocaleString('en-PH',{minimumFractionDigits:2})} (${pct}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    <?php endif; ?>
+</script>
 
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>
