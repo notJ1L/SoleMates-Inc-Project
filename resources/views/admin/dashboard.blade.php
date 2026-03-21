@@ -4,9 +4,7 @@
 @section('page-title', 'Dashboard')
 
 @section('topbar-actions')
-    <a href="{{ route('admin.products.create') }}" class="btn-primary-admin">
-        <i class="bi bi-plus-lg"></i> New Product
-    </a>
+    {{-- no additional actions for dashboard --}}
 @endsection
 
 @section('content')

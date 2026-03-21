@@ -2,9 +2,7 @@
 <?php $__env->startSection('page-title', 'Dashboard'); ?>
 
 <?php $__env->startSection('topbar-actions'); ?>
-    <a href="<?php echo e(route('admin.products.create')); ?>" class="btn-primary-admin">
-        <i class="bi bi-plus-lg"></i> New Product
-    </a>
+    
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
