@@ -207,7 +207,7 @@
     $dashYearlyData = $yearlyData ?? array_fill(0, 12, 0);
     $dashYear       = $currentYear ?? now()->year;
 ?>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="<?php echo e(asset('js/chart.umd.js')); ?>"></script>
 <script>
     Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
     Chart.defaults.color       = '#6B6560';
@@ -284,5 +284,6 @@
     });
     <?php endif; ?>
 </script>
+<?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

@@ -209,7 +209,7 @@
     $dashYearlyData = $yearlyData ?? array_fill(0, 12, 0);
     $dashYear       = $currentYear ?? now()->year;
 @endphp
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="{{ asset('js/chart.umd.js') }}"></script>
 <script>
     Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
     Chart.defaults.color       = '#6B6560';
@@ -286,3 +286,4 @@
     });
     @endif
 </script>
+@endsection

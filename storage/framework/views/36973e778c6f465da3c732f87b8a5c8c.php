@@ -146,7 +146,7 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('scripts'); ?>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="<?php echo e(asset('js/chart.umd.js')); ?>"></script>
 <script>
     Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
     Chart.defaults.color       = '#6B6560';
