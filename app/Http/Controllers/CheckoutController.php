@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItems;
 use App\Models\Cart;
+use App\Notifications\OrderCompleted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -116,6 +117,9 @@ class CheckoutController extends Controller
 
             // Clear cart from database
             Cart::clearUserCart(Auth::id());
+
+            // Send order confirmation email
+            $order->user->notify(new OrderCompleted($order));
 
             return redirect()->route('checkout.success', $order->id)->with('success', 'Order placed successfully!');
 

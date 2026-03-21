@@ -13,21 +13,15 @@ class Order extends Model
         'order_number',
         'total_amount',
         'status',
-        'shipping_address',
-        'phone',
         'payment_method',
         'payment_status',
-        'status',
         'shipping_address',
         'phone',
         'shipping',
-        'payment_method',
-        'payment_status',
         'notes',
         'shipping_city',
         'shipping_postcode',
         'shipping_country',
-        'order_number',
     ];
 
     public function user(): BelongsTo

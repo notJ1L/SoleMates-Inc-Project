@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Notifications\OrderCompleted;
+use App\Notifications\OrderStatusUpdated;
+use App\Notifications\OrderThankYou;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -35,10 +38,20 @@ class OrderController extends Controller
         $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
-        // Send email notification if order is marked as completed
-        if ($request->status === 'completed' && $oldStatus !== 'completed') {
-            // TODO: Send email notification
-            // event(new OrderStatusUpdated($order));
+        // Update payment status when order is marked as completed
+        if ($request->status === 'completed') {
+            $order->update(['payment_status' => 'paid']);
+        }
+
+        // Send email notification for status change
+        if ($oldStatus !== $request->status) {
+            if ($request->status === 'completed' && $oldStatus !== 'completed') {
+                // Send thank you email instead of status update when completed
+                $order->user->notify(new OrderThankYou($order));
+            } else {
+                // Send regular status update for other status changes
+                $order->user->notify(new OrderStatusUpdated($order, $oldStatus));
+            }
         }
 
         return redirect()->back()->with('success', 'Order status updated successfully.');
