@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Shop — SoleMates Footwear'); ?>
 
-@section('title', 'Shop — SoleMates Footwear')
-
-@section('head')
+<?php $__env->startSection('head'); ?>
 <style>
     .filter-title {
         font-family: var(--font-mono);
@@ -144,32 +142,34 @@
     .empty-state .empty-icon { font-size: 4rem; opacity: 0.25; margin-bottom: 1rem; }
     .empty-state h5 { font-family: var(--font-display); color: var(--black); }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
-@php
+<?php $__env->startSection('content'); ?>
+<?php
     $activeCat   = $categories->firstWhere('id', request('category_id'));
     $activeBrand = $brands->firstWhere('id', request('brand_id'));
     $hasFilters  = request('search') || request('category_id') || request('brand_id') || request('price_min') || request('price_max');
-@endphp
+?>
 
-{{-- Page Header --}}
+
 <div class="page-header">
     <div class="container">
         <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>">Home</a></li>
             <li class="breadcrumb-item active">Shop</li>
         </ol></nav>
         <h1>
-            @if(request('search'))
-                Results for "{{ request('search') }}"
-            @elseif(request('brand_id') && isset($activeBrand))
-                {{ $activeBrand->name }}
-            @elseif(request('category_id') && isset($activeCat))
-                {{ $activeCat->name }}
-            @else
+            <?php if(request('search')): ?>
+                Results for "<?php echo e(request('search')); ?>"
+            <?php elseif(request('brand_id') && isset($activeBrand)): ?>
+                <?php echo e($activeBrand->name); ?>
+
+            <?php elseif(request('category_id') && isset($activeCat)): ?>
+                <?php echo e($activeCat->name); ?>
+
+            <?php else: ?>
                 All Products
-            @endif
+            <?php endif; ?>
         </h1>
     </div>
 </div>
@@ -177,60 +177,62 @@
 <div class="container py-4">
     <div class="row g-4">
 
-        {{-- ===== SIDEBAR FILTERS ===== --}}
+        
         <div class="col-lg-3">
             <div class="filter-sidebar">
-                <form method="GET" action="{{ route('products.index') }}" id="filterForm">
-                    @if(request('search'))
-                        <input type="hidden" name="search" value="{{ request('search') }}">
-                    @endif
+                <form method="GET" action="<?php echo e(route('products.index')); ?>" id="filterForm">
+                    <?php if(request('search')): ?>
+                        <input type="hidden" name="search" value="<?php echo e(request('search')); ?>">
+                    <?php endif; ?>
 
-                    {{-- Active filters --}}
-                    @if($hasFilters)
+                    
+                    <?php if($hasFilters): ?>
                         <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
                             <span style="font-size:0.75rem;color:var(--warm-gray);">Active:</span>
-                            @if(request('search'))
-                                <a href="{{ route('products.index') }}" class="active-filter">"{{ request('search') }}" <i class="bi bi-x"></i></a>
-                            @endif
-                            @if($activeCat)
-                                <a href="{{ route('products.index', array_merge(request()->except('category_id'), [])) }}" class="active-filter">{{ $activeCat->name }} <i class="bi bi-x"></i></a>
-                            @endif
-                            @if($activeBrand)
-                                <a href="{{ route('products.index', array_merge(request()->except('brand_id'), [])) }}" class="active-filter">{{ $activeBrand->name }} <i class="bi bi-x"></i></a>
-                            @endif
-                            @if(request('price_min') || request('price_max'))
-                                <a href="{{ route('products.index', array_merge(request()->except(['price_min','price_max']), [])) }}" class="active-filter">
-                                    ₱{{ number_format(request('price_min', $priceMin)) }}–{{ number_format(request('price_max', $priceMax)) }} <i class="bi bi-x"></i>
+                            <?php if(request('search')): ?>
+                                <a href="<?php echo e(route('products.index')); ?>" class="active-filter">"<?php echo e(request('search')); ?>" <i class="bi bi-x"></i></a>
+                            <?php endif; ?>
+                            <?php if($activeCat): ?>
+                                <a href="<?php echo e(route('products.index', array_merge(request()->except('category_id'), []))); ?>" class="active-filter"><?php echo e($activeCat->name); ?> <i class="bi bi-x"></i></a>
+                            <?php endif; ?>
+                            <?php if($activeBrand): ?>
+                                <a href="<?php echo e(route('products.index', array_merge(request()->except('brand_id'), []))); ?>" class="active-filter"><?php echo e($activeBrand->name); ?> <i class="bi bi-x"></i></a>
+                            <?php endif; ?>
+                            <?php if(request('price_min') || request('price_max')): ?>
+                                <a href="<?php echo e(route('products.index', array_merge(request()->except(['price_min','price_max']), []))); ?>" class="active-filter">
+                                    ₱<?php echo e(number_format(request('price_min', $priceMin))); ?>–<?php echo e(number_format(request('price_max', $priceMax))); ?> <i class="bi bi-x"></i>
                                 </a>
-                            @endif
+                            <?php endif; ?>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                    {{-- Sort --}}
+                    
                     <div class="filter-card">
                         <div class="filter-title">Sort By</div>
-                        @foreach(['latest' => 'Newest First', 'price_asc' => 'Price: Low to High', 'price_desc' => 'Price: High to Low', 'name' => 'Name A–Z'] as $val => $label)
+                        <?php $__currentLoopData = ['latest' => 'Newest First', 'price_asc' => 'Price: Low to High', 'price_desc' => 'Price: High to Low', 'name' => 'Name A–Z']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $val => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <label class="filter-option">
-                                <input type="radio" name="sort" value="{{ $val }}"
-                                       {{ request('sort', 'latest') === $val ? 'checked' : '' }}
+                                <input type="radio" name="sort" value="<?php echo e($val); ?>"
+                                       <?php echo e(request('sort', 'latest') === $val ? 'checked' : ''); ?>
+
                                        onchange="this.form.submit()">
-                                {{ $label }}
+                                <?php echo e($label); ?>
+
                             </label>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
 
-                    {{-- Price Range --}}
+                    
                     <div class="filter-card">
                         <div class="filter-title">Price Range</div>
                         <div class="d-flex gap-2 align-items-center mb-2">
                             <input type="number" name="price_min" id="price_min"
-                                   value="{{ request('price_min', '') }}"
+                                   value="<?php echo e(request('price_min', '')); ?>"
                                    placeholder="₱ Min" min="0"
                                    class="form-control form-control-sm"
                                    style="font-size:0.8rem;">
                             <span style="color:var(--warm-gray);">—</span>
                             <input type="number" name="price_max" id="price_max"
-                                   value="{{ request('price_max', '') }}"
+                                   value="<?php echo e(request('price_max', '')); ?>"
                                    placeholder="₱ Max" min="0"
                                    class="form-control form-control-sm"
                                    style="font-size:0.8rem;">
@@ -238,151 +240,160 @@
                         <button type="submit" class="btn btn-sm btn-outline-secondary w-100" style="font-size:0.75rem;">Apply Price</button>
                     </div>
 
-                    {{-- Category --}}
-                    @if($categories->count() > 0)
+                    
+                    <?php if($categories->count() > 0): ?>
                     <div class="filter-card">
                         <div class="filter-title">Category</div>
                         <label class="filter-option">
                             <input type="radio" name="category_id" value=""
-                                   {{ !request('category_id') ? 'checked' : '' }}
+                                   <?php echo e(!request('category_id') ? 'checked' : ''); ?>
+
                                    onchange="this.form.submit()"> All
                         </label>
-                        @foreach($categories as $cat)
+                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <label class="filter-option">
-                                <input type="radio" name="category_id" value="{{ $cat->id }}"
-                                       {{ request('category_id') == $cat->id ? 'checked' : '' }}
-                                       onchange="this.form.submit()">
-                                {{ $cat->name }}
-                                <span class="filter-count">{{ $cat->products_count }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                    @endif
+                                <input type="radio" name="category_id" value="<?php echo e($cat->id); ?>"
+                                       <?php echo e(request('category_id') == $cat->id ? 'checked' : ''); ?>
 
-                    {{-- Brand --}}
-                    @if($brands->count() > 0)
+                                       onchange="this.form.submit()">
+                                <?php echo e($cat->name); ?>
+
+                                <span class="filter-count"><?php echo e($cat->products_count); ?></span>
+                            </label>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+                    <?php endif; ?>
+
+                    
+                    <?php if($brands->count() > 0): ?>
                     <div class="filter-card">
                         <div class="filter-title">Brand</div>
                         <label class="filter-option">
                             <input type="radio" name="brand_id" value=""
-                                   {{ !request('brand_id') ? 'checked' : '' }}
+                                   <?php echo e(!request('brand_id') ? 'checked' : ''); ?>
+
                                    onchange="this.form.submit()"> All
                         </label>
-                        @foreach($brands as $br)
+                        <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $br): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <label class="filter-option">
-                                <input type="radio" name="brand_id" value="{{ $br->id }}"
-                                       {{ request('brand_id') == $br->id ? 'checked' : '' }}
+                                <input type="radio" name="brand_id" value="<?php echo e($br->id); ?>"
+                                       <?php echo e(request('brand_id') == $br->id ? 'checked' : ''); ?>
+
                                        onchange="this.form.submit()">
-                                {{ $br->name }}
-                                <span class="filter-count">{{ $br->products_count }}</span>
+                                <?php echo e($br->name); ?>
+
+                                <span class="filter-count"><?php echo e($br->products_count); ?></span>
                             </label>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
-                    @endif
+                    <?php endif; ?>
 
                 </form>
             </div>
         </div>
 
-        {{-- ===== PRODUCT GRID ===== --}}
+        
         <div class="col-lg-9">
             <div class="sort-bar d-flex justify-content-between align-items-center">
                 <span class="result-count">
-                    <strong>{{ $products->total() }}</strong> product{{ $products->total() !== 1 ? 's' : '' }} found
+                    <strong><?php echo e($products->total()); ?></strong> product<?php echo e($products->total() !== 1 ? 's' : ''); ?> found
                 </span>
-                <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem;">
+                <a href="<?php echo e(route('products.index')); ?>" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem;">
                     <i class="bi bi-arrow-counterclockwise me-1"></i>Clear Filters
                 </a>
             </div>
 
-            @if($products->count() > 0)
+            <?php if($products->count() > 0): ?>
                 <div class="row g-3">
-                    @foreach($products as $product)
+                    <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="col-sm-6 col-xl-4">
                             <div class="product-card">
-                                <a href="{{ route('products.show', $product->id) }}" style="text-decoration:none;color:inherit;">
+                                <a href="<?php echo e(route('products.show', $product->id)); ?>" style="text-decoration:none;color:inherit;">
                                 <div class="product-img-wrap">
-                                    @php $thumb = $product->thumbnailUrl(); @endphp
-                                    @if($thumb)
-                                        <img src="{{ $thumb }}"
-                                             alt="{{ $product->name }}" class="product-img">
-                                    @else
+                                    <?php $thumb = $product->thumbnailUrl(); ?>
+                                    <?php if($thumb): ?>
+                                        <img src="<?php echo e($thumb); ?>"
+                                             alt="<?php echo e($product->name); ?>" class="product-img">
+                                    <?php else: ?>
                                         <span class="product-img-placeholder">👟</span>
-                                    @endif
-                                    @if($product->created_at->diffInDays() < 14)
+                                    <?php endif; ?>
+                                    <?php if($product->created_at->diffInDays() < 14): ?>
                                         <span class="product-badge">New</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                                 <div class="product-info">
-                                    <div class="product-brand">{{ $product->brand->name ?? 'SoleMates' }}</div>
-                                    <div class="product-name">{{ $product->name }}</div>
+                                    <div class="product-brand"><?php echo e($product->brand->name ?? 'SoleMates'); ?></div>
+                                    <div class="product-name"><?php echo e($product->name); ?></div>
                                     <div class="d-flex align-items-center justify-content-between mt-1">
-                                        <div class="product-price">₱{{ number_format($product->price, 2) }}</div>
-                                        @if($product->stock <= 5 && $product->stock > 0)
-                                            <small style="font-size:0.68rem; color:var(--red);">Only {{ $product->stock }} left</small>
-                                        @elseif($product->stock == 0)
+                                        <div class="product-price">₱<?php echo e(number_format($product->price, 2)); ?></div>
+                                        <?php if($product->stock <= 5 && $product->stock > 0): ?>
+                                            <small style="font-size:0.68rem; color:var(--red);">Only <?php echo e($product->stock); ?> left</small>
+                                        <?php elseif($product->stock == 0): ?>
                                             <small style="font-size:0.68rem; color:var(--warm-gray);">Out of stock</small>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
-                                    @if($product->reviews_count > 0)
+                                    <?php if($product->reviews_count > 0): ?>
                                         <div class="product-rating">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                <i class="bi bi-star{{ $i <= round($product->reviews_avg_rating) ? '-fill' : '' }}"></i>
-                                            @endfor
-                                            <span>({{ $product->reviews_count }})</span>
+                                            <?php for($i = 1; $i <= 5; $i++): ?>
+                                                <i class="bi bi-star<?php echo e($i <= round($product->reviews_avg_rating) ? '-fill' : ''); ?>"></i>
+                                            <?php endfor; ?>
+                                            <span>(<?php echo e($product->reviews_count); ?>)</span>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                                 </a>
                                 <div class="prod-actions">
-                                    <a href="{{ route('products.show', $product->id) }}" class="btn-prod-view">View Details</a>
-                                    @if($product->stock > 0)
-                                        @auth
-                                            <form action="{{ route('cart.add', $product->id) }}" method="POST" style="display:contents;">
-                                                @csrf
+                                    <a href="<?php echo e(route('products.show', $product->id)); ?>" class="btn-prod-view">View Details</a>
+                                    <?php if($product->stock > 0): ?>
+                                        <?php if(auth()->guard()->check()): ?>
+                                            <form action="<?php echo e(route('cart.add', $product->id)); ?>" method="POST" style="display:contents;">
+                                                <?php echo csrf_field(); ?>
                                                 <input type="hidden" name="quantity" value="1">
-                                                <button type="submit" class="btn-prod-cart" title="Add to cart" aria-label="Add {{ $product->name }} to cart">
+                                                <button type="submit" class="btn-prod-cart" title="Add to cart" aria-label="Add <?php echo e($product->name); ?> to cart">
                                                     <i class="fas fa-shopping-bag"></i>
                                                 </button>
                                             </form>
-                                        @else
-                                            <a href="{{ route('login') }}" class="btn-prod-cart" title="Sign in to add to cart">
+                                        <?php else: ?>
+                                            <a href="<?php echo e(route('login')); ?>" class="btn-prod-cart" title="Sign in to add to cart">
                                                 <i class="fas fa-shopping-bag"></i>
                                             </a>
-                                        @endauth
-                                    @else
+                                        <?php endif; ?>
+                                    <?php else: ?>
                                         <button class="btn-prod-cart" disabled title="Out of stock">
                                             <i class="fas fa-ban"></i>
                                         </button>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
 
-                {{-- Pagination --}}
-                @if($products->hasPages())
+                
+                <?php if($products->hasPages()): ?>
                     <div class="mt-4">
-                        {{ $products->links() }}
-                    </div>
-                @endif
+                        <?php echo e($products->links()); ?>
 
-            @else
+                    </div>
+                <?php endif; ?>
+
+            <?php else: ?>
                 <div class="empty-state">
                     <div class="empty-icon">🔍</div>
                     <h5>No products found</h5>
                     <p class="mt-2" style="font-size:0.88rem;">
                         Try adjusting your search or filters.
                     </p>
-                    <a href="{{ route('products.index') }}" class="btn btn-primary mt-3">Browse All</a>
+                    <a href="<?php echo e(route('products.index')); ?>" class="btn btn-primary mt-3">Browse All</a>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
 
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
 
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/products/index.blade.php ENDPATH**/ ?>

@@ -77,6 +77,9 @@ class CartController extends Controller
             return redirect()->back()->with('error', 'Product is out of stock.');
         }
 
+        $qty = max(1, (int) $request->input('quantity', 1));
+        $qty = min($qty, $product->stock);
+
         if (Auth::check()) {
             // Add to database for authenticated users
             $cartItem = Cart::where('user_id', Auth::id())
@@ -88,9 +91,12 @@ class CartController extends Controller
                 if ($cartItem->quantity >= $product->stock) {
                     return redirect()->back()->with('error', 'Cannot add more than available stock.');
                 }
-                Cart::addItem(Auth::id(), $id, 1);
+                $allowed = min($qty, $product->stock - $cartItem->quantity);
+                if ($allowed > 0) {
+                    Cart::addItem(Auth::id(), $id, $allowed);
+                }
             } else {
-                Cart::addItem(Auth::id(), $id, 1);
+                Cart::addItem(Auth::id(), $id, $qty);
             }
         } else {
             // Add to session for guests
@@ -101,14 +107,15 @@ class CartController extends Controller
                 if ($cart[$id]['quantity'] >= $product->stock) {
                     return redirect()->back()->with('error', 'Cannot add more than available stock.');
                 }
-                $cart[$id]['quantity']++;
+                $allowed = min($qty, $product->stock - $cart[$id]['quantity']);
+                $cart[$id]['quantity'] += $allowed;
             } else {
                 $cart[$id] = [
-                    'name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => 1,
-                    'image' => $product->thumbnailUrl(),
-                    'stock' => $product->stock
+                    'name'     => $product->name,
+                    'price'    => $product->price,
+                    'quantity' => $qty,
+                    'image'    => $product->thumbnailUrl(),
+                    'stock'    => $product->stock
                 ];
             }
 
