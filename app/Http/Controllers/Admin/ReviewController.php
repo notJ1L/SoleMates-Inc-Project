@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -20,9 +21,10 @@ class ReviewController extends Controller
         return view('admin.reviews.index');
     }
 
-    public function data()
+    public function data(Request $request)
     {
-        $query = Review::with(['user', 'product']);
+        $query = Review::with(['user', 'product'])
+            ->when($request->filled('rating_filter'), fn($q) => $q->where('rating', $request->rating_filter));
 
         return DataTables::of($query)
             ->addColumn('user_col', function (Review $review) {

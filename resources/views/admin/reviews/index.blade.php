@@ -15,6 +15,27 @@
     </div>
 @endif
 
+<div class="filter-bar">
+    <div class="d-flex align-items-center gap-2 flex-wrap w-100">
+        <i class="bi bi-funnel" style="color:var(--c-text-muted);font-size:0.9rem;"></i>
+        <select id="filterRating" class="form-select" style="width:150px;">
+            <option value="">All Ratings</option>
+            <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; (5)</option>
+            <option value="4">&#9733;&#9733;&#9733;&#9733; (4)</option>
+            <option value="3">&#9733;&#9733;&#9733; (3)</option>
+            <option value="2">&#9733;&#9733; (2)</option>
+            <option value="1">&#9733; (1)</option>
+        </select>
+        <input id="filterSearch" type="text" class="form-control" style="max-width:280px;flex:1;" placeholder="Search by customer or product...">
+        <button type="button" onclick="applyReviewFilters()" class="btn-secondary-admin">
+            <i class="bi bi-search"></i> Search
+        </button>
+        <button type="button" onclick="clearReviewFilters()" id="clearReviewFiltersBtn" class="btn-secondary-admin" style="display:none;color:var(--c-error);">
+            <i class="bi bi-x-lg"></i> Clear
+        </button>
+    </div>
+</div>
+
 <div class="panel">
     <div class="table-responsive">
         <table id="reviewsTable" class="data-table" style="width:100%">
@@ -42,7 +63,13 @@
 $('#reviewsTable').DataTable({
     processing: true,
     serverSide: true,
-    ajax: '{{ route('admin.reviews.data') }}',
+    ajax: {
+        url: '{{ route('admin.reviews.data') }}',
+        data: function(d) {
+            d.rating_filter = $('#filterRating').val();
+            d.search.value  = $('#filterSearch').val();
+        }
+    },
     columns: [
         { data: 'user_col',    name: 'user.name' },
         { data: 'product_col', name: 'product.name' },
@@ -61,7 +88,7 @@ $('#reviewsTable').DataTable({
         zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No reviews found.</div>',
         paginate: { previous: '&#x2039;', next: '&#x203A;' },
     },
-    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rtip',
+    dom: 'rtip',
     initComplete: function() {
         var wrapper = this.api().table().container();
         var $info  = $(wrapper).find('.dataTables_info').detach();
@@ -69,23 +96,22 @@ $('#reviewsTable').DataTable({
         $('#reviews-outer-nav').append($info).append($pager);
     },
     drawCallback: function() {
-        $('.dataTables_filter input').css({
-            'border': '1px solid var(--border)',
-            'border-radius': 'var(--radius-sm)',
-            'padding': '0.425rem 0.75rem',
-            'font-size': '0.838rem',
-            'background': 'var(--surface-2)',
-            'margin-left': '0.5rem',
-        });
-        $('.dataTables_length select').css({
-            'border': '1px solid var(--border)',
-            'border-radius': 'var(--radius-sm)',
-            'padding': '0.425rem 0.5rem',
-            'font-size': '0.838rem',
-            'background': 'var(--surface-2)',
-            'margin': '0 0.375rem',
-        });
     }
 });
+
+function applyReviewFilters() {
+    const hasFilters = $('#filterRating').val() || $('#filterSearch').val();
+    $('#clearReviewFiltersBtn').toggle(!!hasFilters);
+    $('#reviewsTable').DataTable().ajax.reload();
+}
+
+function clearReviewFilters() {
+    $('#filterRating').val('');
+    $('#filterSearch').val('');
+    $('#clearReviewFiltersBtn').hide();
+    $('#reviewsTable').DataTable().ajax.reload();
+}
+
+$('#filterSearch').on('keydown', function(e) { if (e.key === 'Enter') applyReviewFilters(); });
 </script>
 @endsection

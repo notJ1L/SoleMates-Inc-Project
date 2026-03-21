@@ -17,9 +17,22 @@ class OrderController extends Controller
         $this->middleware('admin');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('user')->latest()->paginate(10);
+        $orders = Order::with(['user', 'orderItems.product'])
+            ->when($request->filled('status'), fn($q) => $q->where('status', $request->status))
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $term = $request->search;
+                $q->where(function ($q2) use ($term) {
+                    $q2->where('id', 'like', ltrim($term, '#'))
+                       ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$term}%")
+                                                         ->orWhere('email', 'like', "%{$term}%"));
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('admin.orders.index', compact('orders'));
     }
 
