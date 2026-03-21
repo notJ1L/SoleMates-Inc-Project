@@ -21,6 +21,6 @@ class ProductPhoto extends Model
     /** Returns the public URL for this gallery photo. */
     public function url(): string
     {
-        return Storage::disk('public')->url($this->image_path);
+        return asset('storage/' . ltrim($this->image_path, '/'));
     }
 }
