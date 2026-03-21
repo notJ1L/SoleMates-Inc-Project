@@ -6,226 +6,950 @@
     <title><?php echo $__env->yieldContent('title', 'SoleMates Footwear'); ?></title>
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <?php echo app('Illuminate\Foundation\Vite')(['resources/sass/app.scss', 'resources/js/app.js']); ?>
 
     <style>
-        .dropdown-toggle::after {
-            content: none;
+        /* ═══════════════════════════════════════════════════════════
+           GLOBAL CSS VARIABLES
+        ═══════════════════════════════════════════════════════════ */
+        :root {
+            /* Brand palette */
+            --c-black:      #0A0A0A;
+            --c-charcoal:   #1A1A1A;
+            --c-gold:       #C8A96E;
+            --c-gold-hover: #D4B87A;
+            --c-gold-dark:  #A8893E;
+            --c-white:      #FFFFFF;
+            --c-off-white:  #F9F8F5;
+            --c-cream:      #F4F2ED;
+            --c-border:     #E4E2DC;
+            --c-text:       #0A0A0A;
+            --c-text-mid:   #3A3A3A;
+            --c-text-soft:  #6A6A6A;
+            --c-text-muted: #999994;
+            --c-error:      #C0392B;
+            --c-success:    #219653;
+
+            /* Aliases used by product pages */
+            --black:        var(--c-black);
+            --white:        var(--c-white);
+            --accent:       var(--c-gold);
+            --warm-gray:    var(--c-text-muted);
+            --red:          var(--c-error);
+
+            /* Typography */
+            --font-display: 'Montserrat', system-ui, sans-serif;
+            --font-body:    'Inter', system-ui, sans-serif;
+            --font-mono:    'Courier New', ui-monospace, monospace;
+
+            /* Layout */
+            --nav-h: 68px;
+            --ease:  cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        /* Add cursor pointer for dropdown */
-        .nav-link.dropdown-toggle {
+
+        /* ═══════════════════════════════════════════════════════════
+           RESET / BASE
+        ═══════════════════════════════════════════════════════════ */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--c-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           NAVBAR
+        ═══════════════════════════════════════════════════════════ */
+        .sm-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background: var(--c-white);
+            border-bottom: 1px solid var(--c-border);
+            transition: box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
+            height: var(--nav-h);
+        }
+
+        .sm-nav.is-scrolled {
+            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.08);
+            border-bottom-color: transparent;
+        }
+
+        .sm-nav > .container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ── Brand ── */
+        .sm-brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-decoration: none;
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .sm-brand-mark {
+            width: 36px;
+            height: 36px;
+            background: var(--c-gold);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--c-black);
+            font-size: 0.95rem;
+            transition: background 0.2s var(--ease);
+            flex-shrink: 0;
+        }
+
+        .sm-brand:hover .sm-brand-mark { background: var(--c-gold-hover); }
+
+        .sm-brand-name {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--c-black);
+            letter-spacing: 0.01em;
+            line-height: 1;
+        }
+
+        .sm-brand-name em {
+            font-style: normal;
+            color: var(--c-gold-dark);
+        }
+
+        /* ── Mobile toggler ── */
+        .sm-toggler {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: none;
+            border: 1.5px solid var(--c-border);
+            border-radius: 8px;
+            color: var(--c-black);
+            font-size: 0.9rem;
             cursor: pointer;
+            margin-left: auto;
+            transition: border-color 0.18s, background 0.18s;
+        }
+
+        .sm-toggler:hover { border-color: var(--c-gold); background: var(--c-off-white); }
+
+        /* ── Collapse wrapper ── */
+        .sm-collapse {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            gap: 0;
+        }
+
+        /* ── Center nav links ── */
+        .sm-nav-links {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            margin: 0 auto;
+            padding: 0;
+            gap: 2px;
+        }
+
+        .sm-nav-link {
+            display: block;
+            padding: 7px 13px;
+            font-family: var(--font-display);
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--c-text-soft);
+            text-decoration: none;
+            border-radius: 7px;
+            letter-spacing: 0.01em;
+            position: relative;
+            transition: color 0.18s var(--ease), background 0.18s var(--ease);
+        }
+
+        .sm-nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 13px;
+            right: 13px;
+            height: 2px;
+            background: var(--c-gold);
+            border-radius: 2px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.22s var(--ease);
+        }
+
+        .sm-nav-link:hover,
+        .sm-nav-link.active {
+            color: var(--c-black);
+            background: var(--c-off-white);
+        }
+
+        .sm-nav-link:hover::after,
+        .sm-nav-link.active::after { transform: scaleX(1); }
+
+        /* ── Right utilities ── */
+        .sm-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* ── Search ── */
+        .sm-search-form {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .sm-search-icon {
+            position: absolute;
+            left: 10px;
+            color: var(--c-text-muted);
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sm-search-input {
+            width: 175px;
+            padding: 7px 12px 7px 28px;
+            background: var(--c-off-white);
+            border: 1.5px solid var(--c-border);
+            border-radius: 20px;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            color: var(--c-text);
+            outline: none;
+            transition: width 0.28s var(--ease), border-color 0.18s, background 0.18s, box-shadow 0.18s;
+            -webkit-appearance: none;
+        }
+
+        .sm-search-input::placeholder { color: #C0BEB8; }
+
+        .sm-search-input:focus {
+            width: 215px;
+            border-color: var(--c-gold);
+            background: var(--c-white);
+            box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.12);
+        }
+
+        /* ── Auth Buttons ── */
+        .sm-btn-ghost {
+            padding: 7px 13px;
+            font-family: var(--font-display);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--c-text-mid);
+            text-decoration: none;
+            border-radius: 7px;
+            letter-spacing: 0.02em;
+            transition: color 0.18s, background 0.18s;
+            white-space: nowrap;
+        }
+
+        .sm-btn-ghost:hover { color: var(--c-black); background: var(--c-off-white); }
+
+        .sm-btn-solid {
+            padding: 7px 16px;
+            font-family: var(--font-display);
+            font-size: 0.78rem;
+            font-weight: 800;
+            background: var(--c-black);
+            color: var(--c-white);
+            text-decoration: none;
+            border-radius: 7px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+            white-space: nowrap;
+        }
+
+        .sm-btn-solid:hover {
+            background: var(--c-charcoal);
+            color: var(--c-white);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+        }
+
+        /* ── Cart icon ── */
+        .sm-icon-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            color: var(--c-text-mid);
+            font-size: 1rem;
+            text-decoration: none;
+            transition: background 0.18s, color 0.18s;
+        }
+
+        .sm-icon-btn:hover { background: var(--c-off-white); color: var(--c-black); }
+
+        .sm-cart-badge {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            min-width: 16px;
+            height: 16px;
+            background: var(--c-gold);
+            color: var(--c-black);
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            font-weight: 900;
+            border-radius: 99px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+            line-height: 1;
+        }
+
+        /* ── User dropdown button ── */
+        .sm-user-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 11px 5px 5px;
+            background: none;
+            border: 1.5px solid var(--c-border);
+            border-radius: 20px;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--c-text-mid);
+            cursor: pointer;
+            transition: border-color 0.18s, background 0.18s;
+        }
+
+        .sm-user-btn:hover { border-color: var(--c-gold); background: var(--c-off-white); }
+        .sm-user-btn::after { display: none !important; }
+
+        .sm-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--c-gold), var(--c-gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            font-weight: 900;
+            color: var(--c-white);
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .sm-user-name {
+            max-width: 110px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ── Dropdown menu ── */
+        .sm-nav .dropdown-menu {
+            border: 1.5px solid var(--c-border);
+            border-radius: 12px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.10);
+            padding: 0.5rem;
+            margin-top: 6px !important;
+            min-width: 190px;
+        }
+
+        .sm-nav .dropdown-item {
+            border-radius: 7px;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            color: var(--c-text-mid);
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sm-nav .dropdown-item:hover { background: var(--c-off-white); color: var(--c-black); }
+        .sm-nav .dropdown-item i { width: 18px; color: var(--c-text-muted); }
+
+        /* ── Page header (shop page) ── */
+        .page-header {
+            background: var(--c-off-white);
+            border-bottom: 1px solid var(--c-border);
+            padding: 1.5rem 0 1.25rem;
+        }
+
+        .page-header h1 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .page-header .breadcrumb {
+            font-size: 0.8rem;
+        }
+
+        .page-header .breadcrumb-item a { color: var(--c-gold-dark); }
+
+        /* ── Filter sidebar (shop page) ── */
+        .filter-sidebar { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .filter-card {
+            background: var(--c-white);
+            border: 1px solid var(--c-border);
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           FLASH MESSAGES
+        ═══════════════════════════════════════════════════════════ */
+        .flash-wrap { position: sticky; top: var(--nav-h); z-index: 1020; }
+
+        /* ═══════════════════════════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════════════════════════ */
+        .sm-footer {
+            background: var(--c-black);
+            color: rgba(255, 255, 255, 0.65);
+            padding: 3.5rem 0 0;
+            margin-top: 5rem;
+            font-size: 0.875rem;
+        }
+
+        .sm-footer-brand {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--c-white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-bottom: 0.9rem;
+        }
+
+        .sm-footer-brand-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--c-gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--c-black);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .sm-footer-tagline {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.65;
+            max-width: 260px;
+        }
+
+        .sm-footer-heading {
+            font-family: var(--font-display);
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--c-white);
+            margin-bottom: 1rem;
+        }
+
+        .sm-footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sm-footer-links a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.18s;
+        }
+
+        .sm-footer-links a:hover { color: var(--c-gold); }
+
+        .sm-footer-social {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .sm-social-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background 0.18s, color 0.18s, border-color 0.18s;
+        }
+
+        .sm-social-btn:hover {
+            background: rgba(200, 169, 110, 0.18);
+            border-color: rgba(200, 169, 110, 0.4);
+            color: var(--c-gold);
+        }
+
+        .sm-footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 2.5rem;
+            padding: 1.25rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .sm-footer-copy {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.28);
+        }
+
+        .sm-footer-legal {
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .sm-footer-legal a {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.28);
+            text-decoration: none;
+            transition: color 0.18s;
+        }
+
+        .sm-footer-legal a:hover { color: var(--c-gold); }
+
+        /* ═══════════════════════════════════════════════════════════
+           RESPONSIVE — NAVBAR
+        ═══════════════════════════════════════════════════════════ */
+        @media (max-width: 991.98px) {
+            .sm-toggler { display: flex; }
+
+            .sm-collapse {
+                position: absolute;
+                top: var(--nav-h);
+                left: 0;
+                right: 0;
+                background: var(--c-white);
+                border-bottom: 1px solid var(--c-border);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+                padding: 1rem 1.25rem 1.25rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                z-index: 1029;
+                /* collapsed by default */
+                display: none;
+            }
+
+            .sm-collapse.open { display: flex; }
+
+            .sm-nav-links {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+                width: 100%;
+                margin: 0;
+            }
+
+            .sm-nav-link { width: 100%; }
+
+            .sm-nav-right {
+                flex-wrap: wrap;
+                width: 100%;
+                gap: 8px;
+            }
+
+            .sm-search-form { width: 100%; }
+            .sm-search-input { width: 100%; border-radius: 8px; }
+            .sm-search-input:focus { width: 100%; }
+        }
+
+        @media (max-width: 575.98px) {
+            .sm-btn-ghost,
+            .sm-btn-solid { flex: 1; text-align: center; justify-content: center; display: flex; }
         }
     </style>
-    
+
     <?php echo $__env->yieldContent('head'); ?>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="<?php echo e(route('home')); ?>">
-                <i class="fas fa-shoe-prints me-2"></i>SoleMates Footwear
-            </a>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════════════════════ -->
+<nav class="sm-nav" id="smNav" role="navigation" aria-label="Main navigation">
+    <div class="container">
+
+        
+        <a class="sm-brand" href="<?php echo e(route('home')); ?>" aria-label="SoleMates Footwear — Home">
+            <div class="sm-brand-mark" aria-hidden="true">
+                <i class="fas fa-shoe-prints"></i>
+            </div>
+            <span class="sm-brand-name">Sole<em>Mates</em></span>
+        </a>
+
+        
+        <button class="sm-toggler"
+                id="smToggler"
+                aria-expanded="false"
+                aria-controls="smCollapse"
+                aria-label="Toggle navigation">
+            <i class="fas fa-bars" id="smTogglerIcon" aria-hidden="true"></i>
+        </button>
+
+        
+        <div class="sm-collapse" id="smCollapse">
+
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <ul class="sm-nav-links" role="list">
+                <li>
+                    <a href="<?php echo e(route('home')); ?>"
+                       class="sm-nav-link <?php echo e(request()->routeIs('home') ? 'active' : ''); ?>"
+                       aria-current="<?php echo e(request()->routeIs('home') ? 'page' : 'false'); ?>">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo e(route('products.index')); ?>"
+                       class="sm-nav-link <?php echo e(request()->routeIs('products.*') ? 'active' : ''); ?>"
+                       aria-current="<?php echo e(request()->routeIs('products.*') ? 'page' : 'false'); ?>">
+                        Shop
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo e(route('about')); ?>"
+                       class="sm-nav-link <?php echo e(request()->routeIs('about') ? 'active' : ''); ?>"
+                       aria-current="<?php echo e(request()->routeIs('about') ? 'page' : 'false'); ?>">
+                        About
+                    </a>
+                </li>
+            </ul>
+
             
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo e(route('home')); ?>">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo e(route('products.index')); ?>">Shop</a>
-                    </li>
-                </ul>
+            <div class="sm-nav-right">
+
                 
-                <!-- Search Bar -->
-                <form class="d-flex me-3" action="<?php echo e(route('search')); ?>" method="GET">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Search products..." value="<?php echo e(request('search')); ?>">
-                    <button class="btn btn-outline-light" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
+                <form class="sm-search-form" action="<?php echo e(route('search')); ?>" method="GET" role="search">
+                    <i class="fas fa-search sm-search-icon" aria-hidden="true"></i>
+                    <input class="sm-search-input"
+                           type="search"
+                           name="search"
+                           placeholder="Search shoes…"
+                           value="<?php echo e(request('search')); ?>"
+                           autocomplete="off"
+                           aria-label="Search products">
                 </form>
-                
-                <!-- User Menu -->
-                <ul class="navbar-nav">
-                    <?php if(auth()->guard()->guest()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo e(route('login')); ?>">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo e(route('register')); ?>">Register</a>
-                        </li>
-                    <?php else: ?>
-                        <!-- Cart Link -->
-                        <li class="nav-item">
-                            <a class="nav-link position-relative" href="<?php echo e(route('cart.index')); ?>">
-                                <i class="fas fa-shopping-cart"></i>
-                                <?php if(Auth::check()): ?>
-                                    <?php
-                                        $cartCount = \App\Models\Cart::where('user_id', Auth::id())->count();
-                                    ?>
-                                    <?php if($cartCount > 0): ?>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            <?php echo e($cartCount); ?>
 
-                                        </span>
-                                    <?php endif; ?>
-                                <?php else: ?>
-                                    <?php if(session('cart') && count(session('cart')) > 0): ?>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            <?php echo e(count(session('cart'))); ?>
+                <?php if(auth()->guard()->guest()): ?>
+                    <a href="<?php echo e(route('login')); ?>" class="sm-btn-ghost">Sign In</a>
+                    <a href="<?php echo e(route('register')); ?>" class="sm-btn-solid">Register</a>
+                <?php else: ?>
+                    
+                    <a href="<?php echo e(route('cart.index')); ?>" class="sm-icon-btn" aria-label="Shopping cart">
+                        <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                        <?php $cartCount = \App\Models\Cart::where('user_id', Auth::id())->count(); ?>
+                        <?php if($cartCount > 0): ?>
+                            <span class="sm-cart-badge" aria-label="<?php echo e($cartCount); ?> items in cart">
+                                <?php echo e($cartCount); ?>
 
-                                        </span>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user me-1"></i><?php echo e(auth()->user()->name); ?>
+                            </span>
+                        <?php endif; ?>
+                    </a>
 
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>"><i class="fas fa-user me-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" href="<?php echo e(route('cart.index')); ?>"><i class="fas fa-shopping-cart me-2"></i>Cart</a></li>
-                                <li><a class="dropdown-item" href="<?php echo e(route('profile.orders')); ?>"><i class="fas fa-box me-2"></i>Orders</a></li>
-                                <?php if(auth()->user()->isAdmin()): ?>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="<?php echo e(route('admin.dashboard')); ?>"><i class="fas fa-cog me-2"></i>Admin Panel</a></li>
-                                <?php endif; ?>
+                    
+                    <div class="dropdown">
+                        <button class="sm-user-btn dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                aria-haspopup="true">
+                            <span class="sm-avatar" aria-hidden="true">
+                                <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
+
+                            </span>
+                            <span class="sm-user-name"><?php echo e(auth()->user()->name); ?></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
+                                    <i class="fas fa-user me-2" aria-hidden="true"></i>My Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?php echo e(route('cart.index')); ?>">
+                                    <i class="fas fa-shopping-bag me-2" aria-hidden="true"></i>My Cart
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?php echo e(route('profile.orders')); ?>">
+                                    <i class="fas fa-box me-2" aria-hidden="true"></i>My Orders
+                                </a>
+                            </li>
+                            <?php if(auth()->user()->isAdmin()): ?>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
-                            </ul>
-                        </li>
-                        
-                        <!-- Fallback logout button -->
-                        <li class="nav-item d-none d-lg-block">
-                            <form action="<?php echo e(route('logout')); ?>" method="POST" style="display: inline;">
-                                <?php echo csrf_field(); ?>
-                                <button type="submit" class="btn btn-outline-light btn-sm ms-2" title="Logout">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                </button>
-                            </form>
-                        </li>
+                                <li>
+                                    <a class="dropdown-item" href="<?php echo e(route('admin.dashboard')); ?>">
+                                        <i class="fas fa-cog me-2" aria-hidden="true"></i>Admin Panel
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger"
+                                   href="<?php echo e(route('logout')); ?>"
+                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>Sign Out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════════════════ -->
+<main class="main-content" style="margin-top: var(--nav-h);">
+
+    
+    <?php if(session('success') || session('error')): ?>
+        <div class="flash-wrap">
+            <?php if(session('success')): ?>
+                <div class="alert alert-success alert-dismissible fade show mb-0 rounded-0 border-0 border-bottom"
+                     style="border-color: var(--c-border) !important; font-size:0.875rem;"
+                     role="alert">
+                    <i class="fas fa-check-circle me-2 text-success" aria-hidden="true"></i>
+                    <?php echo e(session('success')); ?>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+            <?php if(session('error')): ?>
+                <div class="alert alert-danger alert-dismissible fade show mb-0 rounded-0 border-0 border-bottom"
+                     style="font-size:0.875rem;"
+                     role="alert">
+                    <i class="fas fa-exclamation-circle me-2" aria-hidden="true"></i>
+                    <?php echo e(session('error')); ?>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php echo $__env->yieldContent('content'); ?>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer class="sm-footer" role="contentinfo">
+    <div class="container">
+        <div class="row g-4 pb-2">
+
+            
+            <div class="col-lg-4 col-md-6">
+                <a href="<?php echo e(route('home')); ?>" class="sm-footer-brand" aria-label="SoleMates Footwear">
+                    <div class="sm-footer-brand-mark" aria-hidden="true">
+                        <i class="fas fa-shoe-prints"></i>
+                    </div>
+                    Sole<span style="color:var(--c-gold);">Mates</span>
+                </a>
+                <p class="sm-footer-tagline">
+                    Your trusted partner for quality footwear since 2024.
+                    Every pair, hand-picked for comfort and style.
+                </p>
+                <div class="sm-footer-social mt-3" role="list" aria-label="Social media links">
+                    <a href="#" class="sm-social-btn" role="listitem" aria-label="Facebook" title="Facebook">
+                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="sm-social-btn" role="listitem" aria-label="Instagram" title="Instagram">
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="sm-social-btn" role="listitem" aria-label="Twitter / X" title="Twitter">
+                        <i class="fab fa-twitter" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="sm-social-btn" role="listitem" aria-label="TikTok" title="TikTok">
+                        <i class="fab fa-tiktok" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+
+            
+            <div class="col-lg-2 col-md-3 col-6">
+                <p class="sm-footer-heading">Shop</p>
+                <ul class="sm-footer-links">
+                    <li><a href="<?php echo e(route('products.index')); ?>">All Products</a></li>
+                    <li><a href="<?php echo e(route('products.index', ['sort' => 'latest'])); ?>">New Arrivals</a></li>
+                    <li><a href="<?php echo e(route('products.index')); ?>">Featured Picks</a></li>
+                    <li><a href="<?php echo e(route('products.index')); ?>">Sale</a></li>
+                </ul>
+            </div>
+
+            
+            <div class="col-lg-2 col-md-3 col-6">
+                <p class="sm-footer-heading">Company</p>
+                <ul class="sm-footer-links">
+                    <li><a href="<?php echo e(route('about')); ?>">About Us</a></li>
+                    <li><a href="<?php echo e(route('about')); ?>#contact">Contact</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+
+            
+            <div class="col-lg-2 col-md-4 col-6">
+                <p class="sm-footer-heading">Support</p>
+                <ul class="sm-footer-links">
+                    <?php if(auth()->guard()->check()): ?>
+                        <li><a href="<?php echo e(route('profile.orders')); ?>">Track Order</a></li>
+                    <?php else: ?>
+                        <li><a href="<?php echo e(route('login')); ?>">Track Order</a></li>
+                    <?php endif; ?>
+                    <li><a href="<?php echo e(route('about')); ?>#contact">Help Centre</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                </ul>
+            </div>
+
+            
+            <div class="col-lg-2 col-md-4 col-6">
+                <p class="sm-footer-heading">Account</p>
+                <ul class="sm-footer-links">
+                    <?php if(auth()->guard()->guest()): ?>
+                        <li><a href="<?php echo e(route('login')); ?>">Sign In</a></li>
+                        <li><a href="<?php echo e(route('register')); ?>">Register</a></li>
+                    <?php else: ?>
+                        <li><a href="<?php echo e(route('profile.edit')); ?>">My Profile</a></li>
+                        <li><a href="<?php echo e(route('profile.orders')); ?>">My Orders</a></li>
+                        <li><a href="<?php echo e(route('cart.index')); ?>">My Cart</a></li>
                     <?php endif; ?>
                 </ul>
             </div>
+
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="main-content" style="margin-top: 76px;">
-        <!-- Flash Messages -->
-        <?php if(session('success')): ?>
-            <div class="alert alert-success alert-dismissible fade show m-0" role="alert">
-                <?php echo e(session('success')); ?>
-
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
         
-        <?php if(session('error')): ?>
-            <div class="alert alert-danger alert-dismissible fade show m-0" role="alert">
-                <?php echo e(session('error')); ?>
-
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
-
-        <?php echo $__env->yieldContent('content'); ?>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5><i class="fas fa-shoe-prints me-2"></i>SoleMates Footwear</h5>
-                    <p>Your trusted partner for quality footwear since 2024.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="<?php echo e(route('home')); ?>" class="text-light">Home</a></li>
-                        <li><a href="<?php echo e(route('products.index')); ?>" class="text-light">Shop</a></li>
-                        <li><a href="#" class="text-light">About Us</a></li>
-                        <li><a href="#" class="text-light">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Follow Us</h5>
-                    <div>
-                        <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a>
-                        <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="text-light me-3"><i class="fab fa-instagram fa-lg"></i></a>
-                        <a href="#" class="text-light"><i class="fab fa-linkedin fa-lg"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="bg-light">
-            <div class="text-center">
-                <p>&copy; <?php echo e(date('Y')); ?> SoleMates Footwear. All rights reserved.</p>
-            </div>
+        <div class="sm-footer-bottom">
+            <p class="sm-footer-copy mb-0">
+                &copy; <?php echo e(date('Y')); ?> SoleMates Footwear. All rights reserved.
+            </p>
+            <nav class="sm-footer-legal" aria-label="Legal links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Cookie Policy</a>
+            </nav>
         </div>
-    </footer>
+    </div>
+</footer>
 
-    <!-- Logout Form -->
-    <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
-        <?php echo csrf_field(); ?>
-    </form>
-    
-        <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Dropdown Init + Logout Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Manually initialize all dropdowns (in case Bootstrap auto-init fails)
-            var dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-            dropdownElements.forEach(function(el) {
-                new bootstrap.Dropdown(el);
-            });
+<form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display:none;" aria-hidden="true">
+    <?php echo csrf_field(); ?>
+</form>
 
-            // Handle logout links
-            const logoutLinks = document.querySelectorAll('a[href*="logout"]');
-            logoutLinks.forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('logout-form').submit();
-                });
-            });
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+(function () {
+    'use strict';
+
+    /* ── Scroll shadow on navbar ── */
+    var nav = document.getElementById('smNav');
+    if (nav) {
+        window.addEventListener('scroll', function () {
+            nav.classList.toggle('is-scrolled', window.scrollY > 8);
+        }, { passive: true });
+    }
+
+    /* ── Mobile nav toggler ── */
+    var toggler  = document.getElementById('smToggler');
+    var collapse = document.getElementById('smCollapse');
+    var togglerIcon = document.getElementById('smTogglerIcon');
+
+    if (toggler && collapse) {
+        toggler.addEventListener('click', function () {
+            var isOpen = collapse.classList.toggle('open');
+            toggler.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (togglerIcon) {
+                togglerIcon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
+            }
         });
-    </script>
 
-    <!-- Dropdown and Logout Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        
-            // Handle logout links
-            const logoutLinks = document.querySelectorAll('a[href*="logout"]');
-            logoutLinks.forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const form = document.getElementById('logout-form');
-                    if (form) {
-                        form.submit();
-                    }
-                });
-            });
+        /* Close on outside click */
+        document.addEventListener('click', function (e) {
+            if (!nav.contains(e.target)) {
+                collapse.classList.remove('open');
+                toggler.setAttribute('aria-expanded', 'false');
+                if (togglerIcon) togglerIcon.className = 'fas fa-bars';
+            }
         });
-    </script>
-    
-    <?php echo $__env->yieldContent('scripts'); ?>
+    }
+
+    /* ── Bootstrap dropdown init ── */
+    document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function (el) {
+        new bootstrap.Dropdown(el);
+    });
+
+    /* ── Logout link handler ── */
+    document.querySelectorAll('a[href*="logout"]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var form = document.getElementById('logout-form');
+            if (form) form.submit();
+        });
+    });
+
+})();
+</script>
+
+<?php echo $__env->yieldContent('scripts'); ?>
 </body>
 </html>
 <?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/layouts/app.blade.php ENDPATH**/ ?>

@@ -4,518 +4,1310 @@
 
 @section('head')
 <style>
-    :root {
-        --sm-black: #111;
-        --sm-cream: #f8f5ef;
-        --sm-accent: #f4a300;
-        --sm-muted: #6f6f6f;
-    }
+/* ════════════════════════════════════════════════════════════
+   HOME PAGE — CSS
+════════════════════════════════════════════════════════════ */
 
-    .hero-section {
-        background: radial-gradient(circle at top left, #ffe9b8 0, #f8f5ef 40%, #ffffff 100%);
-        border-bottom: 1px solid rgba(0,0,0,0.03);
-    }
+/* ── Shared section spacing ── */
+.hp-section {
+    padding: 4.5rem 0;
+}
+.hp-section-alt {
+    background: var(--c-off-white);
+}
 
-    .hero-inner {
-        padding: 3.5rem 0 2.5rem;
-    }
+/* ── Section Header ── */
+.hp-sec-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2.25rem;
+    flex-wrap: wrap;
+}
+.hp-sec-kicker {
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-gold-dark);
+    margin-bottom: 0.4rem;
+}
+.hp-sec-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2vw, 1.85rem);
+    font-weight: 900;
+    color: var(--c-black);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0;
+}
+.hp-sec-link {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-text-soft);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    transition: color 0.18s ease;
+}
+.hp-sec-link:hover { color: var(--c-black); }
+.hp-sec-link i { font-size: 0.7rem; transition: transform 0.18s ease; }
+.hp-sec-link:hover i { transform: translateX(3px); }
 
-    .hero-kicker {
-        font-family: var(--font-mono, ui-monospace);
-        font-size: 0.7rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--sm-muted);
-    }
+/* ════════════════════════════════════════════════════════════
+   HERO
+════════════════════════════════════════════════════════════ */
+.hero {
+    background: linear-gradient(140deg, #fffdf8 0%, #f9f6ef 55%, #f1ede3 100%);
+    border-bottom: 1px solid var(--c-border);
+    overflow: hidden;
+}
 
-    .hero-title {
-        font-family: var(--font-display, system-ui);
-        font-weight: 700;
-        font-size: clamp(2rem, 3vw + 1rem, 3rem);
-        line-height: 1.1;
-        margin: 0.75rem 0;
-    }
+.hero-inner {
+    padding: 4.5rem 0 3.5rem;
+}
 
-    .hero-highlight {
-        display: inline-block;
-        padding: 0.15rem 0.4rem;
-        background: #111;
-        color: #ffe7b8;
-        border-radius: 0.2rem;
-    }
+.hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+    margin-bottom: 1.1rem;
+}
+.hero-kicker::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--c-gold);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
 
-    .hero-subtitle {
-        max-width: 32rem;
-        color: var(--sm-muted);
-        font-size: 0.97rem;
-    }
+.hero-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(2.4rem, 4vw + 0.5rem, 3.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: var(--c-black);
+    margin-bottom: 1.25rem;
+}
 
-    .hero-cta .btn-primary {
-        background: var(--sm-black);
-        border-color: var(--sm-black);
-        font-family: var(--font-mono, ui-monospace);
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        font-size: 0.7rem;
-        padding-inline: 1.9rem;
-    }
+.hero-highlight {
+    display: inline-block;
+    background: var(--c-black);
+    color: #ffe9b0;
+    padding: 0.05em 0.3em;
+    border-radius: 4px;
+}
 
-    .hero-cta .btn-outline-dark {
-        font-size: 0.78rem;
-        border-radius: 999px;
-    }
+.hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--c-text-soft);
+    max-width: 480px;
+    margin-bottom: 2rem;
+}
 
-    .hero-meta {
-        font-size: 0.78rem;
-        color: var(--sm-muted);
-        font-family: var(--font-mono, ui-monospace);
-    }
+/* CTA Buttons */
+.hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.25rem;
+}
 
-    .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.35rem 0.7rem;
-        border-radius: 999px;
-        background: #fff;
-        border: 1px solid rgba(0,0,0,0.06);
-        font-size: 0.7rem;
-    }
+.btn-hero-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 13px 26px;
+    background: var(--c-black);
+    color: var(--c-white);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.18s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-hero-primary:hover {
+    background: var(--c-charcoal);
+    color: var(--c-white);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+}
 
-    .hero-badge-icon {
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #111 0, #f4a300 100%);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 0.9rem;
-    }
+.btn-hero-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 12px 22px;
+    background: transparent;
+    color: var(--c-black);
+    border: 1.5px solid var(--c-border);
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+.btn-hero-secondary:hover {
+    border-color: var(--c-black);
+    background: rgba(0,0,0,0.04);
+    color: var(--c-black);
+}
 
-    .hero-image-card {
-        background: #111;
-        color: #fff;
-        border-radius: 1rem;
-        padding: 1.5rem 1.75rem;
-        position: relative;
-        overflow: hidden;
-        min-height: 240px;
-    }
+/* Hero trust bar */
+.hero-trust {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+}
 
-    .hero-tagline {
-        font-size: 0.7rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        opacity: 0.7;
-        font-family: var(--font-mono, ui-monospace);
-    }
+.hero-trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+}
+.hero-trust-badge i {
+    color: var(--c-gold-dark);
+    font-size: 0.85rem;
+}
 
-    .hero-image-title {
-        font-size: 1.55rem;
-        font-weight: 700;
-        margin-top: 0.75rem;
-        max-width: 11rem;
-    }
+/* Hero Right Card */
+.hero-card {
+    background: var(--c-black);
+    border-radius: 18px;
+    padding: 2.5rem 2rem;
+    min-height: 340px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-    .hero-pill {
-        position: absolute;
-        right: 1.5rem;
-        bottom: 1.5rem;
-        background: #f4a300;
-        color: #111;
-        border-radius: 999px;
-        padding: 0.45rem 0.9rem;
-        font-size: 0.7rem;
-        font-family: var(--font-mono, ui-monospace);
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-    }
+.hero-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 80% 65% at 15% 115%, rgba(200,169,110,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 85% -5%, rgba(200,169,110,0.10) 0%, transparent 55%);
+    pointer-events: none;
+}
 
-    .hero-accent-circle {
-        position: absolute;
-        right: -4rem;
-        top: -4rem;
-        width: 9rem;
-        height: 9rem;
-        border-radius: 999px;
-        background: radial-gradient(circle at 30% 40%, #ffe7b8 0, #f4a300 40%, #111 100%);
-        opacity: 0.7;
-    }
+.hero-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+}
 
-    .section-heading {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 0.75rem;
-    }
+.hero-card-inner {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-    .section-heading h2 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin: 0;
-    }
+.hero-card-tag {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 0.75rem;
+}
 
-    .section-heading span {
-        font-size: 0.8rem;
-        color: var(--sm-muted);
-    }
+.hero-card-headline {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--c-white);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    max-width: 14rem;
+}
 
-    .chip-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1.25rem;
-    }
+.hero-card-desc {
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.5);
+    max-width: 16rem;
+}
 
-    .chip-link {
-        border-radius: 999px;
-        border: 1px solid rgba(0,0,0,0.08);
-        padding: 0.3rem 0.8rem;
-        font-size: 0.78rem;
-        text-decoration: none;
-        color: #222;
-        background: #fff;
-    }
+.hero-card-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
 
-    .chip-link small {
-        font-size: 0.7rem;
-        opacity: 0.7;
-        margin-left: 0.2rem;
-    }
+.hero-stat-num {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    font-weight: 900;
+    color: var(--c-gold);
+    line-height: 1;
+}
 
-    .chip-link:hover {
-        border-color: #111;
-        color: #111;
-    }
+.hero-stat-label {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.38);
+    margin-top: 0.2rem;
+}
 
-    .homepage-section {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
+.hero-card-pill {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(200,169,110,0.18);
+    border: 1px solid rgba(200,169,110,0.35);
+    border-radius: 99px;
+    padding: 5px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-gold);
+    z-index: 2;
+}
 
-    /* Product card reused from shop grid (simplified) */
-    .product-card {
-        background: #ffffff;
-        border: 1px solid rgba(0,0,0,0.07);
-        border-radius: 4px;
-        overflow: hidden;
-        transition: all 0.25s ease;
-        text-decoration: none;
-        color: #111;
-        display: block;
-        height: 100%;
-    }
-    .product-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        color: #111;
-    }
-    .product-img-wrap {
-        overflow: hidden;
-        background: var(--sm-cream);
-        aspect-ratio: 4/3;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .product-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.4s ease;
-    }
-    .product-card:hover .product-img {
-        transform: scale(1.04);
-    }
-    .product-img-placeholder {
-        font-size: 3.2rem;
-        opacity: 0.25;
-    }
-    .product-badge {
-        position: absolute;
-        top: 0.6rem;
-        left: 0.6rem;
-        background: #111;
-        color: #ffe7b8;
-        font-family: var(--font-mono, ui-monospace);
-        font-size: 0.58rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        padding: 2px 8px;
-        border-radius: 2px;
-    }
-    .product-info {
-        padding: 0.9rem 1rem 1rem;
-    }
-    .product-brand {
-        font-family: var(--font-mono, ui-monospace);
-        font-size: 0.6rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--sm-muted);
-        margin-bottom: 0.15rem;
-    }
-    .product-name {
-        font-weight: 600;
-        font-size: 0.95rem;
-        margin-bottom: 0.15rem;
-    }
-    .product-price {
-        font-family: var(--font-mono, ui-monospace);
-        font-size: 0.95rem;
-        font-weight: 700;
-    }
-    .product-stock {
-        font-size: 0.7rem;
-        color: #b02a37;
-    }
+/* ════════════════════════════════════════════════════════════
+   SEARCH RESULTS (conditional)
+════════════════════════════════════════════════════════════ */
+.search-results-section {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--c-border);
+}
 
-    .empty-featured {
-        padding: 2rem 1.5rem;
-        text-align: center;
-        color: var(--sm-muted);
-        border-radius: 6px;
-        border: 1px dashed rgba(0,0,0,0.1);
-        background: #fcfbf8;
-        font-size: 0.9rem;
-    }
+.search-results-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--c-black);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+}
 
-    @media (max-width: 767.98px) {
-        .hero-inner {
-            padding: 2.6rem 0 1.8rem;
-        }
-        .hero-image-card {
-            margin-top: 1.75rem;
-        }
-    }
+/* ════════════════════════════════════════════════════════════
+   CATEGORY BROWSE STRIP
+════════════════════════════════════════════════════════════ */
+.cat-strip {
+    background: var(--c-white);
+    border-bottom: 1px solid var(--c-border);
+    padding: 0.85rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.cat-strip::-webkit-scrollbar { display: none; }
+
+.cat-strip-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: max-content;
+    padding: 0 1rem;
+}
+
+.cat-strip-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+    white-space: nowrap;
+    margin-right: 0.25rem;
+}
+
+.cat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 5px 13px;
+    background: var(--c-off-white);
+    border: 1.5px solid var(--c-border);
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--c-text-mid);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+.cat-chip:hover {
+    border-color: var(--c-black);
+    background: var(--c-black);
+    color: var(--c-white);
+}
+
+.cat-chip-count {
+    font-size: 0.68rem;
+    color: var(--c-text-muted);
+    font-family: var(--font-mono);
+    transition: color 0.18s ease;
+}
+.cat-chip:hover .cat-chip-count { color: rgba(255,255,255,0.5); }
+
+.cat-chip-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 5px 14px;
+    background: var(--c-black);
+    border: 1.5px solid var(--c-black);
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: var(--c-white);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    transition: background 0.18s ease;
+    margin-left: 0.25rem;
+}
+.cat-chip-all:hover { background: var(--c-charcoal); color: var(--c-white); }
+
+/* ════════════════════════════════════════════════════════════
+   PRODUCT CARD (shared by carousel + grid)
+════════════════════════════════════════════════════════════ */
+.prod-card {
+    background: var(--c-white);
+    border: 1.5px solid var(--c-border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.26s ease, box-shadow 0.26s ease, border-color 0.26s ease;
+}
+.prod-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.09);
+    border-color: rgba(200,169,110,0.4);
+}
+
+.prod-img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: var(--c-off-white);
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prod-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+.prod-card:hover .prod-img { transform: scale(1.06); }
+
+.prod-img-placeholder {
+    font-size: 3.5rem;
+    opacity: 0.18;
+    user-select: none;
+}
+
+.prod-badge {
+    position: absolute;
+    top: 0.65rem;
+    left: 0.65rem;
+    background: var(--c-black);
+    color: #ffe9b0;
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    line-height: 1.4;
+}
+
+.prod-badge-new { background: var(--c-black); color: #ffe9b0; }
+.prod-badge-sale { background: #C0392B; color: #fff; }
+.prod-badge-hot  { background: var(--c-gold-dark); color: #fff; }
+
+.prod-info {
+    padding: 1rem 1rem 0.85rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.prod-brand {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-gold-dark);
+    margin-bottom: 0.25rem;
+}
+
+.prod-name {
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--c-black);
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+    flex: 1;
+
+    /* Clamp to 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.prod-price {
+    font-family: var(--font-mono);
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--c-black);
+    margin-bottom: 0.25rem;
+}
+
+.prod-stock-low {
+    font-size: 0.68rem;
+    color: #C0392B;
+    font-family: var(--font-mono);
+}
+.prod-stock-out {
+    font-size: 0.68rem;
+    color: var(--c-text-muted);
+    font-family: var(--font-mono);
+}
+
+/* ── Card Action Row ── */
+.prod-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem 1rem;
+    margin-top: auto;
+}
+
+.btn-prod-view {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--c-off-white);
+    border: 1.5px solid var(--c-border);
+    border-radius: 7px;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--c-text-mid);
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    white-space: nowrap;
+}
+.btn-prod-view:hover {
+    background: var(--c-black);
+    border-color: var(--c-black);
+    color: var(--c-white);
+}
+
+.btn-prod-cart {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 7px;
+    background: var(--c-black);
+    border: none;
+    color: var(--c-white);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.18s ease, transform 0.18s ease;
+    text-decoration: none;
+}
+.btn-prod-cart:hover {
+    background: var(--c-gold-dark);
+    transform: scale(1.06);
+    color: var(--c-white);
+}
+.btn-prod-cart:disabled {
+    background: var(--c-border);
+    color: var(--c-text-muted);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FEATURED CAROUSEL
+════════════════════════════════════════════════════════════ */
+.carousel-outer {
+    position: relative;
+}
+
+.carousel-viewport {
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 1.25rem;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+}
+
+/* Card widths — 4/3/2/1.3 columns */
+.carousel-card {
+    flex: 0 0 calc((100% - 3 * 1.25rem) / 4);
+    min-width: 0;
+}
+
+@media (max-width: 991.98px) {
+    .carousel-card { flex: 0 0 calc((100% - 2 * 1.25rem) / 3); }
+}
+@media (max-width: 767.98px) {
+    .carousel-card { flex: 0 0 calc((100% - 1 * 1.25rem) / 2); }
+}
+@media (max-width: 479.98px) {
+    .carousel-card { flex: 0 0 78%; }
+    .carousel-track { gap: 1rem; }
+}
+
+/* Arrows */
+.carousel-arrows {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.c-arrow {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--c-white);
+    border: 1.5px solid var(--c-border);
+    color: var(--c-text-mid);
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    flex-shrink: 0;
+}
+.c-arrow:hover:not(:disabled) {
+    background: var(--c-black);
+    border-color: var(--c-black);
+    color: var(--c-white);
+    transform: scale(1.05);
+}
+.c-arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* Dots */
+.carousel-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 1.5rem;
+}
+
+.c-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    background: var(--c-border);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.22s ease, width 0.22s ease;
+}
+.c-dot.active {
+    background: var(--c-black);
+    width: 20px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   NEW ARRIVALS GRID
+════════════════════════════════════════════════════════════ */
+.arrivals-grid .prod-card {
+    /* Slightly lighter card for the alt background */
+    background: var(--c-white);
+}
+
+/* ════════════════════════════════════════════════════════════
+   EMPTY STATES
+════════════════════════════════════════════════════════════ */
+.hp-empty {
+    text-align: center;
+    padding: 3rem 2rem;
+    border: 1.5px dashed var(--c-border);
+    border-radius: 12px;
+    background: var(--c-white);
+}
+.hp-empty-icon {
+    font-size: 3rem;
+    opacity: 0.18;
+    margin-bottom: 0.75rem;
+}
+.hp-empty p { color: var(--c-text-muted); font-size: 0.9rem; }
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE HERO
+════════════════════════════════════════════════════════════ */
+@media (max-width: 991.98px) {
+    .hero-inner { padding: 3rem 0 2.5rem; }
+    .hero-card  { min-height: 240px; margin-top: 2rem; }
+    .hero-title { font-size: clamp(2rem, 5vw, 2.6rem); }
+}
+@media (max-width: 575.98px) {
+    .hero-inner { padding: 2.5rem 0 2rem; }
+    .hp-section { padding: 3rem 0; }
+}
 </style>
 @endsection
 
+
 @section('content')
 
-{{-- ===== HERO / LANDING ===== --}}
-<section class="hero-section">
+{{-- ════════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ --}}
+<section class="hero" aria-label="Hero banner">
     <div class="container hero-inner">
         <div class="row align-items-center g-4">
+
+            {{-- Left: Copy --}}
             <div class="col-lg-7">
-                <p class="hero-kicker">SoleMates Footwear · 2026 Collection</p>
+                <p class="hero-kicker">SoleMates Footwear &nbsp;·&nbsp; {{ date('Y') }} Collection</p>
+
                 <h1 class="hero-title">
-                    Step into your
+                    Step into your<br>
                     <span class="hero-highlight">perfect pair.</span>
                 </h1>
-                <p class="hero-subtitle mb-4">
-                    Discover thoughtfully curated footwear for every walk of life—from everyday errands
-                    to milestone moments. Lightweight comfort, elevated style, and pairs that really last.
+
+                <p class="hero-subtitle">
+                    Thoughtfully curated footwear for every walk of life — from everyday errands
+                    to milestone moments. Lightweight comfort, elevated style, pairs that truly last.
                 </p>
 
-                <div class="d-flex flex-wrap align-items-center gap-3 hero-cta mb-3">
-                    <a href="{{ route('products.index') }}" class="btn btn-primary">
-                        Shop all products
+                <div class="hero-cta">
+                    <a href="{{ route('products.index') }}" class="btn-hero-primary">
+                        <i class="fas fa-store" aria-hidden="true"></i>
+                        Shop All Products
                     </a>
-                    <a href="#featured" class="btn btn-outline-dark">
-                        Browse featured picks
+                    <a href="#featured" class="btn-hero-secondary">
+                        <i class="fas fa-star" aria-hidden="true"></i>
+                        Featured Picks
                     </a>
                 </div>
 
-                {{-- Search Form --}}
-                <form action="{{ route('search') }}" method="GET"
-                      class="d-flex align-items-center gap-2 mt-3"
-                      style="max-width:480px;">
-                    <input type="text" name="search"
-                           value="{{ request('search') }}"
-                           placeholder="Search products, brands..."
-                           class="form-control"
-                           style="border-radius:4px;font-size:0.9rem;">
-                    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">
-                        <i class="bi bi-search"></i> Search
-                    </button>
-                </form>
-
-                <div class="d-flex flex-wrap align-items-center gap-3 hero-meta mt-2">
-                    <span class="hero-badge">
-                        <span class="hero-badge-icon">👟</span>
-                        Loved by shoppers across the city
+                <div class="hero-trust">
+                    <span class="hero-trust-badge">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        Secure checkout
                     </span>
-                    <span>Secure checkout · Fast local shipping</span>
+                    <span class="hero-trust-badge">
+                        <i class="fas fa-shipping-fast" aria-hidden="true"></i>
+                        Fast local shipping
+                    </span>
+                    <span class="hero-trust-badge">
+                        <i class="fas fa-undo" aria-hidden="true"></i>
+                        30-day returns
+                    </span>
                 </div>
             </div>
 
+            {{-- Right: Visual Card --}}
             <div class="col-lg-5">
-                <div class="hero-image-card">
-                    <div class="hero-accent-circle"></div>
-                    <div class="hero-tagline">Weekend-ready comfort</div>
-                    <div class="hero-image-title">
-                        Slip into cloud–soft cushioning.
-                    </div>
-                    <p class="mt-3 mb-0" style="font-size:0.82rem; max-width:14rem; opacity:0.85;">
-                        From classic sneakers to polished loafers, every pair is hand‑checked for quality
-                        so you can wear them on repeat.
-                    </p>
-                    <div class="hero-pill">
-                        New arrivals weekly
+                <div class="hero-card" aria-hidden="true">
+                    <div class="hero-card-pill">New arrivals weekly</div>
+                    <div class="hero-card-inner">
+                        <div>
+                            <p class="hero-card-tag">Weekend-ready comfort</p>
+                            <h2 class="hero-card-headline">
+                                Slip into cloud&#8209;soft cushioning.
+                            </h2>
+                            <p class="hero-card-desc">
+                                From classic sneakers to polished loafers, every pair is
+                                hand&#8209;checked for quality so you can wear them on repeat.
+                            </p>
+                        </div>
+                        <div class="hero-card-stats">
+                            <div>
+                                <div class="hero-stat-num">500+</div>
+                                <div class="hero-stat-label">Products</div>
+                            </div>
+                            <div>
+                                <div class="hero-stat-num">2K+</div>
+                                <div class="hero-stat-label">Happy customers</div>
+                            </div>
+                            <div>
+                                <div class="hero-stat-num">100%</div>
+                                <div class="hero-stat-label">Quality checked</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
 
-{{-- ===== SEARCH RESULTS ===== --}}
+
+{{-- ════════════════════════════════════════════════════════════
+     SEARCH RESULTS (only when a query is active)
+════════════════════════════════════════════════════════════ --}}
 @if(isset($results))
-<section class="homepage-section" style="padding-bottom:0;">
+<section class="search-results-section" aria-label="Search results">
     <div class="container">
-        <h4 style="font-family:var(--font-display);font-weight:700;">
+        <h2 class="search-results-title">
             Results for &ldquo;{{ $query }}&rdquo;
-            <span style="font-size:0.9rem;color:var(--sm-muted);"> ({{ $results->total() }} found)</span>
-        </h4>
+        </h2>
+        <p class="text-muted mb-4" style="font-size:0.85rem;">
+            {{ $results->total() }} product{{ $results->total() !== 1 ? 's' : '' }} found
+        </p>
 
         @if($results->count())
-            <div class="row g-3 mt-2">
+            <div class="row g-3">
                 @foreach($results as $product)
                     <div class="col-6 col-md-4 col-xl-3">
-                        <a href="{{ route('products.show', $product->id) }}" class="product-card">
-                            <div class="product-img-wrap">
-                                @php $thumb = $product->thumbnailUrl(); @endphp
-                                @if($thumb)
-                                    <img src="{{ $thumb }}" alt="{{ $product->name }}" class="product-img">
-                                @else
-                                    <span class="product-img-placeholder">&#128095;</span>
-                                @endif
-                                @if($product->created_at && $product->created_at->diffInDays() < 14)
-                                    <span class="product-badge">New</span>
-                                @endif
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">
-                                    {{ optional($product->brand)->name ?? 'SoleMates' }}
+                        <div class="prod-card">
+                            <a href="{{ route('products.show', $product->id) }}" style="text-decoration:none;color:inherit;">
+                                <div class="prod-img-wrap">
+                                    @php $thumb = $product->thumbnailUrl(); @endphp
+                                    @if($thumb)
+                                        <img src="{{ $thumb }}" alt="{{ $product->name }}" class="prod-img">
+                                    @else
+                                        <span class="prod-img-placeholder" aria-hidden="true">&#128095;</span>
+                                    @endif
+                                    @if($product->created_at && $product->created_at->diffInDays() < 14)
+                                        <span class="prod-badge prod-badge-new">New</span>
+                                    @endif
                                 </div>
-                                <div class="product-name">{{ $product->name }}</div>
-                                <div class="d-flex justify-content-between align-items-center mt-1">
-                                    <div class="product-price">&#8369;{{ number_format($product->price, 2) }}</div>
+                                <div class="prod-info">
+                                    <div class="prod-brand">{{ optional($product->brand)->name ?? 'SoleMates' }}</div>
+                                    <div class="prod-name">{{ $product->name }}</div>
+                                    <div class="prod-price">&#8369;{{ number_format($product->price, 2) }}</div>
                                     @if($product->stock !== null)
                                         @if($product->stock <= 5 && $product->stock > 0)
-                                            <span class="product-stock">Only {{ $product->stock }} left</span>
+                                            <div class="prod-stock-low">Only {{ $product->stock }} left</div>
                                         @elseif($product->stock == 0)
-                                            <span class="product-stock" style="color:var(--sm-muted);">Out of stock</span>
+                                            <div class="prod-stock-out">Out of stock</div>
                                         @endif
                                     @endif
                                 </div>
+                            </a>
+                            <div class="prod-actions">
+                                <a href="{{ route('products.show', $product->id) }}" class="btn-prod-view">View Details</a>
+                                @if($product->stock > 0)
+                                    @auth
+                                        <form action="{{ route('cart.add', $product->id) }}" method="POST" style="display:contents;">
+                                            @csrf
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn-prod-cart" title="Add to cart" aria-label="Add {{ $product->name }} to cart">
+                                                <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('login') }}" class="btn-prod-cart" title="Sign in to add to cart" aria-label="Sign in to add to cart">
+                                            <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                                        </a>
+                                    @endauth
+                                @else
+                                    <button class="btn-prod-cart" disabled aria-label="Out of stock">
+                                        <i class="fas fa-ban" aria-hidden="true"></i>
+                                    </button>
+                                @endif
                             </div>
-                        </a>
+                        </div>
                     </div>
                 @endforeach
             </div>
-
             <div class="mt-4">{{ $results->links() }}</div>
         @else
-            <p class="text-muted mt-3">No products found for &ldquo;{{ $query }}&rdquo;. Try a different search term.</p>
+            <div class="hp-empty">
+                <div class="hp-empty-icon">&#128269;</div>
+                <p>No products matched &ldquo;{{ $query }}&rdquo;. Try a broader search term.</p>
+                <a href="{{ route('home') }}" class="btn btn-dark btn-sm mt-2" style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.06em;">Clear Search</a>
+            </div>
         @endif
     </div>
 </section>
 @endif
 
-{{-- ===== CATEGORIES / BRANDS STRIP ===== --}}
-<section class="homepage-section">
+
+{{-- ════════════════════════════════════════════════════════════
+     CATEGORY BROWSE STRIP
+════════════════════════════════════════════════════════════ --}}
+@if(isset($categories) && $categories->count())
+<div class="cat-strip" role="navigation" aria-label="Browse by category">
     <div class="container">
-        <div class="section-heading">
-            <h2>Shop by vibe</h2>
-            <span>Browse by category or brand</span>
+        <div class="cat-strip-inner">
+            <span class="cat-strip-label">Browse:</span>
+            @foreach($categories->take(8) as $category)
+                <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="cat-chip">
+                    {{ $category->name }}
+                    <span class="cat-chip-count">{{ $category->products_count }}</span>
+                </a>
+            @endforeach
+            <a href="{{ route('products.index') }}" class="cat-chip-all">
+                View All <i class="fas fa-arrow-right" style="font-size:0.65rem;" aria-hidden="true"></i>
+            </a>
         </div>
-
-        {{-- Categories --}}
-        @if(isset($categories) && $categories->count())
-            <div class="chip-row mb-2">
-                @foreach($categories as $category)
-                    <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="chip-link">
-                        {{ $category->name }}
-                        <small>{{ $category->products_count ?? $category->products?->count() ?? 0 }}</small>
-                    </a>
-                @endforeach
-            </div>
-        @endif
-
-        {{-- Brands --}}
-        @if(isset($brands) && $brands->count())
-            <div class="chip-row">
-                @foreach($brands as $brand)
-                    <a href="{{ route('products.index', ['brand_id' => $brand->id]) }}" class="chip-link">
-                        {{ $brand->name }}
-                        <small>{{ $brand->products_count ?? $brand->products?->count() ?? 0 }}</small>
-                    </a>
-                @endforeach
-            </div>
-        @endif
     </div>
-</section>
+</div>
+@endif
 
-{{-- ===== FEATURED PRODUCTS ===== --}}
-<section id="featured" class="homepage-section" style="padding-top:0;">
+
+{{-- ════════════════════════════════════════════════════════════
+     FEATURED PICKS CAROUSEL
+════════════════════════════════════════════════════════════ --}}
+<section id="featured" class="hp-section" aria-label="Featured picks">
     <div class="container">
-        <div class="section-heading">
-            <h2>Featured picks</h2>
-            <span>Hand‑picked pairs just for you</span>
+
+        <div class="hp-sec-head">
+            <div>
+                <p class="hp-sec-kicker">Handpicked</p>
+                <h2 class="hp-sec-title">Featured Picks</h2>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                {{-- Arrows --}}
+                <div class="carousel-arrows" id="featuredArrows">
+                    <button class="c-arrow" id="featPrev" aria-label="Previous featured products">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <button class="c-arrow" id="featNext" aria-label="Next featured products">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <a href="{{ route('products.index') }}" class="hp-sec-link">
+                    View all <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
         </div>
 
         @if(isset($featuredProducts) && $featuredProducts->count())
-            <div class="row g-3">
-                @foreach($featuredProducts as $product)
-                    <div class="col-6 col-md-4 col-xl-3">
-                        <a href="{{ route('products.show', $product->id) }}" class="product-card">
-                            <div class="product-img-wrap">
-                @php $thumb = $product->thumbnailUrl(); @endphp
-                                @if($thumb)
-                                    <img
-                                        src="{{ $thumb }}"
-                                        alt="{{ $product->name }}"
-                                        class="product-img"
-                                    >
-                                @else
-                                    <span class="product-img-placeholder">👟</span>
-                                @endif
 
-                                @if($product->created_at && $product->created_at->diffInDays() < 14)
-                                    <span class="product-badge">New</span>
-                                @endif
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">
-                                    {{ optional($product->brand)->name ?? 'SoleMates' }}
-                                </div>
-                                <div class="product-name">
-                                    {{ $product->name }}
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-1">
-                                    <div class="product-price">
-                                        ₱{{ number_format($product->price, 2) }}
-                                    </div>
-                                    @if($product->stock !== null)
-                                        @if($product->stock <= 5 && $product->stock > 0)
-                                            <span class="product-stock">Only {{ $product->stock }} left</span>
-                                        @elseif($product->stock == 0)
-                                            <span class="product-stock" style="color:var(--sm-muted);">
-                                                Out of stock
-                                            </span>
+            {{-- Carousel --}}
+            <div class="carousel-outer" id="featuredCarousel">
+                <div class="carousel-viewport">
+                    <div class="carousel-track" id="featuredTrack">
+                        @foreach($featuredProducts as $product)
+                            <div class="carousel-card">
+                                <div class="prod-card">
+
+                                    {{-- Image --}}
+                                    <a href="{{ route('products.show', $product->id) }}"
+                                       style="text-decoration:none;color:inherit;"
+                                       tabindex="-1"
+                                       aria-hidden="true">
+                                        <div class="prod-img-wrap">
+                                            @php $thumb = $product->thumbnailUrl(); @endphp
+                                            @if($thumb)
+                                                <img src="{{ $thumb }}"
+                                                     alt="{{ $product->name }}"
+                                                     class="prod-img"
+                                                     loading="lazy">
+                                            @else
+                                                <span class="prod-img-placeholder" aria-hidden="true">&#128095;</span>
+                                            @endif
+
+                                            @if($product->created_at && $product->created_at->diffInDays() < 14)
+                                                <span class="prod-badge prod-badge-new">New</span>
+                                            @endif
+                                        </div>
+                                    </a>
+
+                                    {{-- Info --}}
+                                    <div class="prod-info">
+                                        <div class="prod-brand">
+                                            {{ optional($product->brand)->name ?? 'SoleMates' }}
+                                        </div>
+                                        <div class="prod-name">
+                                            <a href="{{ route('products.show', $product->id) }}"
+                                               style="text-decoration:none;color:inherit;">
+                                                {{ $product->name }}
+                                            </a>
+                                        </div>
+                                        <div class="prod-price">&#8369;{{ number_format($product->price, 2) }}</div>
+                                        @if($product->stock !== null)
+                                            @if($product->stock <= 5 && $product->stock > 0)
+                                                <div class="prod-stock-low">Only {{ $product->stock }} left</div>
+                                            @elseif($product->stock == 0)
+                                                <div class="prod-stock-out">Out of stock</div>
+                                            @endif
                                         @endif
-                                    @endif
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
+                                    </div>
+
+                                    {{-- Actions --}}
+                                    <div class="prod-actions">
+                                        <a href="{{ route('products.show', $product->id) }}"
+                                           class="btn-prod-view">
+                                            View Details
+                                        </a>
+
+                                        @if(!isset($product->stock) || $product->stock > 0)
+                                            @auth
+                                                <form action="{{ route('cart.add', $product->id) }}"
+                                                      method="POST"
+                                                      style="display:contents;">
+                                                    @csrf
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <button type="submit"
+                                                            class="btn-prod-cart"
+                                                            title="Add to cart"
+                                                            aria-label="Add {{ $product->name }} to cart">
+                                                        <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <a href="{{ route('login') }}"
+                                                   class="btn-prod-cart"
+                                                   title="Sign in to add to cart"
+                                                   aria-label="Sign in to add {{ $product->name }} to cart">
+                                                    <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                                                </a>
+                                            @endauth
+                                        @else
+                                            <button class="btn-prod-cart" disabled aria-label="Out of stock">
+                                                <i class="fas fa-ban" aria-hidden="true"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+
+                                </div>{{-- /.prod-card --}}
+                            </div>{{-- /.carousel-card --}}
+                        @endforeach
+                    </div>{{-- /.carousel-track --}}
+                </div>{{-- /.carousel-viewport --}}
             </div>
+
+            {{-- Dots --}}
+            <div class="carousel-dots" id="featuredDots" role="tablist" aria-label="Carousel position"></div>
+
         @else
-            <div class="empty-featured">
-                <div>We’re still curating featured pairs.</div>
-                <div class="mt-2">
-                    In the meantime, you can explore everything in our
-                    <a href="{{ route('products.index') }}">shop</a>.
-                </div>
+            <div class="hp-empty">
+                <div class="hp-empty-icon" aria-hidden="true">&#128095;</div>
+                <p>
+                    We're still curating our featured picks.<br>
+                    <a href="{{ route('products.index') }}">Explore all products</a> in the meantime.
+                </p>
             </div>
         @endif
+
     </div>
 </section>
 
+
+{{-- ════════════════════════════════════════════════════════════
+     NEW ARRIVALS GRID
+════════════════════════════════════════════════════════════ --}}
+@if(isset($newArrivals) && $newArrivals->count())
+<section class="hp-section hp-section-alt arrivals-grid" aria-label="New arrivals">
+    <div class="container">
+
+        <div class="hp-sec-head">
+            <div>
+                <p class="hp-sec-kicker">Just Dropped</p>
+                <h2 class="hp-sec-title">New Arrivals</h2>
+            </div>
+            <a href="{{ route('products.index', ['sort' => 'latest']) }}" class="hp-sec-link">
+                See all new <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div class="row g-3">
+            @foreach($newArrivals->take(8) as $product)
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="prod-card">
+
+                        <a href="{{ route('products.show', $product->id) }}"
+                           style="text-decoration:none;color:inherit;"
+                           aria-label="{{ $product->name }}">
+                            <div class="prod-img-wrap">
+                                @php $thumb = $product->thumbnailUrl(); @endphp
+                                @if($thumb)
+                                    <img src="{{ $thumb }}"
+                                         alt="{{ $product->name }}"
+                                         class="prod-img"
+                                         loading="lazy">
+                                @else
+                                    <span class="prod-img-placeholder" aria-hidden="true">&#128095;</span>
+                                @endif
+                                <span class="prod-badge prod-badge-new">New</span>
+                            </div>
+                        </a>
+
+                        <div class="prod-info">
+                            <div class="prod-brand">
+                                {{ optional($product->brand)->name ?? 'SoleMates' }}
+                            </div>
+                            <div class="prod-name">
+                                <a href="{{ route('products.show', $product->id) }}"
+                                   style="text-decoration:none;color:inherit;">
+                                    {{ $product->name }}
+                                </a>
+                            </div>
+                            <div class="prod-price">&#8369;{{ number_format($product->price, 2) }}</div>
+                            @if($product->stock !== null && $product->stock <= 5 && $product->stock > 0)
+                                <div class="prod-stock-low">Only {{ $product->stock }} left</div>
+                            @elseif($product->stock !== null && $product->stock == 0)
+                                <div class="prod-stock-out">Out of stock</div>
+                            @endif
+                        </div>
+
+                        <div class="prod-actions">
+                            <a href="{{ route('products.show', $product->id) }}" class="btn-prod-view">View Details</a>
+                            @if(!isset($product->stock) || $product->stock > 0)
+                                @auth
+                                    <form action="{{ route('cart.add', $product->id) }}"
+                                          method="POST"
+                                          style="display:contents;">
+                                        @csrf
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit"
+                                                class="btn-prod-cart"
+                                                title="Add to cart"
+                                                aria-label="Add {{ $product->name }} to cart">
+                                            <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('login') }}"
+                                       class="btn-prod-cart"
+                                       title="Sign in to add to cart"
+                                       aria-label="Sign in to add {{ $product->name }} to cart">
+                                        <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                                    </a>
+                                @endauth
+                            @else
+                                <button class="btn-prod-cart" disabled aria-label="Out of stock">
+                                    <i class="fas fa-ban" aria-hidden="true"></i>
+                                </button>
+                            @endif
+                        </div>
+
+                    </div>{{-- /.prod-card --}}
+                </div>
+            @endforeach
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ route('products.index', ['sort' => 'latest']) }}"
+               class="btn-hero-secondary d-inline-flex">
+                <i class="fas fa-th" aria-hidden="true"></i>
+                Browse All Products
+            </a>
+        </div>
+
+    </div>
+</section>
+@endif
+
+@endsection
+
+
+@section('scripts')
+<script>
+/**
+ * SoleMates — Featured Products Carousel
+ * Auto-play · Prev/Next arrows · Dot indicators · Pause on hover · Responsive
+ */
+(function () {
+    'use strict';
+
+    var AUTOPLAY_MS = 4000;
+
+    /* ── Find elements ── */
+    var outer    = document.getElementById('featuredCarousel');
+    var track    = document.getElementById('featuredTrack');
+    var dotsWrap = document.getElementById('featuredDots');
+    var btnPrev  = document.getElementById('featPrev');
+    var btnNext  = document.getElementById('featNext');
+
+    if (!outer || !track) return;
+
+    var cards  = Array.from(track.children);
+    var total  = cards.length;
+    if (total === 0) return;
+
+    var current  = 0;
+    var timer    = null;
+    var trackGap = 0; /* will be read from computed style */
+
+    /* ── Responsive column count ── */
+    function getCols() {
+        var w = window.innerWidth;
+        if (w >= 992) return 4;
+        if (w >= 768) return 3;
+        if (w >= 480) return 2;
+        return 1;
+    }
+
+    /* ── Max slide index (no empty space at end) ── */
+    function maxIdx() {
+        return Math.max(0, total - getCols());
+    }
+
+    /* ── Read actual gap from computed style ── */
+    function readGap() {
+        var style = window.getComputedStyle(track);
+        var col   = style.columnGap || style.gap || '0px';
+        trackGap  = parseFloat(col) || 20;
+    }
+
+    /* ── Slide to index ── */
+    function go(idx) {
+        readGap();
+        current = Math.max(0, Math.min(idx, maxIdx()));
+
+        var cardW   = cards[0].offsetWidth + trackGap;
+        track.style.transform = 'translateX(-' + (current * cardW) + 'px)';
+
+        /* Arrows */
+        if (btnPrev) btnPrev.disabled = current === 0;
+        if (btnNext) btnNext.disabled = current >= maxIdx();
+
+        /* Dots */
+        updateDots();
+    }
+
+    /* ── Build / rebuild dot buttons ── */
+    function buildDots() {
+        if (!dotsWrap) return;
+        var cols   = getCols();
+        var nDots  = Math.ceil(total / cols);
+        dotsWrap.innerHTML = '';
+        for (var i = 0; i < nDots; i++) {
+            (function (dotIdx) {
+                var btn = document.createElement('button');
+                btn.className   = 'c-dot' + (dotIdx === 0 ? ' active' : '');
+                btn.setAttribute('role', 'tab');
+                btn.setAttribute('aria-label', 'Go to slide group ' + (dotIdx + 1));
+                btn.addEventListener('click', function () {
+                    stopAuto();
+                    go(dotIdx * getCols());
+                    startAuto();
+                });
+                dotsWrap.appendChild(btn);
+            })(i);
+        }
+    }
+
+    /* ── Highlight correct dot ── */
+    function updateDots() {
+        if (!dotsWrap) return;
+        var cols      = getCols();
+        var activeDot = Math.round(current / cols);
+        var dots      = dotsWrap.querySelectorAll('.c-dot');
+        dots.forEach(function (d, i) {
+            d.classList.toggle('active', i === activeDot);
+            d.setAttribute('aria-selected', i === activeDot ? 'true' : 'false');
+        });
+    }
+
+    /* ── Auto-play ── */
+    function startAuto() {
+        stopAuto();
+        timer = setInterval(function () {
+            go(current >= maxIdx() ? 0 : current + 1);
+        }, AUTOPLAY_MS);
+    }
+
+    function stopAuto() {
+        clearInterval(timer);
+    }
+
+    /* ── Arrow events ── */
+    if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+            stopAuto();
+            go(current <= 0 ? maxIdx() : current - 1);
+            startAuto();
+        });
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener('click', function () {
+            stopAuto();
+            go(current >= maxIdx() ? 0 : current + 1);
+            startAuto();
+        });
+    }
+
+    /* ── Pause on hover ── */
+    outer.addEventListener('mouseenter', stopAuto);
+    outer.addEventListener('mouseleave', startAuto);
+
+    /* ── Touch/swipe support ── */
+    var touchX = null;
+    outer.addEventListener('touchstart', function (e) {
+        touchX = e.touches[0].clientX;
+    }, { passive: true });
+
+    outer.addEventListener('touchend', function (e) {
+        if (touchX === null) return;
+        var diff = touchX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 45) {
+            stopAuto();
+            go(diff > 0 ? current + 1 : current - 1);
+            startAuto();
+        }
+        touchX = null;
+    }, { passive: true });
+
+    /* ── Resize: rebuild dots and reposition ── */
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            buildDots();
+            go(Math.min(current, maxIdx()));
+        }, 150);
+    });
+
+    /* ── Init ── */
+    buildDots();
+    go(0);
+    startAuto();
+
+})();
+</script>
 @endsection

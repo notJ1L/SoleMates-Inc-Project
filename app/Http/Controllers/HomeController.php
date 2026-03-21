@@ -9,43 +9,71 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function __construct()
-    {
-        // Remove auth middleware to allow public access to homepage
-    }
-
     public function index()
     {
-        $featuredProducts = Product::with(['category', 'brand', 'photos'])
-                                  ->inRandomOrder()
-                                  ->take(10)
-                                  ->get();
-        
-        $categories = Category::withCount('products')->get();
-        $brands = Brand::withCount('products')->get();
+        // 8 random products for the featured carousel
+        $featuredProducts = Product::with(["category", "brand", "photos"])
+            ->inRandomOrder()
+            ->take(8)
+            ->get();
 
-        return view('home', compact('featuredProducts', 'categories', 'brands'));
+        // 8 newest products for the "New Arrivals" section
+        $newArrivals = Product::with(["category", "brand", "photos"])
+            ->latest()
+            ->take(8)
+            ->get();
+
+        $categories = Category::withCount("products")
+            ->having("products_count", ">", 0)
+            ->get();
+
+        $brands = Brand::withCount("products")
+            ->having("products_count", ">", 0)
+            ->get();
+
+        return view(
+            "home",
+            compact("featuredProducts", "newArrivals", "categories", "brands"),
+        );
     }
 
     public function search(Request $request)
     {
-        $query = trim($request->get('search', ''));
+        $query = trim($request->get("search", ""));
 
-        if ($query === '') {
-            return redirect()->route('home');
+        if ($query === "") {
+            return redirect()->route("home");
         }
 
         $results = Product::search($query)
-            ->query(fn ($q) => $q->with(['category', 'brand', 'photos'])
-                                 ->withCount('reviews')
-                                 ->withAvg('reviews', 'rating'))
+            ->query(
+                fn($q) => $q
+                    ->with(["category", "brand", "photos"])
+                    ->withCount("reviews")
+                    ->withAvg("reviews", "rating"),
+            )
             ->paginate(12)
             ->withQueryString();
 
         $featuredProducts = collect();
-        $categories = Category::withCount('products')->having('products_count', '>', 0)->get();
-        $brands     = Brand::withCount('products')->having('products_count', '>', 0)->get();
+        $newArrivals = collect();
+        $categories = Category::withCount("products")
+            ->having("products_count", ">", 0)
+            ->get();
+        $brands = Brand::withCount("products")
+            ->having("products_count", ">", 0)
+            ->get();
 
-        return view('home', compact('results', 'query', 'featuredProducts', 'categories', 'brands'));
+        return view(
+            "home",
+            compact(
+                "results",
+                "query",
+                "featuredProducts",
+                "newArrivals",
+                "categories",
+                "brands",
+            ),
+        );
     }
 }
