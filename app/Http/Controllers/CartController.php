@@ -40,6 +40,15 @@ class CartController extends Controller
     private function getCart()
     {
         if (Auth::check()) {
+            // Merge any lingering session cart into the database first
+            $sessionCart = session()->get('cart', []);
+            if (!empty($sessionCart)) {
+                foreach ($sessionCart as $productId => $item) {
+                    Cart::addItem(Auth::id(), $productId, $item['quantity']);
+                }
+                session()->forget('cart');
+            }
+
             // Get from database for authenticated users
             $cartItems = Cart::getUserCart(Auth::id());
             $cart = [];

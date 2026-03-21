@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,15 @@ class LoginController extends Controller
 
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
+
+        // Merge guest session cart into database
+        $sessionCart = $request->session()->get('cart', []);
+        if (!empty($sessionCart)) {
+            foreach ($sessionCart as $productId => $item) {
+                Cart::addItem($user->id, $productId, $item['quantity']);
+            }
+            $request->session()->forget('cart');
+        }
 
         if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard');
