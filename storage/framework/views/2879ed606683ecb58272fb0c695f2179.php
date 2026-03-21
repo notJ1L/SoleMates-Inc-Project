@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Forgot Password — SoleMates Footwear'); ?>
 
-@section('title', 'Forgot Password — SoleMates Footwear')
-
-@section('head')
+<?php $__env->startSection('head'); ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -444,16 +442,16 @@
     .auth-form-title { font-size: 1.7rem; }
   }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="auth-page">
 
-  {{-- ═══ LEFT: Visual Panel ═══ --}}
+  
   <aside class="auth-visual">
     <div class="auth-visual-inner">
 
-      <a href="{{ route('home') }}" class="auth-brand">
+      <a href="<?php echo e(route('home')); ?>" class="auth-brand">
         <div class="auth-brand-mark"><i class="fas fa-shoe-prints"></i></div>
         <span class="auth-brand-name">Sole<em>Mates</em></span>
       </a>
@@ -489,13 +487,13 @@
       </div>
 
       <p class="auth-visual-foot">
-        &copy; {{ date('Y') }} SoleMates Footwear &nbsp;·&nbsp; All rights reserved
+        &copy; <?php echo e(date('Y')); ?> SoleMates Footwear &nbsp;·&nbsp; All rights reserved
       </p>
 
     </div>
   </aside>
 
-  {{-- ═══ RIGHT: Form Panel ═══ --}}
+  
   <section class="auth-form-panel" aria-label="Password reset form">
 
     <header class="auth-form-header">
@@ -507,18 +505,18 @@
       </p>
     </header>
 
-    {{-- Success status --}}
-    @if(session('status'))
+    
+    <?php if(session('status')): ?>
       <div class="auth-alert-success" role="alert">
         <i class="fas fa-check-circle" aria-hidden="true"></i>
-        <span>{{ session('status') }}</span>
+        <span><?php echo e(session('status')); ?></span>
       </div>
-    @endif
+    <?php endif; ?>
 
-    <form method="POST" action="{{ route('password.email') }}" novalidate>
-      @csrf
+    <form method="POST" action="<?php echo e(route('password.email')); ?>" novalidate>
+      <?php echo csrf_field(); ?>
 
-      {{-- Email --}}
+      
       <div class="form-field">
         <label for="email">Email Address</label>
         <div class="field-wrap">
@@ -527,20 +525,28 @@
             type="email"
             id="email"
             name="email"
-            value="{{ old('email') }}"
+            value="<?php echo e(old('email')); ?>"
             placeholder="you@example.com"
             autocomplete="email"
             autofocus
-            class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
+            class="<?php echo e($errors->has('email') ? 'is-invalid' : ''); ?>"
             aria-required="true"
           >
         </div>
-        @error('email')
+        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
           <p class="field-error" role="alert">
             <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-            {{ $message }}
+            <?php echo e($message); ?>
+
           </p>
-        @enderror
+        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
       </div>
 
       <button type="submit" class="btn-auth-primary">
@@ -550,7 +556,7 @@
 
     </form>
 
-    <a href="{{ route('login') }}" class="auth-back-link">
+    <a href="<?php echo e(route('login')); ?>" class="auth-back-link">
       <i class="fas fa-arrow-left" aria-hidden="true"></i>
       Back to Sign In
     </a>
@@ -558,4 +564,6 @@
   </section>
 
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/auth/passwords/email.blade.php ENDPATH**/ ?>

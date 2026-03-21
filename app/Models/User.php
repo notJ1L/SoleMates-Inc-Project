@@ -57,6 +57,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->is_active;
     }
 
+    /** Returns the email address for password reset purposes */
+    public function getEmailForReset()
+    {
+        return $this->email;
+    }
+
     /** Returns the public URL for this user's profile photo, if present. */
     public function profilePhotoUrl(): ?string
     {
