@@ -61,12 +61,6 @@ Route::middleware("auth")->group(function () {
         VerificationController::class,
         "notice",
     ])->name("verification.notice");
-    Route::get("/email/verify/{id}/{hash}", [
-        VerificationController::class,
-        "verify",
-    ])
-        ->middleware(["signed"])
-        ->name("verification.verify");
     Route::post("/email/verification-notification", [
         VerificationController::class,
         "resend",
@@ -82,6 +76,13 @@ Route::middleware("auth")->group(function () {
         "confirm",
     ]);
 });
+
+Route::get("/email/verify/{id}/{hash}", [
+    VerificationController::class,
+    "verify",
+])
+    ->middleware(["signed", "throttle:6,1"])
+    ->name("verification.verify");
 
 // Image serving route for artisan serve
 Route::get("/images/{filename}", function ($filename) {
@@ -129,7 +130,7 @@ Route::get("/simple-products/{product}", [
 ])->name("products.simple.show");
 
 // Cart and Checkout Routes (Protected)
-Route::middleware(["auth"])->group(function () {
+Route::middleware(["auth", "verified"])->group(function () {
     Route::get("/cart", [CartController::class, "index"])->name("cart.index");
     Route::post("/cart/add/{id}", [CartController::class, "add"])->name(
         "cart.add",
@@ -185,7 +186,7 @@ Route::middleware(["auth"])->group(function () {
 });
 
 // Admin Routes (Protected)
-Route::middleware(["auth", "admin"])
+Route::middleware(["auth", "verified", "admin"])
     ->prefix("admin")
     ->name("admin.")
     ->group(function () {

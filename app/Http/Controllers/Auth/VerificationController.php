@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class VerificationController extends Controller
 {
@@ -17,27 +18,31 @@ class VerificationController extends Controller
     public function notice(Request $request)
     {
         return $request->user()->hasVerifiedEmail()
-                    ? redirect()->intended('/home')
+                    ? redirect()->route('home')
                     : view('auth.verify');
     }
 
     /**
      * Mark the authenticated user's email address as verified.
      *
-     * @param  \Illuminate\Foundation\Auth\EmailVerificationRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function verify(EmailVerificationRequest $request)
+    public function verify(Request $request, string $id, string $hash)
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended('/home');
+        $user = User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            abort(403);
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new \Illuminate\Auth\Events\Verified($request->user()));
+        if (! $user->hasVerifiedEmail() && $user->markEmailAsVerified()) {
+            event(new Verified($user));
         }
 
-        return redirect()->intended('/home')->with('verified', true);
+        return redirect()
+            ->route('login')
+            ->with('status', 'Email verified successfully. You can now sign in.');
     }
 
     /**
@@ -49,7 +54,7 @@ class VerificationController extends Controller
     public function resend(Request $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended('/home');
+            return redirect()->route('home');
         }
 
         $request->user()->sendEmailVerificationNotification();

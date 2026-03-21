@@ -521,6 +521,12 @@
     color: var(--c-error);
   }
 
+  .auth-alert-success {
+    background: rgba(33,150,83,0.08);
+    border: 1px solid rgba(33,150,83,0.2);
+    color: var(--c-success);
+  }
+
   /* ════════════════════════════════════════════
      RESPONSIVE
   ════════════════════════════════════════════ */
@@ -632,6 +638,13 @@
       <h2 class="auth-form-title">Sign In</h2>
       <p class="auth-form-subtitle">Enter your credentials to access your account</p>
     </header>
+
+    <?php if(session('status')): ?>
+      <div class="auth-alert auth-alert-success" role="alert">
+        <i class="fas fa-check-circle" style="margin-top:1px;flex-shrink:0;"></i>
+        <span><?php echo e(session('status')); ?></span>
+      </div>
+    <?php endif; ?>
 
     
     <?php if($errors->any() && !$errors->has('email') && !$errors->has('password')): ?>

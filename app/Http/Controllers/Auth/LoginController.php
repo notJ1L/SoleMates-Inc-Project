@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -35,20 +36,36 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
-            $request->session()->regenerate();
+        $user = User::where('email', $request->email)->first();
 
-            // Check if user is admin and redirect accordingly
-            if (Auth::user()->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            }
-
-            return redirect()->intended(route('home'));
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => [trans('auth.failed')],
+            ]);
         }
 
-        throw ValidationException::withMessages([
-            'email' => [trans('auth.failed')],
-        ]);
+        if (!$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+
+            throw ValidationException::withMessages([
+                'email' => ['Your email address is not verified yet. A new verification link has been sent to your inbox.'],
+            ]);
+        }
+
+        if (!$user->isActive()) {
+            throw ValidationException::withMessages([
+                'email' => ['Your account has been deactivated. Please contact administrator.'],
+            ]);
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->intended(route('home'));
     }
 
     /**
