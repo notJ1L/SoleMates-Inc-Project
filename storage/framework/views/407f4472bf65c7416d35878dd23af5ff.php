@@ -898,7 +898,7 @@
                                 <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
 
                             </span>
-                            <span class="sm-user-name"><?php echo e(auth()->user()->name); ?></span>
+                            <span class="sm-user-name"><?php echo e(explode(' ', auth()->user()->name)[0]); ?></span>
                             <i class="fas fa-chevron-down sm-user-chevron" aria-hidden="true"></i>
                         </button>
 
@@ -911,7 +911,7 @@
 
                                 </div>
                                 <div style="min-width:0;">
-                                    <div class="sm-user-panel-name"><?php echo e(auth()->user()->name); ?></div>
+                                    <div class="sm-user-panel-name"><?php echo e(explode(' ', auth()->user()->name)[0]); ?></div>
                                     <div class="sm-user-panel-email"><?php echo e(auth()->user()->email); ?></div>
                                 </div>
                             </div>

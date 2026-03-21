@@ -896,7 +896,7 @@
                             <span class="sm-avatar" aria-hidden="true">
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             </span>
-                            <span class="sm-user-name">{{ auth()->user()->name }}</span>
+                            <span class="sm-user-name">{{ explode(' ', auth()->user()->name)[0] }}</span>
                             <i class="fas fa-chevron-down sm-user-chevron" aria-hidden="true"></i>
                         </button>
 
@@ -908,7 +908,7 @@
                                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                 </div>
                                 <div style="min-width:0;">
-                                    <div class="sm-user-panel-name">{{ auth()->user()->name }}</div>
+                                    <div class="sm-user-panel-name">{{ explode(' ', auth()->user()->name)[0] }}</div>
                                     <div class="sm-user-panel-email">{{ auth()->user()->email }}</div>
                                 </div>
                             </div>

@@ -11,8 +11,8 @@
   /* ════════════════════════════════════════════
      LAYOUT RESET — hide nav/footer on auth pages
   ════════════════════════════════════════════ */
-  nav.navbar,
-  footer { display: none !important; }
+  nav.sm-nav,
+  footer.sm-footer { display: none !important; }
   .main-content { margin-top: 0 !important; }
 
   /* ════════════════════════════════════════════
