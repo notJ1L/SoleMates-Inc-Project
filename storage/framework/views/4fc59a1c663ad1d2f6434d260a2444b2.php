@@ -19,6 +19,37 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
+<div class="filter-bar">
+    <div class="d-flex align-items-center gap-2 flex-wrap w-100">
+        <i class="bi bi-funnel" style="color:var(--c-text-muted);font-size:0.9rem;"></i>
+        <select id="filterCategory" class="form-select" style="width:160px;">
+            <option value="">All Categories</option>
+            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option value="<?php echo e($cat->id); ?>"><?php echo e($cat->name); ?></option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </select>
+        <select id="filterBrand" class="form-select" style="width:140px;">
+            <option value="">All Brands</option>
+            <?php $__currentLoopData = $brands; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $brand): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option value="<?php echo e($brand->id); ?>"><?php echo e($brand->name); ?></option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </select>
+        <select id="filterStatus" class="form-select" style="width:150px;">
+            <option value="">All Statuses</option>
+            <option value="instock">In Stock</option>
+            <option value="lowstock">Low Stock</option>
+            <option value="outofstock">Out of Stock</option>
+        </select>
+        <input id="filterSearch" type="text" class="form-control" style="max-width:260px;flex:1;" placeholder="Search products...">
+        <button type="button" onclick="applyProductFilters()" class="btn-secondary-admin">
+            <i class="bi bi-search"></i> Search
+        </button>
+        <button type="button" onclick="clearProductFilters()" id="clearProductFiltersBtn" class="btn-secondary-admin" style="display:none;color:var(--c-error);">
+            <i class="bi bi-x-lg"></i> Clear
+        </button>
+    </div>
+</div>
+
 <div class="panel">
     <div class="table-responsive">
         <table id="productsTable" class="data-table" style="width:100%">
@@ -103,7 +134,11 @@ const table = $('#productsTable').DataTable({
     ajax: {
         url: '<?php echo e(route('admin.products.data')); ?>',
         data: function(d) {
-            d.trashed = showingTrashed ? 1 : 0;
+            d.trashed       = showingTrashed ? 1 : 0;
+            d.category_id   = $('#filterCategory').val();
+            d.brand_id      = $('#filterBrand').val();
+            d.status_filter = $('#filterStatus').val();
+            d.search.value  = $('#filterSearch').val();
         }
     },
     columns: [
@@ -126,7 +161,7 @@ const table = $('#productsTable').DataTable({
         zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No products found.</div>',
         paginate: { previous: '&#x2039;', next: '&#x203A;' },
     },
-    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rtip',
+    dom: 'rtip',
     initComplete: function() {
         var wrapper = this.api().table().container();
         var $info  = $(wrapper).find('.dataTables_info').detach();
@@ -134,25 +169,23 @@ const table = $('#productsTable').DataTable({
         $('#products-outer-nav').append($info).append($pager);
     },
     drawCallback: function() {
-        // re-style search/length inputs to match admin theme
-        $('.dataTables_filter input').css({
-            'border': '1px solid var(--border)',
-            'border-radius': 'var(--radius-sm)',
-            'padding': '0.425rem 0.75rem',
-            'font-size': '0.838rem',
-            'background': 'var(--surface-2)',
-            'margin-left': '0.5rem',
-        });
-        $('.dataTables_length select').css({
-            'border': '1px solid var(--border)',
-            'border-radius': 'var(--radius-sm)',
-            'padding': '0.425rem 0.5rem',
-            'font-size': '0.838rem',
-            'background': 'var(--surface-2)',
-            'margin': '0 0.375rem',
-        });
     }
 });
+
+function applyProductFilters() {
+    const hasFilters = $('#filterCategory').val() || $('#filterBrand').val() || $('#filterStatus').val() || $('#filterSearch').val();
+    $('#clearProductFiltersBtn').toggle(!!hasFilters);
+    table.ajax.reload();
+}
+
+function clearProductFilters() {
+    $('#filterCategory, #filterBrand, #filterStatus').val('');
+    $('#filterSearch').val('');
+    $('#clearProductFiltersBtn').hide();
+    table.ajax.reload();
+}
+
+$('#filterSearch').on('keydown', function(e) { if (e.key === 'Enter') applyProductFilters(); });
 
 function toggleTrashed() {
     showingTrashed = !showingTrashed;

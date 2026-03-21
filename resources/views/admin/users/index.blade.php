@@ -14,6 +14,29 @@
 @endsection
 
 @section('content')
+<div class="filter-bar">
+    <div class="d-flex align-items-center gap-2 flex-wrap w-100">
+        <i class="bi bi-funnel" style="color:var(--c-text-muted);font-size:0.9rem;"></i>
+        <select id="filterRole" class="form-select" style="width:140px;">
+            <option value="">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+        </select>
+        <select id="filterStatus" class="form-select" style="width:150px;">
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+        </select>
+        <input id="filterSearch" type="text" class="form-control" style="max-width:280px;flex:1;" placeholder="Search by name or email...">
+        <button type="button" onclick="applyUserFilters()" class="btn-secondary-admin">
+            <i class="bi bi-search"></i> Search
+        </button>
+        <button type="button" onclick="clearUserFilters()" id="clearUserFiltersBtn" class="btn-secondary-admin" style="display:none;color:var(--c-error);">
+            <i class="bi bi-x-lg"></i> Clear
+        </button>
+    </div>
+</div>
+
 <div class="panel">
     <div class="table-responsive">
         <table id="usersTable" class="data-table" style="width:100%">
@@ -38,10 +61,17 @@
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 <script>
-$('#usersTable').DataTable({
+const usersTable = $('#usersTable').DataTable({
     processing: true,
     serverSide: true,
-    ajax: '{{ route('admin.users.data') }}',
+    ajax: {
+        url: '{{ route('admin.users.data') }}',
+        data: function(d) {
+            d.role_filter   = $('#filterRole').val();
+            d.status_filter = $('#filterStatus').val();
+            d.search.value  = $('#filterSearch').val();
+        }
+    },
     columns: [
         { data: 'avatar_col', name: 'name',       orderable: true,  searchable: true },
         { data: 'email',      name: 'email' },
@@ -60,7 +90,7 @@ $('#usersTable').DataTable({
         zeroRecords: '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No users found.</div>',
         paginate: { previous: '&#x2039;', next: '&#x203A;' },
     },
-    dom: '<"dt-top d-flex align-items-center justify-content-between gap-2 mb-3"lf>rtip',
+    dom: 'rtip',
     initComplete: function() {
         var wrapper = this.api().table().container();
         var $info  = $(wrapper).find('.dataTables_info').detach();
@@ -68,23 +98,22 @@ $('#usersTable').DataTable({
         $('#users-outer-nav').append($info).append($pager);
     },
     drawCallback: function() {
-        $('.dataTables_filter input').css({
-            'border': '1px solid var(--border)',
-            'border-radius': 'var(--radius-sm)',
-            'padding': '0.425rem 0.75rem',
-            'font-size': '0.838rem',
-            'background': 'var(--surface-2)',
-            'margin-left': '0.5rem',
-        });
-        $('.dataTables_length select').css({
-            'border': '1px solid var(--border)',
-            'border-radius': 'var(--radius-sm)',
-            'padding': '0.425rem 0.5rem',
-            'font-size': '0.838rem',
-            'background': 'var(--surface-2)',
-            'margin': '0 0.375rem',
-        });
     }
 });
+
+function applyUserFilters() {
+    const hasFilters = $('#filterRole').val() || $('#filterStatus').val() || $('#filterSearch').val();
+    $('#clearUserFiltersBtn').toggle(!!hasFilters);
+    usersTable.ajax.reload();
+}
+
+function clearUserFilters() {
+    $('#filterRole, #filterStatus').val('');
+    $('#filterSearch').val('');
+    $('#clearUserFiltersBtn').hide();
+    usersTable.ajax.reload();
+}
+
+$('#filterSearch').on('keydown', function(e) { if (e.key === 'Enter') applyUserFilters(); });
 </script>
 @endsection

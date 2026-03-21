@@ -27,9 +27,14 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-    public function data()
+    public function data(Request $request)
     {
-        $query = User::query();
+        $query = User::query()
+            ->when($request->filled('role_filter'),   fn($q) => $q->where('role', $request->role_filter))
+            ->when($request->filled('status_filter'), function ($q) use ($request) {
+                if ($request->status_filter === 'active')   $q->where('is_active', true);
+                elseif ($request->status_filter === 'inactive') $q->where('is_active', false);
+            });
 
         return DataTables::of($query)
             ->addColumn('avatar_col', function (User $user) {

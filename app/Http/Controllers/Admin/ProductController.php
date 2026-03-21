@@ -23,7 +23,9 @@ class ProductController extends Controller
 
     public function index()
     {
-        return view('admin.products.index');
+        $categories = Category::orderBy('name')->get();
+        $brands     = Brand::orderBy('name')->get();
+        return view('admin.products.index', compact('categories', 'brands'));
     }
 
     public function data(Request $request)
@@ -33,7 +35,14 @@ class ProductController extends Controller
         $query = Product::withTrashed()
             ->with(['category', 'brand', 'photos'])
             ->when($trashed, fn($q) => $q->onlyTrashed())
-            ->when(!$trashed, fn($q) => $q->whereNull('deleted_at'));
+            ->when(!$trashed, fn($q) => $q->whereNull('deleted_at'))
+            ->when($request->filled('category_id'), fn($q) => $q->where('category_id', $request->category_id))
+            ->when($request->filled('brand_id'),    fn($q) => $q->where('brand_id', $request->brand_id))
+            ->when($request->filled('status_filter'), function ($q) use ($request) {
+                if ($request->status_filter === 'instock')    $q->where('stock', '>', 5);
+                elseif ($request->status_filter === 'lowstock')  $q->whereBetween('stock', [1, 5]);
+                elseif ($request->status_filter === 'outofstock') $q->where('stock', 0);
+            });
 
         return DataTables::of($query)
             ->addColumn('photo', function ($product) {
