@@ -183,6 +183,11 @@ Route::middleware(["auth", "verified"])->group(function () {
         ProfileController::class,
         "show",
     ])->name("profile.orders.show");
+    
+    Route::get("/profile/orders/{order}/receipt", [
+        ProfileController::class,
+        "receipt",
+    ])->name("profile.orders.receipt");
 });
 
 // Admin Routes (Protected)

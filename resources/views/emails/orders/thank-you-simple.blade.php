@@ -40,18 +40,9 @@
         </div>
     </div>
     
-    <!-- Special Offer -->
-    <div style="margin: 0 30px 30px; padding: 25px; background: linear-gradient(135deg, #C8A96E, #B8935F); color: #0C0C0C; border-radius: 12px; text-align: center;">
-        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 10px;">🎁 A Special Thank You Gift!</h3>
-        <p style="margin-bottom: 15px;">As a token of our appreciation, here's a discount for your next purchase:</p>
-        <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 18px; margin: 15px 0; border: 2px dashed rgba(255,255,255,0.3);">THANKYOU15</div>
-        <p style="margin-bottom: 5px;">Use this code for 15% off your next order</p>
-        <p style="font-size: 12px; opacity: 0.8;">Valid for 30 days • One-time use</p>
-    </div>
-    
     <!-- Buttons -->
     <div style="display: flex; gap: 15px; justify-content: center; margin: 30px; flex-wrap: wrap;">
-        <a href="{{ route('home') }}" style="display: inline-block; background: #C8A96E; color: #0C0C0C; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; text-align: center; min-width: 150px;">Shop Again</a>
+        <a href="{{ route('profile.orders.receipt', $order->id) }}" style="display: inline-block; background: #C8A96E; color: #0C0C0C; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; text-align: center; min-width: 150px;">📄 Download Receipt</a>
         <a href="{{ route('profile.orders.show', $order->id) }}" style="display: inline-block; background: transparent; border: 2px solid #C8A96E; color: #C8A96E; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; text-align: center; min-width: 150px;">View Order</a>
     </div>
     

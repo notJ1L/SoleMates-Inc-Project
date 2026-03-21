@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\OrderReceiptService;
 
 class ProfileController extends Controller
 {
@@ -20,6 +21,16 @@ class ProfileController extends Controller
         $order->load("orderItems.product.photos");
 
         return view("profile.orders-show", compact("order"));
+    }
+
+    public function receipt(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $receiptService = new OrderReceiptService();
+        return $receiptService->generateReceipt($order);
     }
 
     public function __construct()

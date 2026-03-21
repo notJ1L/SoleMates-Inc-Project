@@ -5,7 +5,7 @@
     
     <!-- Header -->
     <div style="background: linear-gradient(135deg, #C8A96E, #B8935F); padding: 40px 30px; text-align: center; color: #0C0C0C;">
-        <h1 style="font-size: 28px; font-weight: 700; margin: 0 0 8px 0;">🎉 Order Completed!</h1>
+        <h1 style="font-size: 28px; font-weight: 700; margin: 0 0 8px 0;">🛒 Order Placed!</h1>
         <p style="font-size: 16px; margin: 0;">Thank you for your purchase from SoleMates</p>
     </div>
     
