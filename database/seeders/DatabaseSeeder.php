@@ -28,19 +28,10 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // Seed default regular user account
-        User::create([
-            'name' => 'Regular User',
-            'email' => 'a@gmail.com',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-            'role' => 'user',
-            'phone' => '09170000000',
-            'address' => 'Sample Street, Metro City',
-            'is_active' => true,
-        ]);
-
-        // Seed products, categories, brands, and product photos
+        // Seed products, categories, brands, and product photos FIRST
         $this->call(ProductSeeder::class);
+
+        // Seed users with orders and reviews AFTER products
+        $this->call(UserSeeder::class);
     }
 }
