@@ -895,8 +895,18 @@
                                 aria-haspopup="true"
                                 aria-controls="smUserPanel">
                             <span class="sm-avatar" aria-hidden="true">
-                                <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
+                                <?php
+                                    $photo = auth()->user()->profile_photo;
+                                    $photoPath = $photo && !str_contains($photo, 'profile_photos/')
+                                        ? 'storage/profile_photos/' . $photo
+                                        : ($photo ? 'storage/' . $photo : null);
+                                ?>
+                                <?php if($photo): ?>
+                                    <img src="<?php echo e(asset($photoPath)); ?>" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                <?php else: ?>
+                                    <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
 
+                                <?php endif; ?>
                             </span>
                             <span class="sm-user-name"><?php echo e(explode(' ', auth()->user()->name)[0]); ?></span>
                             <i class="fas fa-chevron-down sm-user-chevron" aria-hidden="true"></i>
@@ -907,8 +917,18 @@
                             
                             <div class="sm-user-panel-head">
                                 <div class="sm-user-panel-avatar" aria-hidden="true">
-                                    <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
+                                    <?php
+                                        $photo = auth()->user()->profile_photo;
+                                        $photoPath = $photo && !str_contains($photo, 'profile_photos/')
+                                            ? 'storage/profile_photos/' . $photo
+                                            : ($photo ? 'storage/' . $photo : null);
+                                    ?>
+                                    <?php if($photo): ?>
+                                        <img src="<?php echo e(asset($photoPath)); ?>" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                    <?php else: ?>
+                                        <?php echo e(strtoupper(substr(auth()->user()->name, 0, 1))); ?>
 
+                                    <?php endif; ?>
                                 </div>
                                 <div style="min-width:0;">
                                     <div class="sm-user-panel-name"><?php echo e(explode(' ', auth()->user()->name)[0]); ?></div>

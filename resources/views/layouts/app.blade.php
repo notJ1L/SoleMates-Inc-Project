@@ -894,7 +894,17 @@
                                 aria-haspopup="true"
                                 aria-controls="smUserPanel">
                             <span class="sm-avatar" aria-hidden="true">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                @php
+                                    $photo = auth()->user()->profile_photo;
+                                    $photoPath = $photo && !str_contains($photo, 'profile_photos/')
+                                        ? 'storage/profile_photos/' . $photo
+                                        : ($photo ? 'storage/' . $photo : null);
+                                @endphp
+                                @if($photo)
+                                    <img src="{{ asset($photoPath) }}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                @else
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                @endif
                             </span>
                             <span class="sm-user-name">{{ explode(' ', auth()->user()->name)[0] }}</span>
                             <i class="fas fa-chevron-down sm-user-chevron" aria-hidden="true"></i>
@@ -905,7 +915,17 @@
                             {{-- Identity header --}}
                             <div class="sm-user-panel-head">
                                 <div class="sm-user-panel-avatar" aria-hidden="true">
-                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                    @php
+                                        $photo = auth()->user()->profile_photo;
+                                        $photoPath = $photo && !str_contains($photo, 'profile_photos/')
+                                            ? 'storage/profile_photos/' . $photo
+                                            : ($photo ? 'storage/' . $photo : null);
+                                    @endphp
+                                    @if($photo)
+                                        <img src="{{ asset($photoPath) }}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                    @else
+                                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                    @endif
                                 </div>
                                 <div style="min-width:0;">
                                     <div class="sm-user-panel-name">{{ explode(' ', auth()->user()->name)[0] }}</div>
