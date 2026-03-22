@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -35,8 +36,17 @@ class ProductsImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             return null;
         }
 
+        $name = trim($row['name']);
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $count = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
         return new Product([
-            'name'        => trim($row['name']),
+            'name'        => $name,
+            'slug'        => $slug,
             'description' => trim($row['description'] ?? ''),
             'price'       => (float) $row['price'],
             'category_id' => $categoryId,
