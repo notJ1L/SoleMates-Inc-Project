@@ -23,7 +23,12 @@ class ReviewController extends Controller
 
     public function data(Request $request)
     {
-        $query = Review::with(['user', 'product'])
+        $trashed = $request->boolean('trashed');
+
+        $query = Review::withTrashed()
+            ->with(['user', 'product'])
+            ->when($trashed,  fn($q) => $q->onlyTrashed())
+            ->when(!$trashed, fn($q) => $q->whereNull('deleted_at'))
             ->when($request->filled('rating_filter'), fn($q) => $q->where('rating', $request->rating_filter));
 
         return DataTables::of($query)
@@ -50,10 +55,21 @@ class ReviewController extends Controller
                     . '<div style="font-size:0.72rem;color:#A09A94;">' . $review->created_at->diffForHumans() . '</div>';
             })
             ->addColumn('actions', function (Review $review) {
+                if ($review->trashed()) {
+                    return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:0.375rem;">'
+                        . '<form action="' . route('admin.reviews.restore', $review->id) . '" method="POST" style="display:inline;">'
+                        . csrf_field()
+                        . '<button type="submit" class="action-btn success" title="Restore"><i class="bi bi-arrow-counterclockwise"></i></button>'
+                        . '</form>'
+                        . '<form action="' . route('admin.reviews.forceDelete', $review->id) . '" method="POST" onsubmit="return confirm(\'Permanently delete this review? This cannot be undone.\')" style="display:inline;">'
+                        . csrf_field() . method_field('DELETE')
+                        . '<button type="submit" class="action-btn danger" title="Delete Permanently"><i class="bi bi-trash3-fill"></i></button>'
+                        . '</form></div>';
+                }
                 return '<div style="display:flex;align-items:center;justify-content:flex-end;">'
-                    . '<form action="' . route('admin.reviews.destroy', $review) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Delete this review? This cannot be undone.\')">'
+                    . '<form action="' . route('admin.reviews.destroy', $review) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Move this review to trash?\')">'
                     . csrf_field() . method_field('DELETE')
-                    . '<button type="submit" class="action-btn danger" title="Delete"><i class="bi bi-trash3"></i></button>'
+                    . '<button type="submit" class="action-btn danger" title="Move to Trash"><i class="bi bi-trash3"></i></button>'
                     . '</form></div>';
             })
             ->rawColumns(['user_col', 'product_col', 'rating_col', 'body_col', 'date_col', 'actions'])
@@ -62,7 +78,19 @@ class ReviewController extends Controller
 
     public function destroy(Review $review)
     {
-        $review->delete();
-        return redirect()->route('admin.reviews.index')->with('success', 'Review deleted successfully.');
+        $review->delete(); // soft delete
+        return redirect()->route('admin.reviews.index')->with('success', 'Review moved to trash.');
+    }
+
+    public function restore($id)
+    {
+        Review::withTrashed()->findOrFail($id)->restore();
+        return redirect()->route('admin.reviews.index')->with('success', 'Review restored successfully.');
+    }
+
+    public function forceDelete($id)
+    {
+        Review::withTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->route('admin.reviews.index')->with('success', 'Review permanently deleted.');
     }
 }

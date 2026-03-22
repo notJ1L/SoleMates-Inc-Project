@@ -8,6 +8,9 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('topbar-actions'); ?>
+    <button type="button" class="btn-secondary-admin" id="toggleTrashedBtn" onclick="toggleTrashed()">
+        <i class="bi bi-trash3"></i> Show Deleted
+    </button>
     <a href="<?php echo e(route('admin.users.create')); ?>" class="btn-primary-admin">
         <i class="bi bi-person-plus"></i> New User
     </a>
@@ -61,12 +64,15 @@
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 <script>
+let showingTrashed = false;
+
 const usersTable = $('#usersTable').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
         url: '<?php echo e(route('admin.users.data')); ?>',
         data: function(d) {
+            d.trashed       = showingTrashed ? 1 : 0;
             d.role_filter   = $('#filterRole').val();
             d.status_filter = $('#filterStatus').val();
             d.search.value  = $('#filterSearch').val();
@@ -115,6 +121,21 @@ function clearUserFilters() {
 }
 
 $('#filterSearch').on('keydown', function(e) { if (e.key === 'Enter') applyUserFilters(); });
+
+function toggleTrashed() {
+    showingTrashed = !showingTrashed;
+    const btn = document.getElementById('toggleTrashedBtn');
+    if (showingTrashed) {
+        btn.innerHTML = '<i class="bi bi-people"></i> Show Active';
+        btn.style.borderColor = 'var(--red)';
+        btn.style.color = 'var(--red)';
+    } else {
+        btn.innerHTML = '<i class="bi bi-trash3"></i> Show Deleted';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+    }
+    usersTable.ajax.reload();
+}
 </script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp_ITCP226\htdocs\SoulMates-Inc-Project\resources\views/admin/users/index.blade.php ENDPATH**/ ?>

@@ -18,8 +18,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('rating'); // 1–5 stars
             $table->text('body');
             $table->timestamps();
-
-            $table->unique(['user_id', 'product_id']); // one review per user per product
+            $table->softDeletes();
         });
     }
 

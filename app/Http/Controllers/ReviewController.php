@@ -1,66 +1,89 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
-use Illuminate\Support\Str;
-use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('admin');
     }
 
-    public function index()
+    public function store(Request $request)
     {
-        return view('admin.reviews.index');
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'rating'     => 'required|integer|min:1|max:5',
+            'body'       => 'required|string|max:2000',
+        ]);
+
+        $user = Auth::user();
+
+        // Must have purchased the product
+        $hasPurchased = $user->orders()
+            ->whereIn('status', ['completed', 'delivered'])
+            ->whereHas('orderItems', fn($q) => $q->where('product_id', $request->product_id))
+            ->exists();
+
+        if (!$hasPurchased) {
+            return back()->with('error', 'You must purchase this product before reviewing it.');
+        }
+
+        // Only one active review per product per user
+        $existing = Review::withTrashed()
+            ->where('user_id', $user->id)
+            ->where('product_id', $request->product_id)
+            ->first();
+
+        if ($existing && !$existing->trashed()) {
+            return back()->with('error', 'You have already reviewed this product.');
+        }
+
+        if ($existing && $existing->trashed()) {
+            // Restore a previously soft-deleted review and update it
+            $existing->restore();
+            $existing->update([
+                'rating' => $request->rating,
+                'body'   => $request->body,
+            ]);
+        } else {
+            Review::create([
+                'user_id'    => $user->id,
+                'product_id' => $request->product_id,
+                'rating'     => $request->rating,
+                'body'       => $request->body,
+            ]);
+        }
+
+        return back()->with('success', 'Your review has been submitted. Thank you!');
     }
 
-    public function data()
+    public function edit(Review $review)
     {
-        $query = Review::with(['user', 'product']);
-
-        return DataTables::of($query)
-            ->addColumn('user_col', function (Review $review) {
-                return '<div style="font-weight:600;">' . e($review->user->name ?? '—') . '</div>'
-                    . '<div style="font-size:0.75rem;color:#A09A94;">' . e($review->user->email ?? '') . '</div>';
-            })
-            ->addColumn('product_col', function (Review $review) {
-                return '<span style="font-size:0.838rem;">' . e($review->product->name ?? '—') . '</span>';
-            })
-            ->addColumn('rating_col', function (Review $review) {
-                $stars = '';
-                for ($i = 1; $i <= 5; $i++) {
-                    $color = $i <= $review->rating ? '#F59E0B' : '#D1D5DB';
-                    $stars .= '<i class="bi bi-star-fill" style="color:' . $color . ';font-size:0.75rem;"></i>';
-                }
-                return $stars . ' <span style="font-size:0.75rem;color:#A09A94;">(' . $review->rating . '/5)</span>';
-            })
-            ->addColumn('body_col', function (Review $review) {
-                return '<span style="font-size:0.838rem;">' . e(Str::limit($review->body, 80)) . '</span>';
-            })
-            ->addColumn('date_col', function (Review $review) {
-                return '<div style="font-size:0.813rem;">' . $review->created_at->format('M d, Y') . '</div>'
-                    . '<div style="font-size:0.72rem;color:#A09A94;">' . $review->created_at->diffForHumans() . '</div>';
-            })
-            ->addColumn('actions', function (Review $review) {
-                return '<div style="display:flex;align-items:center;justify-content:flex-end;">'
-                    . '<form action="' . route('admin.reviews.destroy', $review) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Delete this review?\')">'
-                    . csrf_field() . method_field('DELETE')
-                    . '<button type="submit" class="action-btn danger" title="Delete"><i class="bi bi-trash3"></i></button>'
-                    . '</form></div>';
-            })
-            ->rawColumns(['user_col', 'product_col', 'rating_col', 'body_col', 'date_col', 'actions'])
-            ->make(true);
+        abort_unless(Auth::id() === $review->user_id, 403);
+        return view('reviews.edit', compact('review'));
     }
 
-    public function destroy(Review $review)
+    public function update(Request $request, Review $review)
     {
-        $review->delete();
-        return redirect()->route('admin.reviews.index')->with('success', 'Review deleted.');
+        abort_unless(Auth::id() === $review->user_id, 403);
+
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'body'   => 'required|string|max:2000',
+        ]);
+
+        $review->update([
+            'rating' => $request->rating,
+            'body'   => $request->body,
+        ]);
+
+        return redirect()->route('products.show', $review->product)
+            ->with('success', 'Your review has been updated.');
     }
 }

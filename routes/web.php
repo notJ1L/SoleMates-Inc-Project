@@ -202,6 +202,8 @@ Route::middleware(["auth", "verified", "admin"])
         Route::get("/users/data", [UserController::class, "data"])->name(
             "users.data",
         );
+        Route::post("/users/{id}/restore", [UserController::class, "restore"])->name("users.restore");
+        Route::delete("/users/{id}/force-delete", [UserController::class, "forceDelete"])->name("users.forceDelete");
         Route::resource("/users", UserController::class);
         Route::post("/products/import", [
             ProductController::class,
@@ -246,6 +248,14 @@ Route::middleware(["auth", "verified", "admin"])
             AdminReviewController::class,
             "data",
         ])->name("reviews.data");
+        Route::post("/reviews/{id}/restore", [
+            AdminReviewController::class,
+            "restore",
+        ])->name("reviews.restore");
+        Route::delete("/reviews/{id}/force-delete", [
+            AdminReviewController::class,
+            "forceDelete",
+        ])->name("reviews.forceDelete");
         Route::delete("/reviews/{review}", [
             AdminReviewController::class,
             "destroy",

@@ -29,7 +29,11 @@ class UserController extends Controller
 
     public function data(Request $request)
     {
-        $query = User::query()
+        $trashed = $request->boolean('trashed');
+
+        $query = User::withTrashed()
+            ->when($trashed,  fn($q) => $q->onlyTrashed())
+            ->when(!$trashed, fn($q) => $q->whereNull('deleted_at'))
             ->when($request->filled('role_filter'),   fn($q) => $q->where('role', $request->role_filter))
             ->when($request->filled('status_filter'), function ($q) use ($request) {
                 if ($request->status_filter === 'active')   $q->where('is_active', true);
@@ -64,6 +68,18 @@ class UserController extends Controller
                     . '<div style="font-size:0.72rem;color:#A09A94;">' . $user->created_at->diffForHumans() . '</div>';
             })
             ->addColumn('actions', function (User $user) {
+                if ($user->trashed()) {
+                    return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:0.375rem;">'
+                        . '<form action="' . route('admin.users.restore', $user->id) . '" method="POST" style="display:inline;">'
+                        . csrf_field()
+                        . '<button type="submit" class="action-btn success" title="Restore"><i class="bi bi-arrow-counterclockwise"></i></button>'
+                        . '</form>'
+                        . '<form action="' . route('admin.users.forceDelete', $user->id) . '" method="POST" onsubmit="return confirm(\'Permanently delete this user? This cannot be undone.\')" style="display:inline;">'
+                        . csrf_field() . method_field('DELETE')
+                        . '<button type="submit" class="action-btn danger" title="Delete Permanently"><i class="bi bi-trash3-fill"></i></button>'
+                        . '</form></div>';
+                }
+
                 $editBtn = '<a href="' . route('admin.users.edit', $user) . '" class="action-btn" title="Edit"><i class="bi bi-pencil"></i></a>';
 
                 if ($user->is_active) {
@@ -78,8 +94,12 @@ class UserController extends Controller
                         . '</form>';
                 }
 
+                $trashBtn = '<form action="' . route('admin.users.destroy', $user) . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Move this user to trash?\')">'
+                    . csrf_field() . method_field('DELETE')
+                    . '<button type="submit" class="action-btn danger" title="Move to Trash"><i class="bi bi-trash3"></i></button></form>';
+
                 return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:0.375rem;">'
-                    . $editBtn . $toggleBtn
+                    . $editBtn . $toggleBtn . $trashBtn
                     . '</div>';
             })
             ->rawColumns(['avatar_col', 'role_col', 'status_col', 'joined_col', 'actions'])
@@ -152,5 +172,30 @@ class UserController extends Controller
     {
         $user->update(['is_active' => true]);
         return redirect()->back()->with('success', 'User activated successfully.');
+    }
+
+    public function destroy(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'You cannot delete your own account.');
+        }
+        $user->delete(); // soft delete
+        return redirect()->route('admin.users.index')->with('success', 'User moved to trash.');
+    }
+
+    public function restore($id)
+    {
+        User::withTrashed()->findOrFail($id)->restore();
+        return redirect()->route('admin.users.index')->with('success', 'User restored successfully.');
+    }
+
+    public function forceDelete($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        if ($user->profile_photo) {
+            Storage::disk('public')->delete($user->profile_photo);
+        }
+        $user->forceDelete();
+        return redirect()->route('admin.users.index')->with('success', 'User permanently deleted.');
     }
 }
