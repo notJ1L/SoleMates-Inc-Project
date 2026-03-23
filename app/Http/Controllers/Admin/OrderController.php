@@ -51,9 +51,11 @@ class OrderController extends Controller
         $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
-        // Update payment status when order is marked as completed
+        // Update payment status when order is marked as completed or cancelled
         if ($request->status === 'completed') {
             $order->update(['payment_status' => 'paid']);
+        } elseif ($request->status === 'cancelled') {
+            $order->update(['payment_status' => 'cancelled']);
         }
 
         // Send email notification for status change

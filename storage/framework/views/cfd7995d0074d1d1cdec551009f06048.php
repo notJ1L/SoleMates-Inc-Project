@@ -1,6 +1,4 @@
-@extends('layouts.email')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="padding: 24px 12px; background-color: #f9f8f5;">
     <tr>
         <td align="center">
@@ -31,7 +29,7 @@
                             <span style="display:inline-block; background:#0A0A0A; color:#FFE9B0; padding:2px 9px; border-radius:4px;">Request</span>
                         </h1>
                         <p style="margin: 14px 0 0; max-width: 500px; font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.7; color: #6A6A6A;">
-                            Hi {{ $user->name }},<br>
+                            Hi <?php echo e($user->name); ?>,<br>
                             We received a request to reset your password for your SoleMates account. Click the button below to reset your password.
                         </p>
                     </td>
@@ -39,7 +37,7 @@
 
                 <tr>
                     <td style="padding: 32px 24px 16px; text-align: center;">
-                        <a href="{{ $resetUrl }}" style="display: inline-block; background: #C8A96E; color: #0C0C0C; padding: 16px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: 0.5px;">Reset Password</a>
+                        <a href="<?php echo e($resetUrl); ?>" style="display: inline-block; background: #C8A96E; color: #0C0C0C; padding: 16px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; letter-spacing: 0.5px;">Reset Password</a>
                     </td>
                 </tr>
 
@@ -52,7 +50,7 @@
 
                 <tr>
                     <td style="background: #f8f5f1; padding: 30px; text-align: center; border-top: 1px solid #e6e0d8;">
-                        <p style="color: #6B6560; font-size: 14px; margin-bottom: 8px;">&copy; {{ date('Y') }} SoleMates Footwear. All rights reserved.</p>
+                        <p style="color: #6B6560; font-size: 14px; margin-bottom: 8px;">&copy; <?php echo e(date('Y')); ?> SoleMates Footwear. All rights reserved.</p>
                         <p style="color: #6B6560; font-size: 14px; margin-bottom: 0;">Find your perfect pair with us</p>
                     </td>
                 </tr>
@@ -60,4 +58,6 @@
         </td>
     </tr>
 </table>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.email', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp2\htdocs\SoulMates-Inc-Project\resources\views/emails/passwords/reset.blade.php ENDPATH**/ ?>
